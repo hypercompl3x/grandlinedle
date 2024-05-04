@@ -6,7 +6,13 @@ export default {
 			transparent: 'transparent',
 			white: '#FFF',
 			black: '#000',
-			red: '#E30C0C',
+			yellow: { primary: '#E0D561', dark: '#F3E033' },
+			green: { light: '#24D475', primary: '#3DA75E' },
+			red: {
+				light: '#D53633',
+				primary: '#E30C0C',
+				dark: '#80201F',
+			},
 			blue: {
 				light: '#4ABFFF',
 				dark: '#1E4DE0',

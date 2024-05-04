@@ -1,5 +1,9 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
+export type Character = Tables<'characters'>;
+
+export type CharacterWithImage = Character & { url: string };
+
 export type Database = {
 	public: {
 		Tables: {

@@ -1,3 +1,4 @@
+import type { Database } from '$lib/types/DatabaseTypes';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 // See https://kit.svelte.dev/docs/types#app
@@ -5,7 +6,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 declare global {
 	namespace App {
 		interface Locals {
-			supabase: SupabaseClient;
+			supabase: SupabaseClient<Database>;
 		}
 		// interface Error {}
 		// interface PageData {}
@@ -14,4 +15,4 @@ declare global {
 	}
 }
 
-export {};
+export { Locals };

@@ -27,7 +27,7 @@
 				{col}
 			</div>
 		{/each}
-		{#each guesses as character (`${character.id}-guess`)}
+		{#each guesses as character, i (`${character.id}-guess`)}
 			{@const noHakiMatches =
 				currentCharacter.haki.length === 0
 					? character.haki.length > 0
@@ -52,10 +52,11 @@
 					{character.name}
 				</div>
 			</div>
-			<Cell red={character.gender !== currentCharacter.gender}>
+			<Cell id={`gender-${i}`} red={character.gender !== currentCharacter.gender}>
 				{character.gender}
 			</Cell>
 			<Cell
+				id={`affiliation-${i}`}
 				red={character.affiliation !== currentCharacter.affiliation}
 				class={{
 					'text-xs': character.affiliation.split(' ').some(word => word.length > 8),
@@ -65,12 +66,14 @@
 				{character.affiliation}
 			</Cell>
 			<Cell
+				id={`devil_fruit-${i}`}
 				red={character.devil_fruit !== currentCharacter.devil_fruit}
 				class={{ 'text-sm': character.devil_fruit === 'Paramecia' }}
 			>
 				{character.devil_fruit}
 			</Cell>
 			<Cell
+				id={`haki-${i}`}
 				red={noHakiMatches}
 				yellow={someHakiMatches && (!allHakiMatches || !sameNumberOfHaki)}
 				class="flex-wrap content-center"
@@ -84,6 +87,7 @@
 				{/if}
 			</Cell>
 			<Cell
+				id={`last_bounty-${i}`}
 				red={character.last_bounty !== currentCharacter.last_bounty}
 				arrow={currentCharacter.last_bounty > character.last_bounty ? 'up' : 'down'}
 			>
@@ -92,15 +96,16 @@
 					{formatBounty(character.last_bounty)}
 				</div>
 			</Cell>
-			<Cell red={!heightMatches} arrow={heightIsLarger ? 'up' : 'down'}>
+			<Cell id={`height-${i}`} red={!heightMatches} arrow={heightIsLarger ? 'up' : 'down'}>
 				<div class="z-10">
 					{formatHeight(character.height_m, character.height_cm)}
 				</div>
 			</Cell>
-			<Cell red={character.origin !== currentCharacter.origin}>
+			<Cell id={`origin-${i}`} red={character.origin !== currentCharacter.origin}>
 				{character.origin}
 			</Cell>
 			<Cell
+				id={`first_saga-${i}`}
 				red={character.first_saga !== currentCharacter.first_saga}
 				class={{ 'text-sm': character.first_saga === 'Dressrosa' }}
 				arrow={getSagaIndex(currentCharacter.first_saga) > getSagaIndex(character.first_saga)

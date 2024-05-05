@@ -1,28 +1,55 @@
 <script lang="ts">
 	import { tick } from 'svelte';
+	import gsap, { Power2 } from 'gsap';
 	import { Loader2 } from 'lucide-svelte';
 	import Search from '$lib/components/Search.svelte';
 	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
 	import Success from '$lib/components/Success.svelte';
 
+	type Result = Awaited<typeof data.pageData>;
+
 	let { data } = $props();
 
-	let result = $state<Awaited<typeof data.pageData>>();
+	let result = $state<Result>();
 	let gettingNewData = $state(false);
+
+	const animateNewRow = async (result: Result) => {
+		await tick();
+
+		const tl = gsap.timeline({
+			onComplete: () => {
+				const playerHasWon = result?.currentCharacter.id === result?.guesses?.[0]?.id;
+				if (playerHasWon) {
+					const successEl = document.getElementById(`success`);
+					successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}
+			},
+			defaults: { opacity: 0, ease: Power2.easeInOut, duration: 0.6 },
+		});
+
+		tl.from('#gender-0', {})
+			.from('#affiliation-0', {})
+			.from('#devil_fruit-0', {})
+			.from('#haki-0', {})
+			.from('#last_bounty-0', {})
+			.from('#height-0', {})
+			.from('#origin-0', {})
+			.from('#first_saga-0', {});
+	};
 
 	$effect(() => {
 		(async () => {
 			try {
+				const oldResult = result;
+
 				gettingNewData = true;
 				result = await data.pageData;
 				gettingNewData = false;
 
-				const playerHasWon = result.currentCharacter.id === result.guesses?.[0]?.id;
+				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
 
-				if (playerHasWon) {
-					await tick();
-					const successEl = document.getElementById(`success`);
-					successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				if (firstIdChanged) {
+					await animateNewRow(result);
 				}
 			} catch (error) {
 				console.error(error);
@@ -30,7 +57,6 @@
 		})();
 	});
 
-	// TODO: animate new rows when they are guessed
 	// TODO: deployment
 </script>
 

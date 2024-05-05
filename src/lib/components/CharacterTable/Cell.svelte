@@ -13,12 +13,14 @@
 		children: Children;
 		class?: string | Record<string, boolean>;
 		arrow?: 'up' | 'down';
+		id: string;
 	};
 
-	let { red, yellow = false, children, class: className, arrow }: Props = $props();
+	let { red, yellow = false, children, class: className, arrow, id }: Props = $props();
 </script>
 
 <div
+	{id}
 	class={cn(
 		'flex items-center justify-center border border-green-light rounded-md bg-green-primary px-1 relative',
 		{

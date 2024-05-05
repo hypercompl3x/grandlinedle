@@ -15,4 +15,4 @@ declare global {
 	}
 }
 
-export { Locals };
+export {};

@@ -37,12 +37,17 @@ const getCurrentCharacter = async (supabase: SupabaseClient<Database>) => {
 
 	if (err || !data.characters) {
 		error(500, {
-			message: 'Failed to current character',
+			message: 'Failed to get current character',
 		});
 	}
 
 	return data.characters;
 };
+
+const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies) => ({
+	guesses: await getGuesses(supabase, cookies),
+	currentCharacter: await getCurrentCharacter(supabase),
+});
 
 export const load: PageServerLoad = async ({ locals: { supabase }, cookies }) => {
 	if (!supabase) {
@@ -52,8 +57,7 @@ export const load: PageServerLoad = async ({ locals: { supabase }, cookies }) =>
 	}
 
 	return {
-		guesses: await getGuesses(supabase, cookies),
-		currentCharacter: await getCurrentCharacter(supabase),
+		pageData: getPageData(supabase, cookies),
 	};
 };
 

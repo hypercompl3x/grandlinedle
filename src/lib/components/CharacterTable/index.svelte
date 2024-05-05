@@ -36,13 +36,6 @@
 			{@const allHakiMatches = currentCharacter.haki.every(haki => character.haki.includes(haki))}
 			{@const sameNumberOfHaki = currentCharacter.haki.length === character.haki.length}
 
-			{@const bountyArrow =
-				currentCharacter.last_bounty === character.last_bounty
-					? undefined
-					: currentCharacter.last_bounty > character.last_bounty
-						? 'up'
-						: 'down'}
-
 			{@const heightMatches =
 				currentCharacter.height_cm === character.height_cm &&
 				currentCharacter.height_m === character.height_m}
@@ -50,14 +43,6 @@
 				currentCharacter.height_m > character.height_m ||
 				(currentCharacter.height_m === character.height_m &&
 					currentCharacter.height_cm > character.height_cm)}
-			{@const heightArrow = heightMatches ? undefined : heightIsLarger ? 'up' : 'down'}
-
-			{@const sagaArrow =
-				currentCharacter.first_saga === character.first_saga
-					? undefined
-					: getSagaIndex(currentCharacter.first_saga) > getSagaIndex(character.first_saga)
-						? 'up'
-						: 'down'}
 
 			<div class="relative overflow-hidden border border-black rounded-md group">
 				<img src={character.url} alt={`${character.name} Image Guess`} />
@@ -98,13 +83,16 @@
 					<img src={X} alt="No Haki" class="w-7" />
 				{/if}
 			</Cell>
-			<Cell red={character.last_bounty !== currentCharacter.last_bounty} arrow={bountyArrow}>
+			<Cell
+				red={character.last_bounty !== currentCharacter.last_bounty}
+				arrow={currentCharacter.last_bounty > character.last_bounty ? 'up' : 'down'}
+			>
 				<div class="z-10 flex items-center gap-x-1">
 					<img src={Berry} alt="Berry" />
 					{formatBounty(character.last_bounty)}
 				</div>
 			</Cell>
-			<Cell red={!heightMatches} arrow={heightArrow}>
+			<Cell red={!heightMatches} arrow={heightIsLarger ? 'up' : 'down'}>
 				<div class="z-10">
 					{formatHeight(character.height_m, character.height_cm)}
 				</div>
@@ -115,7 +103,9 @@
 			<Cell
 				red={character.first_saga !== currentCharacter.first_saga}
 				class={{ 'text-sm': character.first_saga === 'Dressrosa' }}
-				arrow={sagaArrow}
+				arrow={getSagaIndex(currentCharacter.first_saga) > getSagaIndex(character.first_saga)
+					? 'up'
+					: 'down'}
 			>
 				<div class="z-10">
 					{character.first_saga}

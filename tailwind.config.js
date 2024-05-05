@@ -20,7 +20,7 @@ export default {
 		},
 		extend: {
 			backgroundImage: {
-				'page-background': "url('/src/lib/assets/one-piece-bg.png')",
+				'page-background': "url('/src/lib/assets/one-piece-bg.webp')",
 			},
 		},
 	},

@@ -29,7 +29,7 @@
 	)}
 >
 	{@render children()}
-	{#if arrow}
+	{#if arrow && red}
 		<div class="absolute inset-0 w-11/12 m-auto h-fit">
 			<Arrow direction={arrow} />
 		</div>

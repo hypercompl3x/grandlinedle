@@ -5,8 +5,6 @@
 	let { data } = $props();
 
 	let guessIds = $derived(data.guesses.map(guess => guess.id));
-
-	// TODO: add arrows onto first saga COLUMNS
 	// TODO: create a success component below with success message, timer till next character, timezone
 	// TODO: have confetti when you get it correct
 </script>

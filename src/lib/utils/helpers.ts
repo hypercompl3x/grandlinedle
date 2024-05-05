@@ -8,9 +8,9 @@ export const cn = (...inputs: ClassValue[]) => {
 
 export const formatBounty = (bounty: Character['last_bounty']) => {
 	if (bounty >= 1_000_000_000) {
-		return `${(bounty / 1_000_000_000).toFixed(0)}B`;
+		return `${(bounty / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}B`;
 	} else if (bounty >= 1_000_000) {
-		return `${(bounty / 1_000_000).toFixed(0)}M`;
+		return `${(bounty / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
 	} else {
 		return bounty;
 	}

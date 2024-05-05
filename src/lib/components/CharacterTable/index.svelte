@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { Character, CharacterWithImage } from '$lib/types/DatabaseTypes';
-	import { COLUMNS, HAKI_MAP } from '$lib/utils/constants';
+	import { COLUMNS, HAKI_MAP, SAGA_MAP } from '$lib/utils/constants';
 	import { formatBounty, formatHeight } from '$lib/utils/helpers';
 	import Cell from './Cell.svelte';
-
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry.png';
 
@@ -13,6 +12,8 @@
 	};
 
 	let { guesses, currentCharacter }: Props = $props();
+
+	const getSagaIndex = (saga: string) => SAGA_MAP?.[saga] || 0;
 </script>
 
 {#if guesses.length > 0}
@@ -28,6 +29,37 @@
 				</div>
 			{/each}
 			{#each guesses as character (`${character.id}-guess`)}
+				{@const noHakiMatches =
+					currentCharacter.haki.length === 0
+						? character.haki.length > 0
+						: currentCharacter.haki.every(haki => !character.haki.includes(haki))}
+				{@const someHakiMatches = currentCharacter.haki.some(haki => character.haki.includes(haki))}
+				{@const allHakiMatches = currentCharacter.haki.every(haki => character.haki.includes(haki))}
+				{@const sameNumberOfHaki = currentCharacter.haki.length === character.haki.length}
+
+				{@const bountyArrow =
+					currentCharacter.last_bounty === character.last_bounty
+						? undefined
+						: currentCharacter.last_bounty > character.last_bounty
+							? 'up'
+							: 'down'}
+
+				{@const heightMatches =
+					currentCharacter.height_cm === character.height_cm &&
+					currentCharacter.height_m === character.height_m}
+				{@const heightIsLarger =
+					currentCharacter.height_m > character.height_m ||
+					(currentCharacter.height_m === character.height_m &&
+						currentCharacter.height_cm > character.height_cm)}
+				{@const heightArrow = heightMatches ? undefined : heightIsLarger ? 'up' : 'down'}
+
+				{@const sagaArrow =
+					currentCharacter.first_saga === character.first_saga
+						? undefined
+						: getSagaIndex(currentCharacter.first_saga) > getSagaIndex(character.first_saga)
+							? 'up'
+							: 'down'}
+
 				<div class="relative overflow-hidden border border-black rounded-md group">
 					<img src={character.url} alt={`${character.name} Image Guess`} />
 					<div
@@ -55,9 +87,8 @@
 					{character.devil_fruit}
 				</Cell>
 				<Cell
-					red={currentCharacter.haki.every(haki => !character.haki.includes(haki))}
-					yellow={currentCharacter.haki.some(haki => character.haki.includes(haki)) &&
-						!currentCharacter.haki.every(haki => character.haki.includes(haki))}
+					red={noHakiMatches}
+					yellow={someHakiMatches && (!allHakiMatches || !sameNumberOfHaki)}
 					class="flex-wrap content-center"
 				>
 					{#if character.haki.length > 0}
@@ -68,24 +99,13 @@
 						<img src={X} alt="No Haki" class="w-7" />
 					{/if}
 				</Cell>
-				<Cell
-					red={character.last_bounty !== currentCharacter.last_bounty}
-					arrow={currentCharacter.last_bounty > character.last_bounty ? 'up' : 'down'}
-				>
+				<Cell red={character.last_bounty !== currentCharacter.last_bounty} arrow={bountyArrow}>
 					<div class="z-10 flex items-center gap-x-1">
 						<img src={Berry} alt="Berry" />
 						{formatBounty(character.last_bounty)}
 					</div>
 				</Cell>
-				<Cell
-					red={character.height_cm !== currentCharacter.height_cm ||
-						character.height_m !== currentCharacter.height_m}
-					arrow={currentCharacter.height_m > character.height_m ||
-					(currentCharacter.height_m === character.height_m &&
-						currentCharacter.height_cm > character.height_cm)
-						? 'up'
-						: 'down'}
-				>
+				<Cell red={!heightMatches} arrow={heightArrow}>
 					<div class="z-10">
 						{formatHeight(character.height_m, character.height_cm)}
 					</div>
@@ -93,8 +113,14 @@
 				<Cell red={character.origin !== currentCharacter.origin}>
 					{character.origin}
 				</Cell>
-				<Cell red={character.first_saga !== currentCharacter.first_saga}>
-					{character.first_saga}
+				<Cell
+					red={character.first_saga !== currentCharacter.first_saga}
+					class={{ 'text-sm': character.first_saga === 'Dressrosa' }}
+					arrow={sagaArrow}
+				>
+					<div class="z-10">
+						{character.first_saga}
+					</div>
 				</Cell>
 			{/each}
 		</div>

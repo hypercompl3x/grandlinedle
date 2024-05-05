@@ -19,3 +19,16 @@ export const HAKI_MAP: Record<string, string> = {
 	Armament: Armament,
 	Observation: Observation,
 };
+
+export const SAGA_MAP: Record<string, number> = {
+	'East Blue': 0,
+	Arabasta: 1,
+	'Sky Island': 2,
+	'Water 7': 3,
+	'Thriller Bark': 4,
+	'Summit War': 5,
+	'Fish-Man Island': 6,
+	Dressrosa: 7,
+	'Whole Cake Island': 8,
+	'Wano Country': 9,
+};

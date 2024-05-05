@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
 	import Search from '$lib/components/Search.svelte';
 	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
@@ -7,18 +8,28 @@
 	let { data } = $props();
 
 	let result = $state<Awaited<typeof data.pageData>>();
+	let gettingNewData = $state(false);
 
 	$effect(() => {
 		(async () => {
 			try {
+				gettingNewData = true;
 				result = await data.pageData;
+				gettingNewData = false;
+
+				const playerHasWon = result.currentCharacter.id === result.guesses?.[0]?.id;
+
+				if (playerHasWon) {
+					await tick();
+					const successEl = document.getElementById(`success`);
+					successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}
 			} catch (error) {
 				console.error(error);
 			}
 		})();
 	});
 
-	// TODO: have confetti when you get it correct and scroll down to the success message
 	// TODO: animate new rows when they are guessed
 	// TODO: deployment
 </script>
@@ -31,7 +42,7 @@
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 		{#if !characterHasBeenGuessed}
-			<Search {guessIds} />
+			<Search {guessIds} {gettingNewData} />
 		{/if}
 		{#if result.guesses.length > 0}
 			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />

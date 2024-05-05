@@ -33,7 +33,7 @@
 	});
 </script>
 
-<div class="pb-12">
+<div id="success" class="pb-12">
 	<div
 		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md w-96 bg-green-light"
 	>

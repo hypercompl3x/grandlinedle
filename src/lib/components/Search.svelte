@@ -1,12 +1,12 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import type { FormEventHandler } from 'svelte/elements';
 	import { applyAction, enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { Search } from 'lucide-svelte';
+	import { Loader2, Search } from 'lucide-svelte';
 	import { getCharactersFromQuery } from '$lib/services/characterService';
 	import type { CharacterWithImage } from '$lib/types/DatabaseTypes';
 	import asyncTransition from '$lib/utils/asyncTransition.svelte';
-	import { invalidateAll } from '$app/navigation';
 
 	type DropdownItem = {
 		name: CharacterWithImage['name'];
@@ -16,9 +16,10 @@
 
 	type Props = {
 		guessIds: CharacterWithImage['id'][];
+		gettingNewData: boolean;
 	};
 
-	let { guessIds }: Props = $props();
+	let { guessIds, gettingNewData }: Props = $props();
 
 	const transition = asyncTransition();
 
@@ -109,10 +110,15 @@
 			oninput={handleSearch}
 			value={query}
 			onclick={() => (isDropdownOpen = true)}
+			disabled={gettingNewData}
 			placeholder="Search for a character..."
-			class="flex w-full py-2 pl-3 pr-10 text-sm border border-black rounded-md focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+			class="flex w-full py-2 pl-3 pr-10 text-sm border border-black rounded-md focus-visible:outline-none disabled:bg-white"
 		/>
-		<Search size={20} class="absolute inset-y-0 my-auto right-3" />
+		{#if gettingNewData}
+			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin" />
+		{:else}
+			<Search size={20} class="absolute inset-y-0 my-auto right-3" />
+		{/if}
 		{#if isDropdownOpen && query}
 			<form
 				use:enhance={pickCharacter}

@@ -56,8 +56,6 @@
 			}
 		})();
 	});
-
-	// TODO: deployment
 </script>
 
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
@@ -67,6 +65,7 @@
 	{#if result}
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
+
 		{#if !characterHasBeenGuessed}
 			<Search {guessIds} {gettingNewData} />
 		{/if}

@@ -27,3 +27,10 @@ export const formatHeight = (heightM: Character['height_m'], heightCm: Character
 		return '';
 	}
 };
+
+export const getMidnightGMT = () => {
+	const now = new Date();
+	const offset = now.getTimezoneOffset();
+	const hour = offset === 60 ? 1 : 0;
+	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, hour));
+};

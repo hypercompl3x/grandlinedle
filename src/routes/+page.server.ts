@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Actions, PageServerLoad } from './$types';
 import { getCharacterImages } from '$lib/services/serviceHelpers';
 import type { Database } from '$lib/types/DatabaseTypes';
+import { getMidnightGMT } from '$lib/utils/helpers';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const characterGuesses = cookies.get('characters');
@@ -71,13 +72,6 @@ export const actions = {
 
 		const newCharactersString = JSON.stringify(characters);
 
-		const now = new Date();
-		const offset = now.getTimezoneOffset();
-		const hour = offset === 60 ? 1 : 0;
-		const midnight = new Date(
-			Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, hour),
-		);
-
-		cookies.set('characters', newCharactersString, { path: '/', expires: midnight });
+		cookies.set('characters', newCharactersString, { path: '/', expires: getMidnightGMT() });
 	},
 } satisfies Actions;

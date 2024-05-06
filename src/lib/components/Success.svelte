@@ -33,9 +33,9 @@
 	});
 </script>
 
-<div id="success" class="pb-12">
+<div id="success" class="w-full px-4 pb-12 max-w-96">
 	<div
-		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md w-96 bg-green-light"
+		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md bg-green-light"
 	>
 		<div class="text-3xl font-bold">Well Played!</div>
 		<div class="flex items-center justify-center gap-x-4">

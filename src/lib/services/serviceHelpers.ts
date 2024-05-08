@@ -6,10 +6,6 @@ const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<D
 	const {
 		data: { publicUrl },
 	} = supabase.storage.from('characters').getPublicUrl(`${id}.png`);
-
-	const res = await fetch(publicUrl, { method: 'GET' });
-
-	if (!res.ok) return '';
 	return publicUrl;
 };
 
@@ -17,10 +13,6 @@ const getLocationImage = async (id: Location['id'], supabase: SupabaseClient<Dat
 	const {
 		data: { publicUrl },
 	} = supabase.storage.from('locations').getPublicUrl(`${id}.webp`);
-
-	const res = await fetch(publicUrl, { method: 'GET' });
-
-	if (!res.ok) return '';
 	return publicUrl;
 };
 

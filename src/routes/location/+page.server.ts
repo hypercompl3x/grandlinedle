@@ -36,10 +36,6 @@ const getBlurryLocation = async (id: Location['id'], supabase: SupabaseClient<Da
 	const {
 		data: { publicUrl },
 	} = supabase.storage.from('locations').getPublicUrl(`${id}-blur.webp`);
-
-	const res = await fetch(publicUrl, { method: 'GET' });
-
-	if (!res.ok) return '';
 	return publicUrl;
 };
 

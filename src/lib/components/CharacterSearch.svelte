@@ -7,6 +7,7 @@
 	import { getCharactersFromQuery } from '$lib/services/characterService';
 	import type { CharacterWithImage } from '$lib/types/DatabaseTypes';
 	import asyncTransition from '$lib/utils/asyncTransition.svelte';
+	import onClickOutside from '$lib/utils/onClickOutside.svelte';
 
 	type DropdownItem = {
 		name: CharacterWithImage['name'];
@@ -21,21 +22,15 @@
 
 	let { guessIds, gettingNewData }: Props = $props();
 
-	const transition = asyncTransition();
-
-	let containerEl = $state<HTMLDivElement>();
 	let isDropdownOpen = $state(false);
 	let query = $state('');
 	let characters = $state<CharacterWithImage[]>([]);
 	let filteredCharacters = $state<CharacterWithImage[]>([]);
 
-	let currentSearchPromise = Promise.resolve();
+	const transition = asyncTransition();
+	const outside = onClickOutside(() => (isDropdownOpen = false));
 
-	const handleClick = (e: Event) => {
-		if (containerEl && !containerEl.contains(e?.target as Node)) {
-			isDropdownOpen = false;
-		}
-	};
+	let currentSearchPromise = Promise.resolve();
 
 	const updateAllCharacters = (newCharacters: CharacterWithImage[]) => {
 		characters = newCharacters;
@@ -79,16 +74,6 @@
 			await applyAction(result);
 		};
 	};
-
-	$effect(() => {
-		document.addEventListener('click', handleClick);
-		document.addEventListener('touchstart', handleClick);
-
-		return () => {
-			document.removeEventListener('click', handleClick);
-			document.removeEventListener('touchstart', handleClick);
-		};
-	});
 </script>
 
 {#snippet dropdownItem({id, name, url}: DropdownItem)}
@@ -104,7 +89,7 @@
 {/snippet}
 
 <div class="w-full px-4 max-w-96">
-	<div bind:this={containerEl} class="relative">
+	<div bind:this={outside.containerEl} class="relative">
 		<input
 			type="text"
 			oninput={handleSearch}

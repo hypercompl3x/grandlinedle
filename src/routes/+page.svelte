@@ -3,47 +3,26 @@
 	import CharacterSearch from '$lib/components/CharacterSearch.svelte';
 	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
 	import Success from '$lib/components/Success.svelte';
-	import { animateNewItem } from '$lib/utils/constants.js';
-
-	type Result = Awaited<typeof data.pageData>;
+	import loadPageData from '$lib/utils/loadPageData.svelte.js';
 
 	let { data } = $props();
 
-	let result = $state<Result>();
-	let gettingNewData = $state(false);
+	type Result = Awaited<typeof data.pageData>;
 
-	$effect(() => {
-		(async () => {
-			try {
-				const oldResult = result;
-
-				gettingNewData = true;
-				result = await data.pageData;
-				gettingNewData = false;
-
-				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
-
-				if (firstIdChanged) {
-					const playerHasWon = result?.currentCharacter.id === result?.guesses?.[0]?.id;
-					await animateNewItem(playerHasWon, 'character');
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		})();
-	});
+	const pageData = loadPageData<Result['guesses'][number], Result>(data.pageData);
 </script>
 
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
 	<div class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
 		Guess today's One Piece character!
 	</div>
-	{#if result}
+	{#if pageData.result}
+		{@const result = pageData.result}
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 
 		{#if !characterHasBeenGuessed}
-			<CharacterSearch {guessIds} {gettingNewData} />
+			<CharacterSearch {guessIds} gettingNewData={pageData.gettingNewData} />
 		{/if}
 		{#if result.guesses.length > 0}
 			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />

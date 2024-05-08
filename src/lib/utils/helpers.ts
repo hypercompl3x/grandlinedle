@@ -1,3 +1,5 @@
+import { tick } from 'svelte';
+import gsap, { Power2 } from 'gsap';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Character } from '$lib/types/DatabaseTypes';
@@ -33,4 +35,31 @@ export const getMidnightGMT = () => {
 	const offset = now.getTimezoneOffset();
 	const hour = offset === 60 ? 1 : 0;
 	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, hour));
+};
+
+export const animateNewItem = async (playerHasWon: boolean, variant: 'character' | 'location') => {
+	await tick();
+
+	const tl = gsap.timeline({
+		onComplete: () => {
+			if (playerHasWon) {
+				const successEl = document.getElementById(`success`);
+				successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		},
+		defaults: { opacity: 0, ease: Power2.easeInOut, duration: 0.6 },
+	});
+
+	if (variant === 'character') {
+		tl.from('#gender-0', {})
+			.from('#affiliation-0', {})
+			.from('#devil_fruit-0', {})
+			.from('#haki-0', {})
+			.from('#last_bounty-0', {})
+			.from('#height-0', {})
+			.from('#origin-0', {})
+			.from('#first_saga-0', {});
+	} else {
+		tl.from('#location-0', {});
+	}
 };

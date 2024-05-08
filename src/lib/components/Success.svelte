@@ -38,7 +38,7 @@
 		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md bg-green-light"
 	>
 		<div class="text-3xl font-bold">Well Played!</div>
-		<div class="flex items-center justify-center gap-x-4">
+		<div class="flex items-center justify-center gap-4 max-sm:flex-col">
 			<img
 				src={correctGuess.url}
 				alt={variant === 'character' ? "Today's character" : "Today's location"}

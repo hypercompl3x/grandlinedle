@@ -23,7 +23,12 @@
 				const newResult = await data.pageData;
 				const guessesWithLocalImages = await getLocalImages(newResult.guesses);
 
-				result = { ...newResult, guesses: guessesWithLocalImages };
+				const currentLocationWithLocalImage = await getLocalImages([newResult.currentLocation]);
+
+				result = {
+					currentLocation: currentLocationWithLocalImage[0],
+					guesses: guessesWithLocalImages,
+				};
 				gettingNewData = false;
 
 				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;

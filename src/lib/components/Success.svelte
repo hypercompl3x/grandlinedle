@@ -1,12 +1,12 @@
-<script lang="ts">
-	import type { CharacterWithImage } from '$lib/types/DatabaseTypes';
+<script lang="ts" generics="T extends {url: string, name: string}">
 	import { getMidnightGMT } from '$lib/utils/helpers';
 
 	type Props = {
-		character: CharacterWithImage;
+		correctGuess: T;
+		variant: 'character' | 'location';
 	};
 
-	let { character }: Props = $props();
+	let { correctGuess, variant }: Props = $props();
 
 	const getTimeLeft = () => {
 		const now = new Date();
@@ -40,17 +40,19 @@
 		<div class="text-3xl font-bold">Well Played!</div>
 		<div class="flex items-center justify-center gap-x-4">
 			<img
-				src={character.url}
-				alt="Today's character"
+				src={correctGuess.url}
+				alt={variant === 'character' ? "Today's character" : "Today's location"}
 				class="h-24 border border-black rounded-md"
 			/>
 			<div>
 				<div class="font-semibold">You Guessed</div>
-				<div class="text-2xl font-bold">{character.name}</div>
+				<div class="text-2xl font-bold">{correctGuess.name}</div>
 			</div>
 		</div>
 		<div>
-			<div class="text-lg font-semibold">Next Character in</div>
+			<div class="text-lg font-semibold">
+				{variant === 'character' ? 'Next Character in' : 'Next location in'}
+			</div>
 			<div class="text-4xl font-bold">{timeLeft}</div>
 		</div>
 	</div>

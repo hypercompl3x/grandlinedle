@@ -2,7 +2,7 @@ import { error, type Cookies } from '@sveltejs/kit';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Config } from '@sveltejs/adapter-vercel';
 import type { Actions, PageServerLoad } from './$types';
-import { getCharacterImages } from '$lib/services/serviceHelpers';
+import { getImages } from '$lib/services/serviceHelpers';
 import type { Database } from '$lib/types/DatabaseTypes';
 import { getMidnightGMT } from '$lib/utils/helpers';
 
@@ -31,7 +31,7 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 		(a, b) => characterGuessesArray.indexOf(a.id) - characterGuessesArray.indexOf(b.id),
 	);
 
-	return await getCharacterImages(characters, supabase);
+	return await getImages(characters, supabase, 'characters');
 };
 
 const getCurrentCharacter = async (supabase: SupabaseClient<Database>) => {

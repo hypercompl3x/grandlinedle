@@ -1,8 +1,12 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
-
 export type Character = Tables<'characters'>;
 
 export type CharacterWithImage = Character & { url: string };
+
+export type Location = Tables<'locations'>;
+
+export type LocationWithImage = Location & { url: string };
+
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
 	public: {
@@ -75,12 +79,57 @@ export type Database = {
 					},
 				];
 			};
+			current_location: {
+				Row: {
+					created_at: string;
+					id: number;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'current_location_id_fkey';
+						columns: ['id'];
+						isOneToOne: true;
+						referencedRelation: 'locations';
+						referencedColumns: ['id'];
+					},
+				];
+			};
+			locations: {
+				Row: {
+					created_at: string;
+					id: number;
+					name: string;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+					name: string;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+					name?: string;
+				};
+				Relationships: [];
+			};
 		};
 		Views: {
 			[_ in never]: never;
 		};
 		Functions: {
 			change_current_character: {
+				Args: Record<PropertyKey, never>;
+				Returns: undefined;
+			};
+			change_current_location: {
 				Args: Record<PropertyKey, never>;
 				Returns: undefined;
 			};

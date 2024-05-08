@@ -63,3 +63,20 @@ export const animateNewItem = async (playerHasWon: boolean, variant: 'character'
 		tl.from('#location-0', {});
 	}
 };
+
+export const getLocalImages = async <T extends { url: string }>(items: T[]): Promise<T[]> => {
+	return await Promise.all(
+		items.map(async item => {
+			const res = await fetch(item.url, { method: 'GET' });
+
+			if (!res.ok) return { ...item, url: '' };
+
+			const blob = await res.blob();
+			const url = URL.createObjectURL(blob);
+			return {
+				...item,
+				url,
+			};
+		}),
+	);
+};

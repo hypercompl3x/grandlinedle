@@ -15,7 +15,7 @@
 		<div
 			id={`location-${i}`}
 			class={cn(
-				'p-4 leading-tight text-white border border-black rounded-md bg-green-light flex items-center gap-x-4',
+				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex items-center gap-x-4',
 				{
 					'bg-red-light border-red-dark': location.id !== currentLocation.id,
 				},

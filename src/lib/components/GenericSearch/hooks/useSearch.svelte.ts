@@ -1,10 +1,10 @@
 import type { FormEventHandler } from 'svelte/elements';
-import asyncTransition from '$lib/utils/asyncTransition.svelte';
 import type { SubmitFunction } from '@sveltejs/kit';
 import { invalidateAll } from '$app/navigation';
 import { applyAction } from '$app/forms';
+import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 
-const search = <T extends { id: number; name: string; url?: string }>(
+const useSearch = <T extends { id: number; name: string; url?: string }>(
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
 	guessIds: T['id'][],
 ) => {
@@ -13,7 +13,7 @@ const search = <T extends { id: number; name: string; url?: string }>(
 	let items = $state<T[]>([]);
 	let filteredItems = $state<T[]>([]);
 
-	const transition = asyncTransition();
+	const transition = useAsyncTransition();
 
 	let currentSearchPromise = Promise.resolve();
 
@@ -77,4 +77,4 @@ const search = <T extends { id: number; name: string; url?: string }>(
 	};
 };
 
-export default search;
+export default useSearch;

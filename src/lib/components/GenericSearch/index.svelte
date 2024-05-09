@@ -1,8 +1,8 @@
 <script lang="ts" generics="T extends {id: number, name: string, url?: string}">
 	import { enhance } from '$app/forms';
 	import { Loader2, Search } from 'lucide-svelte';
-	import onClickOutside from '$lib/utils/onClickOutside.svelte';
-	import search from './search.svelte';
+	import useOnClickOutside from '$lib/hooks/useOnClickOutside.svelte';
+	import useSearch from './hooks/useSearch.svelte';
 
 	const SEARCH_MAP = {
 		character: {
@@ -28,8 +28,8 @@
 
 	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[page];
 
-	const s = search(getItemsFromQuery, guessIds);
-	const outside = onClickOutside(() => (s.isDropdownOpen = false));
+	const search = useSearch(getItemsFromQuery, guessIds);
+	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
 {#snippet dropdownItem({id, name, url}: Pick<T, 'id' | 'name' | 'url'>)}
@@ -47,12 +47,12 @@
 {/snippet}
 
 <div class="w-full px-4 max-w-96">
-	<div bind:this={outside.containerEl} class="relative">
+	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
 			type="text"
-			oninput={s.handleSearch}
-			value={s.query}
-			onclick={() => (s.isDropdownOpen = true)}
+			oninput={search.handleSearch}
+			value={search.query}
+			onclick={() => (search.isDropdownOpen = true)}
 			disabled={gettingNewData}
 			placeholder={searchPlaceholder}
 			class="flex w-full py-2 pl-3 pr-10 text-sm border border-black rounded-md focus-visible:outline-none disabled:bg-white"
@@ -62,22 +62,22 @@
 		{:else}
 			<Search size={20} class="absolute inset-y-0 my-auto right-3" />
 		{/if}
-		{#if s.isDropdownOpen && s.query}
+		{#if search.isDropdownOpen && search.query}
 			<form
-				use:enhance={s.pickItem}
+				use:enhance={search.pickItem}
 				method="POST"
 				class="absolute top-[38px] bg-white bg-opacity-95 inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20"
 			>
-				{#if s.transition.isPending}
+				{#if search.transition.isPending}
 					<div class="flex items-center w-full h-20 px-4 text-xl font-bold animate-pulse">
 						Searching...
 					</div>
-				{:else if s.filteredItems.length === 0}
+				{:else if search.filteredItems.length === 0}
 					<div class="flex items-center w-full h-20 px-4 text-xl font-bold">
 						{noItemsFoundMessage}
 					</div>
 				{:else}
-					{#each s.filteredItems as item (`${item.id}-dropdown-item`)}
+					{#each search.filteredItems as item (`${item.id}-dropdown-item`)}
 						{@const { name, id, url } = item}
 						{@render dropdownItem({ name, id, url })}
 					{/each}

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
-	import CharacterSearch from '$lib/components/CharacterSearch.svelte';
 	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
 	import Success from '$lib/components/Success.svelte';
 	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
+	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
+	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -48,13 +49,18 @@
 		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 
 		{#if !characterHasBeenGuessed}
-			<CharacterSearch {guessIds} {gettingNewData} />
+			<GenericSearch
+				{guessIds}
+				{gettingNewData}
+				getItemsFromQuery={getCharactersFromQuery}
+				page="character"
+			/>
 		{/if}
 		{#if result.guesses.length > 0}
 			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />
 		{/if}
 		{#if characterHasBeenGuessed}
-			<Success correctGuess={result.guesses[0]} variant="character" />
+			<Success correctGuess={result.guesses[0]} page="character" />
 		{/if}
 	{:else}
 		<Loader2 class="text-white animate-spin" size={80} />

@@ -37,7 +37,7 @@
 		name={buttonName}
 		type="submit"
 		value={id}
-		class="flex items-center w-full px-4 py-2 text-xl font-bold hover:bg-white gap-x-5 focus-visible:outline-none focus:bg-white"
+		class="flex items-center w-full px-4 py-2 text-xl font-bold text-left hover:bg-white gap-x-5 focus-visible:outline-none focus:bg-white"
 	>
 		{#if url}
 			<img src={url} alt={`${name} Image`} class="h-16 rounded-md" />

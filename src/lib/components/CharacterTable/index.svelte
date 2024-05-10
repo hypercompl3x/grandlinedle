@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Character, CharacterWithImage } from '$lib/types/DatabaseTypes';
 	import { COLUMNS, HAKI_MAP, SAGA_MAP } from '$lib/utils/constants';
-	import { formatBounty, formatHeight } from '$lib/utils/helpers';
+	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import Cell from './Cell.svelte';
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry.png';
@@ -47,7 +47,10 @@
 			<div class="relative overflow-hidden border border-black rounded-md group">
 				<img src={character.url} alt={`${character.name} Image Guess`} />
 				<div
-					class="absolute top-0 flex items-center justify-center w-full h-full px-1 text-sm font-bold text-transparent transition-colors duration-200 group-hover:bg-blue-dark group-hover:text-white"
+					class={cn(
+						'absolute top-0 flex items-center justify-center w-full h-full px-1 text-sm font-bold text-transparent transition-colors duration-200 group-hover:bg-blue-dark group-hover:text-white',
+						{ 'text-xs': character.name.split(' ').some(word => word.length > 9) },
+					)}
 				>
 					{character.name}
 				</div>
@@ -59,9 +62,7 @@
 				id={`affiliation-${i}`}
 				red={character.affiliation !== currentCharacter.affiliation}
 				class={{
-					'text-sm':
-						character.affiliation.split(' ').some(word => word.length > 7) ||
-						character.affiliation === 'Automata',
+					'text-sm': character.affiliation.split(' ').some(word => word.length > 7),
 					'text-xs': character.affiliation === 'Donquixote Pirates',
 				}}
 			>

@@ -1,12 +1,25 @@
 <script lang="ts" generics="T extends {url: string, name: string}">
 	import { getMidnightGMT } from '$lib/utils/helpers';
 
-	type Props = {
-		correctGuess: T;
-		variant: 'character' | 'location';
+	const SUCCESS_MAP = {
+		character: {
+			imgAlt: "Today's character",
+			nextMessage: 'Next Character in',
+		},
+		location: {
+			imgAlt: "Today's location",
+			nextMessage: 'Next location in',
+		},
 	};
 
-	let { correctGuess, variant }: Props = $props();
+	type Props = {
+		correctGuess: T;
+		page: 'character' | 'location';
+	};
+
+	let { correctGuess, page }: Props = $props();
+
+	const { imgAlt, nextMessage } = SUCCESS_MAP[page];
 
 	const getTimeLeft = () => {
 		const now = new Date();
@@ -39,11 +52,7 @@
 	>
 		<div class="text-3xl font-bold">Well Played!</div>
 		<div class="flex items-center justify-center gap-4 max-sm:flex-col">
-			<img
-				src={correctGuess.url}
-				alt={variant === 'character' ? "Today's character" : "Today's location"}
-				class="h-24 border border-black rounded-md"
-			/>
+			<img src={correctGuess.url} alt={imgAlt} class="h-24 border border-black rounded-md" />
 			<div>
 				<div class="font-semibold">You Guessed</div>
 				<div class="text-2xl font-bold">{correctGuess.name}</div>
@@ -51,7 +60,7 @@
 		</div>
 		<div>
 			<div class="text-lg font-semibold">
-				{variant === 'character' ? 'Next Character in' : 'Next location in'}
+				{nextMessage}
 			</div>
 			<div class="text-4xl font-bold">{timeLeft}</div>
 		</div>

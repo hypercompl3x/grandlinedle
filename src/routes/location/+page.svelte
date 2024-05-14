@@ -3,8 +3,9 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Locations from '$lib/components/Locations.svelte';
 	import Success from '$lib/components/Success.svelte';
-	import LocationSearch from '$lib/components/LocationSearch.svelte';
 	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
+	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
+	import { getLocationsFromQuery } from '$lib/services/locationService.js';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -60,13 +61,18 @@
 			/>
 		</div>
 		{#if !locationHasBeenGuessed}
-			<LocationSearch {guessIds} {gettingNewData} />
+			<GenericSearch
+				{guessIds}
+				{gettingNewData}
+				getItemsFromQuery={getLocationsFromQuery}
+				page="location"
+			/>
 		{/if}
 		{#if result.guesses.length > 0}
 			<Locations guesses={result.guesses} currentLocation={result.currentLocation} />
 		{/if}
 		{#if locationHasBeenGuessed}
-			<Success correctGuess={result.guesses[0]} variant="location" />
+			<Success correctGuess={result.guesses[0]} page="location" />
 		{/if}
 	{:else}
 		<Loader2 class="text-white animate-spin" size={80} />

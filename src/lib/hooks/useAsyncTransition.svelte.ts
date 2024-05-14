@@ -1,4 +1,4 @@
-const asyncTransition = () => {
+const useAsyncTransition = () => {
 	let isPending = $state(false);
 
 	const startTransition = async (callback: () => Promise<unknown>) => {
@@ -15,4 +15,4 @@ const asyncTransition = () => {
 	};
 };
 
-export default asyncTransition;
+export default useAsyncTransition;

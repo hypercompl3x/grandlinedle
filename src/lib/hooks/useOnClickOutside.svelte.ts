@@ -1,4 +1,4 @@
-const onClickOutside = (fn: () => void) => {
+const useOnClickOutside = (fn: () => void) => {
 	let containerEl = $state<HTMLDivElement>();
 
 	const handleClick = (e: Event) => {
@@ -24,4 +24,4 @@ const onClickOutside = (fn: () => void) => {
 	};
 };
 
-export default onClickOutside;
+export default useOnClickOutside;

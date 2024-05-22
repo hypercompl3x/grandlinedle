@@ -62,8 +62,13 @@
 				id={`affiliation-${i}`}
 				red={character.affiliation !== currentCharacter.affiliation}
 				class={{
-					'text-sm': character.affiliation.split(' ').some(word => word.length > 7),
-					'text-xs': character.affiliation === 'Donquixote Pirates',
+					'text-sm': character.affiliation
+						.split(' ')
+						.some(word => word.length > 7 && word.length <= 9),
+					'text-xs': character.affiliation
+						.split(' ')
+						.some(word => word.length > 9 && word.length <= 12),
+					'text-[10px]': character.affiliation.split(' ').some(word => word.length > 12),
 				}}
 			>
 				{character.affiliation}

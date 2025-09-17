@@ -3,7 +3,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Locations from '$lib/components/Locations.svelte';
 	import Success from '$lib/components/Success.svelte';
-	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
+	import { animateNewItem, cn, getLocalImages } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import { getLocationsFromQuery } from '$lib/services/locationService.js';
 
@@ -54,11 +54,19 @@
 		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
 
 		<div class="w-full max-w-screen-sm px-4">
-			<img
-				src={result.currentLocation.url}
-				alt="Today's location"
-				class="border border-black rounded-md"
-			/>
+			<div class="overflow-hidden bg-[#313131] border border-black rounded-md">
+				<img
+					src={result.currentLocation.url}
+					alt="Today's location"
+					class={cn('blur-sm', {
+						'blur-3xl': result.guesses.length === 0,
+						'blur-2xl': result.guesses.length === 1,
+						'blur-xl': result.guesses.length === 2,
+						'blur-lg': result.guesses.length === 3,
+						'blur-md': result.guesses.length === 4,
+					})}
+				/>
+			</div>
 		</div>
 		{#if !locationHasBeenGuessed}
 			<GenericSearch

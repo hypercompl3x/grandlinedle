@@ -35,7 +35,7 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 const getBlurryLocation = async (id: Location['id'], supabase: SupabaseClient<Database>) => {
 	const {
 		data: { publicUrl },
-	} = supabase.storage.from('locations').getPublicUrl(`${id}-blur.webp`);
+	} = supabase.storage.from('locations').getPublicUrl(`${id}.webp`);
 	return publicUrl;
 };
 

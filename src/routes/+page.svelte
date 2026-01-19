@@ -41,7 +41,10 @@
 </script>
 
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
-	<div class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<div
+		class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1"
+		data-testid="character-title"
+	>
 		Guess today's One Piece character!
 	</div>
 	{#if result}

@@ -52,7 +52,10 @@
 </script>
 
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
-	<div class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<div
+		class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1"
+		data-testid="quote-title"
+	>
 		Guess who said today's One Piece quote!
 	</div>
 	{#if result}
@@ -62,6 +65,7 @@
 		<div class="w-full max-w-screen-sm px-4">
 			<div
 				class="p-6 text-2xl font-semibold text-center text-white bg-[#313131] border border-black rounded-md"
+				data-testid="current-quote"
 			>
 				"{result.currentQuote.quote}"
 			</div>

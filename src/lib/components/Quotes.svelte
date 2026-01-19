@@ -14,6 +14,7 @@
 	{#each guesses as character, i (`${character.id}-guess`)}
 		<div
 			id={`quote-${i}`}
+			data-testid={`quote-guess-${character.name}`}
 			class={cn(
 				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex items-center gap-x-4',
 				{

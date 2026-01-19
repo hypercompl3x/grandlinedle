@@ -46,7 +46,10 @@
 </script>
 
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
-	<div class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<div
+		class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1"
+		data-testid="location-title"
+	>
 		Guess today's One Piece location!
 	</div>
 	{#if result}
@@ -58,6 +61,7 @@
 				<img
 					src={result.currentLocation.url}
 					alt="Today's location"
+					data-testid="current-location"
 					class={cn('blur-sm', {
 						'blur-3xl': result.guesses.length === 0,
 						'blur-2xl': result.guesses.length === 1,

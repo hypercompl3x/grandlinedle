@@ -39,6 +39,7 @@
 
 {#snippet dropdownItem({id, name, url}: Pick<T, 'id' | 'name' | 'url'>)}
 	<button
+		data-testid={`dropdown-item-${name}`}
 		name={buttonName}
 		type="submit"
 		value={id}
@@ -54,6 +55,7 @@
 <div class="w-full px-4 max-w-96">
 	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
+			data-testid="search-input"
 			type="text"
 			oninput={search.handleSearch}
 			value={search.query}

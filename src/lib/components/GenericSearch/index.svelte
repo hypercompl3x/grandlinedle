@@ -15,6 +15,11 @@
 			searchPlaceholder: 'Search for a location...',
 			buttonName: 'locationId',
 		},
+		quote: {
+			noItemsFoundMessage: 'No characters found',
+			searchPlaceholder: 'Search for a character...',
+			buttonName: 'characterId',
+		},
 	};
 
 	type Props = {

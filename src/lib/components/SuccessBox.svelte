@@ -10,16 +10,20 @@
 			imgAlt: "Today's location",
 			nextMessage: 'Next location in',
 		},
+		quote: {
+			imgAlt: "Today's character",
+			nextMessage: 'Next quote in',
+		},
 	};
 
 	type Props = {
 		correctGuess: T;
-		page: 'character' | 'location';
+		page: 'character' | 'location' | 'quote';
 	};
 
-	let { correctGuess, page }: Props = $props();
+	let props: Props = $props();
 
-	const { imgAlt, nextMessage } = SUCCESS_MAP[page];
+	const { imgAlt, nextMessage } = SUCCESS_MAP[props.page];
 
 	const getTimeLeft = () => {
 		const now = new Date();
@@ -46,16 +50,16 @@
 	});
 </script>
 
-<div id="success" class="w-full px-4 pb-12 max-w-96">
+<div id="success-box" class="w-full px-4 pb-12 max-w-96" data-testid="success-box">
 	<div
 		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md bg-green-light"
 	>
 		<div class="text-3xl font-bold">Well Played!</div>
 		<div class="flex items-center justify-center gap-4 max-sm:flex-col">
-			<img src={correctGuess.url} alt={imgAlt} class="h-24 border border-black rounded-md" />
+			<img src={props.correctGuess.url} alt={imgAlt} class="h-24 border border-black rounded-md" />
 			<div>
 				<div class="font-semibold">You Guessed</div>
-				<div class="text-2xl font-bold">{correctGuess.name}</div>
+				<div class="text-2xl font-bold">{props.correctGuess.name}</div>
 			</div>
 		</div>
 		<div>

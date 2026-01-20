@@ -37,14 +37,17 @@ export const getMidnightGMT = () => {
 	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, hour));
 };
 
-export const animateNewItem = async (playerHasWon: boolean, variant: 'character' | 'location') => {
+export const animateNewItem = async (
+	playerHasWon: boolean,
+	variant: 'character' | 'location' | 'quote',
+) => {
 	await tick();
 
 	const tl = gsap.timeline({
 		onComplete: () => {
 			if (playerHasWon) {
-				const successEl = document.getElementById(`success`);
-				successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				const successBoxEl = document.getElementById(`success-box`);
+				successBoxEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 		},
 		defaults: { opacity: 0, ease: Power2.easeInOut, duration: 0.6 },
@@ -59,8 +62,10 @@ export const animateNewItem = async (playerHasWon: boolean, variant: 'character'
 			.from('#height-0', {})
 			.from('#origin-0', {})
 			.from('#first_saga-0', {});
-	} else {
+	} else if (variant === 'location') {
 		tl.from('#location-0', {});
+	} else {
+		tl.from('#quotecharacter-0', {});
 	}
 };
 

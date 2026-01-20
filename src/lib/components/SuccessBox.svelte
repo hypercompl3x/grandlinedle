@@ -10,11 +10,15 @@
 			imgAlt: "Today's location",
 			nextMessage: 'Next location in',
 		},
+		quote: {
+			imgAlt: "Today's character",
+			nextMessage: 'Next quote in',
+		},
 	};
 
 	type Props = {
 		correctGuess: T;
-		page: 'character' | 'location';
+		page: 'character' | 'location' | 'quote';
 	};
 
 	let props: Props = $props();

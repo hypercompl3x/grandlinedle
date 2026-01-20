@@ -6,7 +6,7 @@ import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 
 const useSearch = <T extends { id: number; name: string; url?: string }>(
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
-	guessIds: T['id'][],
+	guessIds: () => T['id'][],
 ) => {
 	let isDropdownOpen = $state(false);
 	let query = $state('');
@@ -42,7 +42,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		}
 
 		currentSearchPromise = transition.startTransition(async () => {
-			const newItems = await getItemsFromQuery(query, guessIds);
+			const newItems = await getItemsFromQuery(query, guessIds());
 			updateAllItems(newItems);
 		});
 	};

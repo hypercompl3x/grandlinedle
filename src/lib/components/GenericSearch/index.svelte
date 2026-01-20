@@ -15,6 +15,11 @@
 			searchPlaceholder: 'Search for a location...',
 			buttonName: 'locationId',
 		},
+		quote: {
+			noItemsFoundMessage: 'No characters found',
+			searchPlaceholder: 'Search for a character...',
+			buttonName: 'characterId',
+		},
 	};
 
 	type Props = {
@@ -28,7 +33,7 @@
 
 	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
 
-	const search = useSearch(props.getItemsFromQuery, props.guessIds);
+	const search = useSearch(props.getItemsFromQuery, () => props.guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 

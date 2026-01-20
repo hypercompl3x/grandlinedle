@@ -15,7 +15,7 @@
 		<div
 			id={`location-${i}`}
 			class={cn(
-				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex items-center gap-x-4',
+				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex max-sm:flex-col items-center gap-4',
 				{
 					'bg-red-light border-red-dark': location.id !== currentLocation.id,
 				},
@@ -26,7 +26,9 @@
 				alt={location.name}
 				class="w-40 border border-black rounded-md sm:w-52 grow-0"
 			/>
-			<div class="text-2xl font-bold">{location.name}</div>
+			<div class="text-2xl font-bold text-center">
+				{location.name}
+			</div>
 		</div>
 	{/each}
 </div>

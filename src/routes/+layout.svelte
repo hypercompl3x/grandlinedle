@@ -7,6 +7,7 @@
 	const LINKS = [
 		{ name: 'Classic', href: '/' },
 		{ name: 'Location', href: '/location' },
+		{ name: 'Quote', href: '/quote' },
 	];
 </script>
 

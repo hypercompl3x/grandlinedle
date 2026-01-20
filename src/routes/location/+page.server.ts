@@ -1,14 +1,9 @@
 import { error, type Cookies } from '@sveltejs/kit';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Config } from '@sveltejs/adapter-vercel';
 import type { Actions, PageServerLoad } from './$types';
 import { getImages } from '$lib/services/serviceHelpers';
 import type { Database, Location } from '$lib/types/DatabaseTypes';
 import { getMidnightGMT } from '$lib/utils/helpers';
-
-export const config: Config = {
-	runtime: 'edge',
-};
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const locationGuesses = cookies.get('locations');

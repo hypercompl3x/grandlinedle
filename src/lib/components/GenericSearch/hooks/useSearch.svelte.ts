@@ -23,13 +23,13 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 	};
 
 	const handleSearch: FormEventHandler<HTMLInputElement> = async e => {
-		await currentSearchPromise;
-
-		const oldQuery = query;
 		const { value } = e.currentTarget;
+		const oldQuery = query;
 
 		isDropdownOpen = true;
 		query = value;
+
+		await currentSearchPromise;
 
 		if (!query) {
 			updateAllItems([]);

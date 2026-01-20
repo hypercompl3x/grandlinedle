@@ -1,16 +1,12 @@
 <script lang="ts">
-	import type { SnippetReturn } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils/helpers';
 	import Arrow from '../Arrow.svelte';
-
-	type Children = (this: void) => typeof SnippetReturn & {
-		_: 'functions passed to {@render ...} tags must use the `Snippet` type imported from "svelte"';
-	};
 
 	type Props = {
 		red: boolean;
 		yellow?: boolean;
-		children: Children;
+		children: Snippet;
 		class?: string | Record<string, boolean>;
 		arrow?: 'up' | 'down';
 		id: string;

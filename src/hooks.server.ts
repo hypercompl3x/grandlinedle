@@ -34,12 +34,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 		PUBLIC_SUPABASE_API_KEY,
 		{
 			cookies: {
-				get: key => event.cookies.get(key),
-				set: (key, value, options) => {
-					event.cookies.set(key, value, { ...options, path: '/' });
+				getAll() {
+					return event.cookies.getAll();
 				},
-				remove: (key, options) => {
-					event.cookies.delete(key, { ...options, path: '/' });
+				setAll(cookiesToSet) {
+					cookiesToSet.forEach(({ name, value, options }) =>
+						event.cookies.set(name, value, { ...options, path: '/' }),
+					);
 				},
 			},
 		},

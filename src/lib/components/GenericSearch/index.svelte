@@ -24,11 +24,11 @@
 		page: keyof typeof SEARCH_MAP;
 	};
 
-	let { guessIds, gettingNewData, getItemsFromQuery, page }: Props = $props();
+	let props: Props = $props();
 
-	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[page];
+	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
 
-	const search = useSearch(getItemsFromQuery, guessIds);
+	const search = useSearch(props.getItemsFromQuery, props.guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
@@ -50,16 +50,16 @@
 <div class="w-full px-4 max-w-96">
 	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
-			data-testid={`search-input-${page}`}
+			data-testid={`search-input-${props.page}`}
 			type="text"
 			oninput={search.handleSearch}
 			value={search.query}
 			onclick={() => (search.isDropdownOpen = true)}
-			disabled={gettingNewData}
+			disabled={props.gettingNewData}
 			placeholder={searchPlaceholder}
 			class="flex w-full py-2 pl-3 pr-10 text-sm border border-black rounded-md focus-visible:outline-none disabled:bg-white"
 		/>
-		{#if gettingNewData}
+		{#if props.gettingNewData}
 			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin" />
 		{:else}
 			<Search size={20} class="absolute inset-y-0 my-auto right-3" />

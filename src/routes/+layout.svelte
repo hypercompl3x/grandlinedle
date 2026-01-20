@@ -1,5 +1,5 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
@@ -24,7 +24,7 @@
 				<a
 					{href}
 					class={cn('p-1.5 font-bold text-lg rounded-md', {
-						'bg-blue-dark text-white': $page.url.pathname === href,
+						'bg-blue-dark text-white': page.url.pathname === href,
 					})}
 				>
 					{name}

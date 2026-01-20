@@ -43,8 +43,8 @@ export const animateNewItem = async (playerHasWon: boolean, variant: 'character'
 	const tl = gsap.timeline({
 		onComplete: () => {
 			if (playerHasWon) {
-				const successEl = document.getElementById(`success`);
-				successEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				const successBoxEl = document.getElementById(`success-box`);
+				successBoxEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 		},
 		defaults: { opacity: 0, ease: Power2.easeInOut, duration: 0.6 },

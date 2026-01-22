@@ -6,7 +6,7 @@ export type Location = Tables<'locations'>;
 
 export type LocationWithImage = Location & { url: string };
 
-export type Quote = Tables<'quotes'>;
+export type Quote = Tables<'quotes'> & { affiliation: Character['affiliation'] };
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 

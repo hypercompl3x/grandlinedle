@@ -17,6 +17,7 @@ export default {
 				light: '#4ABFFF',
 				dark: '#1E4DE0',
 			},
+			grey: '#696969',
 		},
 		extend: {
 			backgroundImage: {

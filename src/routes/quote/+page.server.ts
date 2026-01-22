@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getImages } from '$lib/services/serviceHelpers';
 import { getMidnightGMT } from '$lib/utils/helpers';
-import type { Database } from '$lib/types/DatabaseTypes';
+import type { Database, Quote } from '$lib/types/DatabaseTypes';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const quoteCharacterGuesses = cookies.get('quotecharacters');
@@ -29,16 +29,21 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 	return await getImages(characters, supabase, 'characters');
 };
 
-const getCurrentQuote = async (supabase: SupabaseClient<Database>) => {
-	const { data, error: err } = await supabase.from('current_quote').select('quotes (*)').single();
+const getCurrentQuote = async (supabase: SupabaseClient<Database>): Promise<Quote> => {
+	const { data, error: err } = await supabase
+		.from('current_quote')
+		.select('quotes (*, characters (*))')
+		.single();
 
-	if (err || !data.quotes) {
+	if (err || !data.quotes || !data.quotes.characters) {
 		error(500, {
 			message: 'Failed to get current quote',
 		});
 	}
 
-	return data.quotes;
+	const { characters, ...rest } = data.quotes;
+
+	return { ...rest, affiliation: characters.affiliation };
 };
 
 const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies) => ({

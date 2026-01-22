@@ -2,10 +2,11 @@
 	import { untrack } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import { animateNewItem, getLocalImages } from '$lib/utils/helpers.js';
-	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import QuoteCharacters from '$lib/components/QuoteCharacters.svelte';
+	import Hint from '$lib/components/Hint.svelte';
+	import { animateNewItem, getLocalImages } from '$lib/utils/helpers.js';
+	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -49,8 +50,15 @@
 	</h1>
 	{#if result}
 		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const quoteHasBeenGuessed = guessIds.includes(result.currentQuote?.character_id)}
+		{@const quoteHasBeenGuessed = guessIds.includes(result.currentQuote.character_id)}
 
+		{#if !quoteHasBeenGuessed}
+			<Hint
+				category="Affiliation"
+				hint={result.currentQuote.affiliation}
+				numberOfGuesses={guessIds.length}
+			/>
+		{/if}
 		<div
 			class="p-6 text-3xl font-semibold text-center text-white bg-black bg-opacity-50 rounded-md text-shadow-1"
 		>

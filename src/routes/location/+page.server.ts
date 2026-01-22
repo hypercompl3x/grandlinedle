@@ -27,7 +27,7 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 	return await getImages(locations, supabase, 'locations');
 };
 
-const getBlurryLocation = async (id: Location['id'], supabase: SupabaseClient<Database>) => {
+const getLocationUrl = async (id: Location['id'], supabase: SupabaseClient<Database>) => {
 	const {
 		data: { publicUrl },
 	} = supabase.storage.from('locations').getPublicUrl(`${id}.webp`);
@@ -46,7 +46,7 @@ const getCurrentLocation = async (supabase: SupabaseClient<Database>) => {
 		});
 	}
 
-	const url = await getBlurryLocation(data.locations.id, supabase);
+	const url = await getLocationUrl(data.locations.id, supabase);
 
 	return { ...data.locations, url };
 };

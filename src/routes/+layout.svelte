@@ -11,9 +11,7 @@
 	];
 </script>
 
-<div
-	class="h-screen overflow-hidden overflow-y-auto bg-center bg-no-repeat bg-cover bg-page-background"
->
+<div class="h-[100svh] min-h-[100svh] overflow-hidden overflow-y-auto">
 	<div class="flex flex-col items-center h-full max-w-screen-md mx-auto">
 		<img
 			alt="The grandlinedle logo"

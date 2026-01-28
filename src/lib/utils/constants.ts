@@ -32,3 +32,9 @@ export const SAGA_MAP: Record<string, number> = {
 	'Whole Cake Island': 8,
 	'Wano Country': 9,
 };
+
+export const GAME_MODE = {
+	CHARACTER: 'character',
+	LOCATION: 'location',
+	QUOTE: 'quote',
+} as const;

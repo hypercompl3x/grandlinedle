@@ -64,7 +64,7 @@
 				class={{
 					'text-sm': character.affiliation
 						.split(' ')
-						.some(word => word.length > 7 && word.length <= 9),
+						.some(word => word.length > 6 && word.length <= 9),
 					'text-xs': character.affiliation
 						.split(' ')
 						.some(word => word.length > 9 && word.length <= 12),

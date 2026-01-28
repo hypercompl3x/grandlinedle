@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { getImages } from '$lib/services/serviceHelpers';
 import { getMidnightGMT } from '$lib/utils/helpers';
 import type { Database, Quote } from '$lib/types/DatabaseTypes';
+import { GAME_MODE } from '$lib/utils/constants';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const quoteCharacterGuesses = cookies.get('quotecharacters');
@@ -64,7 +65,7 @@ export const load: PageServerLoad = async ({ locals: { supabase }, cookies }) =>
 };
 
 export const actions = {
-	default: async ({ cookies, request }) => {
+	default: async ({ cookies, request, locals }) => {
 		const data = await request.formData();
 		const characterId = data.get('characterId');
 		const characterIdNumber = Number(characterId);
@@ -79,5 +80,15 @@ export const actions = {
 		const newCharactersString = JSON.stringify(quoteCharacters);
 
 		cookies.set('quotecharacters', newCharactersString, { path: '/', expires: getMidnightGMT() });
+
+		const currentQuote = await getCurrentQuote(locals.supabase);
+
+		if (currentQuote.character_id === characterIdNumber) {
+			const completedString = cookies.get('completed') || '[]';
+			const completed = JSON.parse(completedString);
+			completed.unshift(GAME_MODE.QUOTE);
+			const newCompletedString = JSON.stringify(completed);
+			cookies.set('completed', newCompletedString, { path: '/', expires: getMidnightGMT() });
+		}
 	},
 } satisfies Actions;

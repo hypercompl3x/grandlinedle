@@ -60,7 +60,7 @@
 			/>
 		{/if}
 		<div
-			class="p-6 text-3xl font-semibold text-center text-white bg-black bg-opacity-50 rounded-md text-shadow-1"
+			class="p-2 mx-4 text-2xl font-semibold text-center text-white bg-black bg-opacity-50 rounded-md sm:text-3xl sm:p-6 text-shadow-1"
 		>
 			"{result.currentQuote.quote}"
 		</div>

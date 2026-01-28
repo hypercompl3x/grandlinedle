@@ -85,3 +85,5 @@ export const getLocalImages = async <T extends { url: string }>(items: T[]): Pro
 		}),
 	);
 };
+
+export const objectAsValues = <T extends object>(obj: T) => Object.values(obj) as T[keyof T][];

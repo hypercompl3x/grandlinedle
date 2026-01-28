@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { getImages } from '$lib/services/serviceHelpers';
 import type { Database, Location } from '$lib/types/DatabaseTypes';
 import { getMidnightGMT } from '$lib/utils/helpers';
+import { GAME_MODE } from '$lib/utils/constants';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const locationGuesses = cookies.get('locations');
@@ -69,7 +70,7 @@ export const load: PageServerLoad = async ({ locals: { supabase }, cookies }) =>
 };
 
 export const actions = {
-	default: async ({ cookies, request }) => {
+	default: async ({ cookies, request, locals }) => {
 		const data = await request.formData();
 		const locationId = data.get('locationId');
 		const locationIdNumber = Number(locationId);
@@ -84,5 +85,15 @@ export const actions = {
 		const newLocationsString = JSON.stringify(locations);
 
 		cookies.set('locations', newLocationsString, { path: '/', expires: getMidnightGMT() });
+
+		const currentLocation = await getCurrentLocation(locals.supabase);
+
+		if (currentLocation.id === locationIdNumber) {
+			const completedString = cookies.get('completed') || '[]';
+			const completed = JSON.parse(completedString);
+			completed.unshift(GAME_MODE.LOCATION);
+			const newCompletedString = JSON.stringify(completed);
+			cookies.set('completed', newCompletedString, { path: '/', expires: getMidnightGMT() });
+		}
 	},
 } satisfies Actions;

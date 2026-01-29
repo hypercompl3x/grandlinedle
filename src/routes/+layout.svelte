@@ -41,7 +41,7 @@ https://grandlinedle.com`,
 	};
 </script>
 
-<div class="h-[100svh] min-h-[100svh] overflow-hidden overflow-y-auto">
+<div class="h-[100dvh] min-h-[100dvh] overflow-hidden overflow-y-auto">
 	<div class="flex flex-col items-center h-full max-w-screen-md mx-auto">
 		<img
 			alt="The grandlinedle logo"

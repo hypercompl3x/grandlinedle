@@ -3,6 +3,7 @@
 	import type { LayoutProps } from './$types';
 	import { X } from 'lucide-svelte';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
+	import Banner from '$lib/components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
@@ -109,3 +110,5 @@ https://grandlinedle.com`,
 		</div>
 	</div>
 </dialog>
+
+<Banner></Banner>

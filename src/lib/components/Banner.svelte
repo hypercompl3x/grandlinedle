@@ -4,7 +4,7 @@
 
 {#if open}
 	<div class="fixed inset-x-0 bottom-0 z-50 pb-2 sm:pb-5">
-		<div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
+		<!-- <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
 			<div class="p-2 rounded-lg shadow-lg bg-blue-dark sm:p-3">
 				<div class="flex flex-wrap items-center justify-between">
 					<div class="flex items-center flex-1 w-0">
@@ -59,6 +59,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 {/if}

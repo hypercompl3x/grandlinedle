@@ -8,13 +8,17 @@ export type LocationWithImage = Location & { url: string };
 
 export type Quote = Tables<'quotes'> & { affiliation: Character['affiliation'] };
 
+export type Leaderboard = Tables<'leaderboard'>[];
+
+export type LeaderboardEntry = Tables<'leaderboard'>;
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
 	// Allows to automatically instantiate createClient with right options
 	// instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
 	__InternalSupabase: {
-		PostgrestVersion: '12.0.2 (a4e00ff)';
+		PostgrestVersion: '14.1';
 	};
 	graphql_public: {
 		Tables: {
@@ -157,6 +161,30 @@ export type Database = {
 					},
 				];
 			};
+			leaderboard: {
+				Row: {
+					classic: number;
+					id: number;
+					location: number;
+					player: string;
+					quote: number;
+				};
+				Insert: {
+					classic: number;
+					id?: number;
+					location: number;
+					player: string;
+					quote: number;
+				};
+				Update: {
+					classic?: number;
+					id?: number;
+					location?: number;
+					player?: string;
+					quote?: number;
+				};
+				Relationships: [];
+			};
 			locations: {
 				Row: {
 					created_at: string;
@@ -212,6 +240,7 @@ export type Database = {
 			change_current_character: { Args: never; Returns: undefined };
 			change_current_location: { Args: never; Returns: undefined };
 			change_current_quote: { Args: never; Returns: undefined };
+			clear_leaderboard: { Args: never; Returns: undefined };
 		};
 		Enums: {
 			[_ in never]: never;

@@ -1,23 +1,17 @@
-import type { Cookies } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { GAME_MODE } from '$lib/utils/constants';
 import { objectAsValues } from '$lib/utils/helpers';
+import { getArrayLengthFromCookie } from '$lib/utils/helpers';
 
 const GAME_MODES = objectAsValues(GAME_MODE);
-
-const getArrayLengthFromCookie = (cookies: Cookies, name: string): number => {
-	try {
-		return JSON.parse(cookies.get(name) ?? '[]').length;
-	} catch {
-		return 0;
-	}
-};
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
 	const completedString = cookies.get('completed') || '[]';
 	const completed = JSON.parse(completedString);
 
 	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false };
+
+	const playerName = cookies.get('playername') || '';
 
 	const characterGuessesLen = getArrayLengthFromCookie(cookies, 'characters');
 	const locationGuessesLen = getArrayLengthFromCookie(cookies, 'locations');
@@ -41,5 +35,6 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		quoteCharacterGuessesLen,
 		todayNumber,
 		completed: true,
+		submitted: !!playerName,
 	};
 };

@@ -3,6 +3,7 @@ import gsap, { Power2 } from 'gsap';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Character } from '$lib/types/DatabaseTypes';
+import type { Cookies } from '@sveltejs/kit';
 
 export const cn = (...inputs: ClassValue[]) => {
 	return twMerge(clsx(inputs));
@@ -87,3 +88,11 @@ export const getLocalImages = async <T extends { url: string }>(items: T[]): Pro
 };
 
 export const objectAsValues = <T extends object>(obj: T) => Object.values(obj) as T[keyof T][];
+
+export const getArrayLengthFromCookie = (cookies: Cookies, name: string): number => {
+	try {
+		return JSON.parse(cookies.get(name) ?? '[]').length;
+	} catch {
+		return 0;
+	}
+};

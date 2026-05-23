@@ -81,7 +81,7 @@
 					<div class="basis-1/3">Avg Guesses</div>
 				</div>
 				{#each result.leaderboard as { id, player, classic, location, quote }, index (`mobile-table-${id}`)}
-					{@const averageGuesses = Math.round((classic + location + quote) / 3)}
+					{@const averageGuesses = Math.round(((classic + location + quote) / 3) * 10) / 10}
 					<div
 						class="flex items-center w-full h-12 text-sm font-semibold text-center text-white rounded-md shadow-lg bg-green-primary"
 					>

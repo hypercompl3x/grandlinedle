@@ -40,6 +40,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Grandlinedle - Classic</title>
+	<meta name="description" content="Guess One Piece characters daily!" />
+</svelte:head>
 <main class="flex flex-col items-center w-full h-full max-sm:w-screen gap-y-8">
 	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
 		Guess today's One Piece character!

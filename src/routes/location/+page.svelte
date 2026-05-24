@@ -3,7 +3,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Locations from '$lib/components/Locations.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
-	import { animateNewItem, cn, getLocalImages } from '$lib/utils/helpers';
+	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import { getLocationsFromQuery } from '$lib/services/locationService.js';
 
@@ -23,11 +23,12 @@
 
 				const newResult = await data.pageData;
 				const guessesWithLocalImages = await getLocalImages(newResult.guesses);
-
-				const currentLocationWithLocalImage = await getLocalImages([newResult.currentLocation]);
+				const currentLocationWithLocalImage = (
+					await getLocalImages([newResult.currentLocation])
+				)[0];
 
 				result = {
-					currentLocation: currentLocationWithLocalImage[0],
+					currentLocation: currentLocationWithLocalImage,
 					guesses: guessesWithLocalImages,
 				};
 				gettingNewData = false;
@@ -58,18 +59,11 @@
 		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
 
 		<div class="w-full max-w-screen-sm px-4">
-			<div class="overflow-hidden bg-[#313131] border border-black rounded-md">
+			<div class="overflow-hidden border border-black rounded-md">
 				<img
 					data-testid="current-location"
 					src={result.currentLocation.url}
 					alt="Today's location"
-					class={cn('blur-sm', {
-						'blur-3xl': result.guesses.length === 0,
-						'blur-2xl': result.guesses.length === 1,
-						'blur-xl': result.guesses.length === 2,
-						'blur-lg': result.guesses.length === 3,
-						'blur-md': result.guesses.length === 4,
-					})}
 				/>
 			</div>
 		</div>

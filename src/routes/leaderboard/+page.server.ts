@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { getMidnightGMT, getArrayLengthFromCookie } from '$lib/utils/helpers';
 import type { Database, Leaderboard, LeaderboardEntry } from '$lib/types/DatabaseTypes';
 import type { Actions } from '../$types';
+import { COOKIE } from '$lib/utils/constants';
 
 const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leaderboard> => {
 	const { data, error: err } = await supabase.from('leaderboard').select('*');
@@ -59,9 +60,9 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
 export const actions = {
 	'submit-entry': async ({ cookies, request, locals }) => {
-		const playerNameCookie = cookies.get('playername');
+		const submittedEntryCookie = cookies.get(COOKIE.SUBMITTED_ENTRY);
 
-		if (playerNameCookie) {
+		if (submittedEntryCookie) {
 			return { errorMessage: 'You have already submitted today' };
 		}
 
@@ -76,9 +77,9 @@ export const actions = {
 			return { errorMessage: 'Please use a name under 15 characters' };
 		}
 
-		const characterGuessesLen = getArrayLengthFromCookie(cookies, 'characters');
-		const locationGuessesLen = getArrayLengthFromCookie(cookies, 'locations');
-		const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, 'quotecharacters');
+		const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
+		const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
+		const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
 
 		const entry: Omit<LeaderboardEntry, 'id'> = {
 			player: playerName,
@@ -93,6 +94,12 @@ export const actions = {
 			return { errorMessage: response.errorMessage };
 		}
 
-		cookies.set('playername', playerName, { path: '/', expires: getMidnightGMT() });
+		cookies.set(COOKIE.SUBMITTED_ENTRY, 'true', { path: '/', expires: getMidnightGMT() });
+
+		const playerNameCookie = cookies.get(COOKIE.PLAYER_NAME);
+
+		if (playerNameCookie !== playerName) {
+			cookies.set(COOKIE.PLAYER_NAME, playerName, { path: '/', maxAge: 60 * 60 * 24 * 365 * 10 });
+		}
 	},
 } satisfies Actions;

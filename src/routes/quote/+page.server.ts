@@ -5,9 +5,10 @@ import { getImages } from '$lib/services/serviceHelpers';
 import { getMidnightGMT } from '$lib/utils/helpers';
 import type { Database, Quote } from '$lib/types/DatabaseTypes';
 import { GAME_MODE } from '$lib/utils/constants';
+import { COOKIE } from '$lib/utils/constants';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
-	const quoteCharacterGuesses = cookies.get('quotecharacters');
+	const quoteCharacterGuesses = cookies.get(COOKIE.QUOTE_CHARACTERS);
 
 	if (!quoteCharacterGuesses) return [];
 
@@ -70,7 +71,7 @@ export const actions = {
 		const characterId = data.get('characterId');
 		const characterIdNumber = Number(characterId);
 
-		const quoteCharactersString = cookies.get('quotecharacters') || '[]';
+		const quoteCharactersString = cookies.get(COOKIE.QUOTE_CHARACTERS) || '[]';
 		const quoteCharacters = JSON.parse(quoteCharactersString);
 
 		if (!quoteCharacters.includes(characterIdNumber)) {
@@ -79,16 +80,19 @@ export const actions = {
 
 		const newCharactersString = JSON.stringify(quoteCharacters);
 
-		cookies.set('quotecharacters', newCharactersString, { path: '/', expires: getMidnightGMT() });
+		cookies.set(COOKIE.QUOTE_CHARACTERS, newCharactersString, {
+			path: '/',
+			expires: getMidnightGMT(),
+		});
 
 		const currentQuote = await getCurrentQuote(locals.supabase);
 
 		if (currentQuote.character_id === characterIdNumber) {
-			const completedString = cookies.get('completed') || '[]';
+			const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 			const completed = JSON.parse(completedString);
 			completed.unshift(GAME_MODE.QUOTE);
 			const newCompletedString = JSON.stringify(completed);
-			cookies.set('completed', newCompletedString, { path: '/', expires: getMidnightGMT() });
+			cookies.set(COOKIE.COMPLETED, newCompletedString, { path: '/', expires: getMidnightGMT() });
 		}
 	},
 } satisfies Actions;

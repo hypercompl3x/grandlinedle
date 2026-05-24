@@ -38,3 +38,12 @@ export const GAME_MODE = {
 	LOCATION: 'location',
 	QUOTE: 'quote',
 } as const;
+
+export const COOKIE = {
+	LOCATIONS: 'locations',
+	CHARACTERS: 'characters',
+	QUOTE_CHARACTERS: 'quotecharacters',
+	COMPLETED: 'completed',
+	SUBMITTED_ENTRY: 'submittedentry',
+	PLAYER_NAME: 'playername',
+} as const;

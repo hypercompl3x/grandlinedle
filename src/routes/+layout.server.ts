@@ -2,20 +2,22 @@ import type { LayoutServerLoad } from './$types';
 import { GAME_MODE } from '$lib/utils/constants';
 import { objectAsValues } from '$lib/utils/helpers';
 import { getArrayLengthFromCookie } from '$lib/utils/helpers';
+import { COOKIE } from '$lib/utils/constants';
 
 const GAME_MODES = objectAsValues(GAME_MODE);
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-	const completedString = cookies.get('completed') || '[]';
+	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 	const completed = JSON.parse(completedString);
 
 	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false };
 
-	const playerName = cookies.get('playername') || '';
+	const playerName = cookies.get(COOKIE.PLAYER_NAME) || '';
+	const submittedEntry = !!cookies.get(COOKIE.SUBMITTED_ENTRY);
 
-	const characterGuessesLen = getArrayLengthFromCookie(cookies, 'characters');
-	const locationGuessesLen = getArrayLengthFromCookie(cookies, 'locations');
-	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, 'quotecharacters');
+	const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
+	const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
+	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
 
 	const today = new Date(
 		new Intl.DateTimeFormat('en-CA', {
@@ -35,6 +37,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		quoteCharacterGuessesLen,
 		todayNumber,
 		completed: true,
-		submitted: !!playerName,
+		submittedEntry,
+		playerName,
 	};
 };

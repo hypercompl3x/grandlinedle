@@ -11,7 +11,8 @@
 
 	let { dialog = $bindable(), data }: Props = $props();
 
-	let playerName = $state('');
+	const initialPlayerName = () => data.playerName;
+	let playerName = $state(initialPlayerName());
 	let submissionError = $state('');
 	let submitting = $state(false);
 	let submitSuccessful = $state(false);
@@ -81,7 +82,7 @@ https://grandlinedle.com`,
 			</div>
 		</div>
 
-		{#if !data.submitted && !submitSuccessful}
+		{#if !data.submittedEntry && !submitSuccessful}
 			<div class="w-full h-px bg-black"></div>
 			<form
 				class="w-4/5 px-2 pt-2 pb-4 space-y-3"

@@ -70,21 +70,19 @@ export const animateNewItem = async (
 	}
 };
 
-export const getLocalImages = async <T extends { url: string }>(items: T[]): Promise<T[]> => {
-	return await Promise.all(
-		items.map(async item => {
-			const res = await fetch(item.url, { method: 'GET' });
+export const preloadImage = async (src: string) => {
+	const img = new Image();
 
-			if (!res.ok) return { ...item, url: '' };
+	img.src = src;
 
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
-			return {
-				...item,
-				url,
-			};
-		}),
-	);
+	await new Promise<void>((resolve, reject) => {
+		img.onload = () => resolve();
+		img.onerror = reject;
+	});
+
+	if (img.decode) {
+		await img.decode().catch(() => {});
+	}
 };
 
 export const objectAsValues = <T extends object>(obj: T) => Object.values(obj) as T[keyof T][];

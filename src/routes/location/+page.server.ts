@@ -1,10 +1,9 @@
 import { error, type Cookies } from '@sveltejs/kit';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import sharp from 'sharp';
 import type { Actions, PageServerLoad } from './$types';
 import { getImages } from '$lib/services/serviceHelpers';
-import type { Database, Location } from '$lib/types/DatabaseTypes';
-import { getArrayLengthFromCookie, getMidnightGMT } from '$lib/utils/helpers';
+import type { Database } from '$lib/types/DatabaseTypes';
+import { getMidnightGMT } from '$lib/utils/helpers';
 import { COOKIE, GAME_MODE } from '$lib/utils/constants';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
@@ -29,19 +28,7 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 	return await getImages(locations, supabase, 'locations');
 };
 
-const getLocationImage = async (id: Location['id'], supabase: SupabaseClient<Database>) => {
-	const { data: imageData, error: imageError } = await supabase.storage
-		.from('locations')
-		.download(`${id}.webp`);
-
-	if (imageError || !imageData) {
-		error(500, 'Failed to download location image');
-	}
-
-	return Buffer.from(await imageData.arrayBuffer());
-};
-
-const getCurrentLocationId = async (supabase: SupabaseClient<Database>) => {
+const getCurrentLocation = async (supabase: SupabaseClient<Database>) => {
 	const { data, error: err } = await supabase
 		.from('current_location')
 		.select('locations (*)')
@@ -53,65 +40,24 @@ const getCurrentLocationId = async (supabase: SupabaseClient<Database>) => {
 		});
 	}
 
-	return data.locations.id;
-};
-
-const BLUR_MAP = {
-	0: 180,
-	1: 120,
-	2: 70,
-	3: 50,
-	4: 25,
-	5: 10,
-};
-
-const getCurrentLocation = async (
-	supabase: SupabaseClient<Database>,
-	cookies: Cookies,
-	guessIds: number[],
-) => {
-	const { data, error: err } = await supabase
-		.from('current_location')
-		.select('locations (*)')
-		.single();
-
-	if (err || !data.locations) {
-		error(500, {
-			message: 'Failed to get current location',
-		});
-	}
-
-	const currentLocation = await getLocationImage(data.locations.id, supabase);
-
-	const locationHasBeenGuessed = guessIds.includes(data.locations.id);
-	const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
-
-	const blur =
-		locationHasBeenGuessed || locationGuessesLen > 5
-			? 0
-			: BLUR_MAP[locationGuessesLen as keyof typeof BLUR_MAP];
-
-	const image =
-		blur > 0
-			? await sharp(currentLocation).blur(blur).jpeg({ quality: 80 }).toBuffer()
-			: await sharp(currentLocation).jpeg({ quality: 90 }).toBuffer();
-
-	const url = `data:image/jpeg;base64,${image.toString('base64')}`;
-
-	return { ...data.locations, url };
+	return data.locations;
 };
 
 const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
-	const guesses = await getGuesses(supabase, cookies);
-	const currentLocation = await getCurrentLocation(
-		supabase,
-		cookies,
-		guesses.map(g => g.id),
-	);
+	const [guesses, currentLocation] = await Promise.all([
+		getGuesses(supabase, cookies),
+		getCurrentLocation(supabase),
+	]);
+
+	const guessIds = guesses.map(g => g.id);
+	const locationHasBeenGuessed = guessIds.includes(currentLocation.id);
 
 	return {
 		guesses,
-		currentLocation,
+		currentLocation: {
+			...currentLocation,
+			url: `/api/current-location/${currentLocation.id}?guessCount=${guessIds.length}&locationGuessed=${locationHasBeenGuessed}`,
+		},
 	};
 };
 
@@ -144,9 +90,9 @@ export const actions = {
 
 		cookies.set(COOKIE.LOCATIONS, newLocationsString, { path: '/', expires: getMidnightGMT() });
 
-		const currentLocationId = await getCurrentLocationId(locals.supabase);
+		const currentLocation = await getCurrentLocation(locals.supabase);
 
-		if (currentLocationId === locationIdNumber) {
+		if (currentLocation.id === locationIdNumber) {
 			const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 			const completed = JSON.parse(completedString);
 			completed.unshift(GAME_MODE.LOCATION);

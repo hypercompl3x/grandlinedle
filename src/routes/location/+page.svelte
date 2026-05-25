@@ -3,7 +3,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Locations from '$lib/components/Locations.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
-	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
+	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import { getLocationsFromQuery } from '$lib/services/locationService.js';
 
@@ -22,15 +22,13 @@
 				gettingNewData = true;
 
 				const newResult = await data.pageData;
-				const guessesWithLocalImages = await getLocalImages(newResult.guesses);
-				const currentLocationWithLocalImage = (
-					await getLocalImages([newResult.currentLocation])
-				)[0];
 
-				result = {
-					currentLocation: currentLocationWithLocalImage,
-					guesses: guessesWithLocalImages,
-				};
+				await Promise.all([
+					...newResult.guesses.map(i => preloadImage(i.url)),
+					preloadImage(newResult.currentLocation.url),
+				]);
+
+				result = newResult;
 				gettingNewData = false;
 
 				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;

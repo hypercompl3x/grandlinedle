@@ -1,6 +1,6 @@
 import { supabase } from '$lib/supabaseClient';
 import type { Character } from '$lib/types/DatabaseTypes';
-import { getLocalImages } from '$lib/utils/helpers';
+import { preloadImage } from '$lib/utils/helpers';
 import { getImages } from './serviceHelpers';
 
 export const getCharactersFromQuery = async (query: string, currentGuesses: Character['id'][]) => {
@@ -16,7 +16,8 @@ export const getCharactersFromQuery = async (query: string, currentGuesses: Char
 	}
 
 	const charactersWithImages = await getImages(characters, supabase, 'characters');
-	const charactersWithLocalImages = await getLocalImages(charactersWithImages);
 
-	return charactersWithLocalImages;
+	await Promise.all(charactersWithImages.map(i => preloadImage(i.url)));
+
+	return charactersWithImages;
 };

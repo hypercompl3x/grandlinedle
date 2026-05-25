@@ -3,12 +3,13 @@
 		hint: string;
 		category: string;
 		numberOfGuesses: number;
+		guessesToReveal: number;
 	};
 
-	let { hint, category, numberOfGuesses }: Props = $props();
+	let { hint, category, numberOfGuesses, guessesToReveal }: Props = $props();
 
 	let showHint = $state(false);
-	let guessesReached = $derived(() => numberOfGuesses > 2);
+	let guessesReached = $derived(() => numberOfGuesses > guessesToReveal - 1);
 </script>
 
 <div class="flex flex-col items-center gap-y-2">
@@ -20,7 +21,7 @@
 		{#if guessesReached()}
 			{category} clue
 		{:else}
-			{@const remainingGuesses = 3 - numberOfGuesses}
+			{@const remainingGuesses = guessesToReveal - numberOfGuesses}
 			{@const triesText = remainingGuesses === 1 ? 'try' : 'tries'}
 			{category} clue in {remainingGuesses}
 			{triesText}

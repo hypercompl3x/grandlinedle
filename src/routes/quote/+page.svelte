@@ -61,6 +61,7 @@
 				category="Affiliation"
 				hint={result.currentQuote.affiliation}
 				numberOfGuesses={guessIds.length}
+				guessesToReveal={3}
 			/>
 		{/if}
 		<div

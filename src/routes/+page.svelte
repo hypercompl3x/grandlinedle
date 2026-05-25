@@ -6,6 +6,7 @@
 	import { animateNewItem, getLocalImages } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import { getCharactersFromQuery } from '$lib/services/characterService.js';
+	import Hint from '$lib/components/Hint.svelte';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -53,6 +54,12 @@
 		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 
 		{#if !characterHasBeenGuessed}
+			<Hint
+				category="Affiliation"
+				hint={result.currentCharacter.affiliation}
+				numberOfGuesses={guessIds.length}
+				guessesToReveal={5}
+			/>
 			<GenericSearch
 				{guessIds}
 				{gettingNewData}

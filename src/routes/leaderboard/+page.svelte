@@ -15,9 +15,7 @@
 
 				const newResult = await data.pageData;
 
-				result = {
-					...newResult,
-				};
+				result = newResult;
 				gettingNewData = false;
 			} catch (error) {
 				console.error(error);

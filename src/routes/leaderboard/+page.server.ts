@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { getMidnightGMT, getArrayLengthFromCookie } from '$lib/utils/helpers';
 import type { Database, Leaderboard, LeaderboardEntry } from '$lib/types/DatabaseTypes';
 import type { Actions } from '../$types';
-import { COOKIE } from '$lib/utils/constants';
+import { COOKIE, NUMBER_OF_GAME_MODES } from '$lib/utils/constants';
 
 const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leaderboard> => {
 	const { data, error: err } = await supabase.from('leaderboard').select('*');
@@ -17,8 +17,8 @@ const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leade
 
 	return data
 		.toSorted((a, b) => {
-			const averageA = (a.classic + a.location + a.quote) / 3;
-			const averageB = (b.classic + b.location + b.quote) / 3;
+			const averageA = (a.classic + a.location + a.quote) / NUMBER_OF_GAME_MODES;
+			const averageB = (b.classic + b.location + b.quote) / NUMBER_OF_GAME_MODES;
 
 			return averageA - averageB;
 		})
@@ -80,12 +80,14 @@ export const actions = {
 		const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
 		const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
 		const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
+		const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
 
 		const entry: Omit<LeaderboardEntry, 'id'> = {
 			player: playerName,
 			classic: characterGuessesLen,
 			location: locationGuessesLen,
 			quote: quoteCharacterGuessesLen,
+			crew: crewGuessesLen,
 		};
 
 		const response = await addLeaderboardEntry(locals.supabase, entry);

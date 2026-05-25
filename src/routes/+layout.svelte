@@ -15,6 +15,7 @@
 		{ name: 'Classic', href: '/' },
 		{ name: 'Location', href: '/location' },
 		{ name: 'Quote', href: '/quote' },
+		{ name: 'Crew', href: '/crew' },
 		{ name: 'Leaderboard', href: '/leaderboard' },
 	];
 </script>

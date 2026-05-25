@@ -20,6 +20,11 @@
 			searchPlaceholder: 'Search for a character...',
 			buttonName: 'characterId',
 		},
+		crew: {
+			noItemsFoundMessage: 'No crews found',
+			searchPlaceholder: 'Search for a crew...',
+			buttonName: 'crewId',
+		},
 	};
 
 	type Props = {

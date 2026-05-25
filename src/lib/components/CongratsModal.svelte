@@ -23,6 +23,7 @@
 ❓ Classic: ${data.characterGuessesLen}
 🌍 Location: ${data.locationGuessesLen}
 💬 Quote: ${data.quoteCharacterGuessesLen}
+🏴‍☠️ Crew: ${data.crewGuessesLen}
 https://grandlinedle.com`,
 	);
 
@@ -69,6 +70,7 @@ https://grandlinedle.com`,
 				<div>❓ Classic: {data.characterGuessesLen}</div>
 				<div>🌍 Location: {data.locationGuessesLen}</div>
 				<div>💬 Quote: {data.quoteCharacterGuessesLen}</div>
+				<div>🏴‍☠️ Crew: {data.crewGuessesLen}</div>
 			</div>
 			<div>https://grandlinedle.com</div>
 			<div>

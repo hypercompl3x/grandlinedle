@@ -14,11 +14,15 @@
 			imgAlt: "Today's character",
 			nextMessage: 'Next quote in',
 		},
+		crew: {
+			imgAlt: "Today's crew",
+			nextMessage: 'Next crew in',
+		},
 	};
 
 	type Props = {
 		correctGuess: T;
-		page: 'character' | 'location' | 'quote';
+		page: keyof typeof SUCCESS_MAP;
 	};
 
 	let props: Props = $props();

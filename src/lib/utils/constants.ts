@@ -37,7 +37,10 @@ export const GAME_MODE = {
 	CHARACTER: 'character',
 	LOCATION: 'location',
 	QUOTE: 'quote',
+	CREW: 'crew',
 } as const;
+
+export const NUMBER_OF_GAME_MODES = Object.values(GAME_MODE).length;
 
 export const COOKIE = {
 	LOCATIONS: 'locations',
@@ -46,4 +49,5 @@ export const COOKIE = {
 	COMPLETED: 'completed',
 	SUBMITTED_ENTRY: 'submittedentry',
 	PLAYER_NAME: 'playername',
+	CREWS: 'crews',
 } as const;

@@ -18,6 +18,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
 	const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
 	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
+	const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
 
 	const today = new Date(
 		new Intl.DateTimeFormat('en-CA', {
@@ -35,6 +36,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		characterGuessesLen,
 		locationGuessesLen,
 		quoteCharacterGuessesLen,
+		crewGuessesLen,
 		todayNumber,
 		completed: true,
 		submittedEntry,

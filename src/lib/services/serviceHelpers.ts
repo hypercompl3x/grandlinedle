@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Character, Location } from '$lib/types/DatabaseTypes';
+import type { Character, Crew, Location } from '$lib/types/DatabaseTypes';
 import type { Database } from '$lib/types/DatabaseTypes';
 
 const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<Database>) => {
@@ -16,17 +16,28 @@ const getLocationImage = async (id: Location['id'], supabase: SupabaseClient<Dat
 	return publicUrl;
 };
 
+const getCrewImage = async (id: Crew['id'], supabase: SupabaseClient<Database>) => {
+	const {
+		data: { publicUrl },
+	} = supabase.storage.from('crews').getPublicUrl(`${id}.webp`);
+	return publicUrl;
+};
+
+const imageFnMap = {
+	characters: getCharacterImage,
+	locations: getLocationImage,
+	crews: getCrewImage,
+};
+
 export const getImages = async <T extends { id: number }>(
 	items: T[],
 	supabase: SupabaseClient<Database>,
-	table: 'characters' | 'locations',
+	table: keyof typeof imageFnMap,
 ) => {
+	const getImage = imageFnMap[table];
 	return await Promise.all(
 		items.map(async item => {
-			const url =
-				table === 'characters'
-					? await getCharacterImage(item.id, supabase)
-					: await getLocationImage(item.id, supabase);
+			const url = await getImage(item.id, supabase);
 
 			return {
 				...item,

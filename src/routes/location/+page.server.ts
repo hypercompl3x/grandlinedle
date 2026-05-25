@@ -7,7 +7,7 @@ import { getMidnightGMT } from '$lib/utils/helpers';
 import { COOKIE, GAME_MODE } from '$lib/utils/constants';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
-	const locationGuesses = cookies.get('locations');
+	const locationGuesses = cookies.get(COOKIE.LOCATIONS);
 
 	if (!locationGuesses) return [];
 

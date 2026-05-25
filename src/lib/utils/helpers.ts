@@ -40,7 +40,7 @@ export const getMidnightGMT = () => {
 
 export const animateNewItem = async (
 	playerHasWon: boolean,
-	variant: 'character' | 'location' | 'quote',
+	variant: 'character' | 'location' | 'quote' | 'crew',
 ) => {
 	await tick();
 
@@ -65,6 +65,8 @@ export const animateNewItem = async (
 			.from('#first_saga-0', {});
 	} else if (variant === 'location') {
 		tl.from('#location-0', {});
+	} else if (variant === 'crew') {
+		tl.from('#crew-0', {});
 	} else {
 		tl.from('#quotecharacter-0', {});
 	}

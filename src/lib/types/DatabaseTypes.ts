@@ -6,6 +6,10 @@ export type Location = Tables<'locations'>;
 
 export type LocationWithImage = Location & { url: string };
 
+export type Crew = Tables<'crews'>;
+
+export type CrewWithImage = Crew & { url: string };
+
 export type Quote = Tables<'quotes'> & { affiliation: Character['affiliation'] };
 
 export type Leaderboard = Tables<'leaderboard'>[];
@@ -92,6 +96,24 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			crews: {
+				Row: {
+					created_at: string;
+					id: number;
+					name: string;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+					name: string;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+					name?: string;
+				};
+				Relationships: [];
+			};
 			current_character: {
 				Row: {
 					created_at: string;
@@ -111,6 +133,29 @@ export type Database = {
 						columns: ['id'];
 						isOneToOne: true;
 						referencedRelation: 'characters';
+						referencedColumns: ['id'];
+					},
+				];
+			};
+			current_crew: {
+				Row: {
+					created_at: string;
+					id: number;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'current_crew_id_fkey';
+						columns: ['id'];
+						isOneToOne: true;
+						referencedRelation: 'crews';
 						referencedColumns: ['id'];
 					},
 				];
@@ -164,6 +209,7 @@ export type Database = {
 			leaderboard: {
 				Row: {
 					classic: number;
+					crew: number;
 					id: number;
 					location: number;
 					player: string;
@@ -171,6 +217,7 @@ export type Database = {
 				};
 				Insert: {
 					classic: number;
+					crew: number;
 					id?: number;
 					location: number;
 					player: string;
@@ -178,6 +225,7 @@ export type Database = {
 				};
 				Update: {
 					classic?: number;
+					crew?: number;
 					id?: number;
 					location?: number;
 					player?: string;
@@ -238,6 +286,7 @@ export type Database = {
 		};
 		Functions: {
 			change_current_character: { Args: never; Returns: undefined };
+			change_current_crew: { Args: never; Returns: undefined };
 			change_current_location: { Args: never; Returns: undefined };
 			change_current_quote: { Args: never; Returns: undefined };
 			clear_leaderboard: { Args: never; Returns: undefined };

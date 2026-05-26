@@ -54,7 +54,7 @@
 	});
 </script>
 
-<div id="success-box" class="w-full px-4 pb-12 max-w-96" data-testid="success-box">
+<div id="success-box" class="w-full px-4 max-w-96" data-testid="success-box">
 	<div
 		class="p-4 space-y-5 leading-tight text-center text-white border border-black rounded-md bg-green-light"
 	>

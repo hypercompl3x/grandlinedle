@@ -31,6 +31,8 @@ export const SAGA_MAP: Record<string, number> = {
 	Dressrosa: 7,
 	'Whole Cake Island': 8,
 	'Wano Country': 9,
+	Egghead: 10,
+	Elbaph: 11,
 };
 
 export const GAME_MODE = {

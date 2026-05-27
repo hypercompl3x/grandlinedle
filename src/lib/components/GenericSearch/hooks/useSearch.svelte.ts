@@ -5,6 +5,7 @@ import { applyAction } from '$app/forms';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 
 const useSearch = <T extends { id: number; name: string; url?: string }>(
+	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
 	guessIds: () => T['id'][],
 ) => {
@@ -12,6 +13,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 	let query = $state('');
 	let items = $state<T[]>([]);
 	let filteredItems = $state<T[]>([]);
+	let form = $state<HTMLFormElement>();
 
 	const transition = useAsyncTransition();
 
@@ -47,7 +49,24 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		});
 	};
 
-	const pickItem: SubmitFunction = () => {
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter' && form) {
+			e.preventDefault();
+			form.requestSubmit();
+		}
+	};
+
+	const pickItem: SubmitFunction = ({ submitter, cancel, formData }) => {
+		if (!submitter) {
+			const firstItem = filteredItems[0];
+
+			if (!firstItem) {
+				cancel();
+				return;
+			}
+
+			formData.set(buttonName, firstItem.id.toString());
+		}
 		return async ({ result }) => {
 			updateAllItems([]);
 			isDropdownOpen = false;
@@ -71,9 +90,16 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		get filteredItems() {
 			return filteredItems;
 		},
+		get form() {
+			return form;
+		},
+		set form(value) {
+			form = value;
+		},
 		transition,
 		pickItem,
 		handleSearch,
+		handleKeyDown,
 	};
 };
 

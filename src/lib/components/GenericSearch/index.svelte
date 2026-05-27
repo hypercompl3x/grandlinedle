@@ -38,7 +38,7 @@
 
 	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
 
-	const search = useSearch(props.getItemsFromQuery, () => props.guessIds);
+	const search = useSearch(buttonName, props.getItemsFromQuery, () => props.guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
@@ -63,6 +63,7 @@
 			data-testid={`search-input-${props.page}`}
 			type="text"
 			oninput={search.handleSearch}
+			onkeydown={search.handleKeyDown}
 			value={search.query}
 			onclick={() => (search.isDropdownOpen = true)}
 			disabled={props.gettingNewData}
@@ -76,6 +77,7 @@
 		{/if}
 		{#if search.isDropdownOpen && search.query}
 			<form
+				bind:this={search.form}
 				use:enhance={search.pickItem}
 				method="POST"
 				class="absolute top-[38px] bg-white bg-opacity-95 inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20"

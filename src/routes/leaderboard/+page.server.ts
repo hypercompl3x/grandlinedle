@@ -1,10 +1,14 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import crypto from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { kv } from '$lib/kv';
 import { getMidnightGMT, getArrayLengthFromCookie } from '$lib/utils/helpers';
 import type { Database, Leaderboard, LeaderboardEntry } from '$lib/types/DatabaseTypes';
 import type { Actions } from '../$types';
 import { COOKIE, NUMBER_OF_GAME_MODES } from '$lib/utils/constants';
+
+import { IP_HASH_SECRET } from '$env/static/private';
 
 const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leaderboard> => {
 	const { data, error: err } = await supabase.from('leaderboard').select('*');
@@ -58,8 +62,12 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	};
 };
 
+const THIRTY_DAYS = 60 * 60 * 24 * 30;
+
+const hashIp = (ip: string) => crypto.createHmac('sha256', IP_HASH_SECRET).update(ip).digest('hex');
+
 export const actions = {
-	'submit-entry': async ({ cookies, request, locals }) => {
+	'submit-entry': async ({ cookies, request, locals, getClientAddress }) => {
 		const submittedEntryCookie = cookies.get(COOKIE.SUBMITTED_ENTRY);
 
 		if (submittedEntryCookie) {
@@ -81,6 +89,22 @@ export const actions = {
 		const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
 		const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
 		const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
+
+		if (characterGuessesLen < 2) {
+			const ip = getClientAddress() || '127.0.0.1';
+			const hashedIp = hashIp(ip);
+
+			const key = `ip:${hashedIp}:classic1:30d`;
+			const newCount = await kv.incr(key);
+			await kv.expire(key, THIRTY_DAYS);
+
+			if (newCount > 1) {
+				return {
+					errorMessage:
+						'This submission was flagged for suspicious activity and cannot be added to the leaderboard.',
+				};
+			}
+		}
 
 		const entry: Omit<LeaderboardEntry, 'id'> = {
 			player: playerName,

@@ -1,16 +1,10 @@
 import { error, type Handle } from '@sveltejs/kit';
 import { createServerClient } from '@supabase/ssr';
 import { Ratelimit } from '@upstash/ratelimit';
-import { createClient } from '@vercel/kv';
+import { kv } from '$lib/kv';
 import type { Database } from '$lib/types/DatabaseTypes';
 
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_API_KEY } from '$env/static/public';
-import { KV_REST_API_URL, KV_REST_API_TOKEN } from '$env/static/private';
-
-const kv = createClient({
-	url: KV_REST_API_URL,
-	token: KV_REST_API_TOKEN,
-});
 
 const ratelimit = new Ratelimit({
 	redis: kv,

@@ -22,7 +22,7 @@ const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leade
 	return data
 		.toSorted((a, b) => {
 			const averageA = (a.classic + a.location + a.quote + a.crew) / NUMBER_OF_GAME_MODES;
-			const averageB = (b.classic + b.location + b.quote + a.crew) / NUMBER_OF_GAME_MODES;
+			const averageB = (b.classic + b.location + b.quote + b.crew) / NUMBER_OF_GAME_MODES;
 
 			return averageA - averageB;
 		})

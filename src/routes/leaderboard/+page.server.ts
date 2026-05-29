@@ -21,8 +21,8 @@ const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leade
 
 	return data
 		.toSorted((a, b) => {
-			const averageA = (a.classic + a.location + a.quote) / NUMBER_OF_GAME_MODES;
-			const averageB = (b.classic + b.location + b.quote) / NUMBER_OF_GAME_MODES;
+			const averageA = (a.classic + a.location + a.quote + a.crew) / NUMBER_OF_GAME_MODES;
+			const averageB = (b.classic + b.location + b.quote + a.crew) / NUMBER_OF_GAME_MODES;
 
 			return averageA - averageB;
 		})
@@ -63,6 +63,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 };
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
+const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
 const hashIp = (ip: string) => crypto.createHmac('sha256', IP_HASH_SECRET).update(ip).digest('hex');
 
@@ -125,7 +126,7 @@ export const actions = {
 		const playerNameCookie = cookies.get(COOKIE.PLAYER_NAME);
 
 		if (playerNameCookie !== playerName) {
-			cookies.set(COOKIE.PLAYER_NAME, playerName, { path: '/', maxAge: 60 * 60 * 24 * 365 * 10 });
+			cookies.set(COOKIE.PLAYER_NAME, playerName, { path: '/', maxAge: TEN_YEARS });
 		}
 	},
 } satisfies Actions;

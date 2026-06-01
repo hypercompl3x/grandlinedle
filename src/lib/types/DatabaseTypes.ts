@@ -114,92 +114,56 @@ export type Database = {
 				};
 				Relationships: [];
 			};
-			current_character: {
+			daily_games: {
 				Row: {
+					character_id: number;
 					created_at: string;
+					crew_id: number;
 					id: number;
+					location_id: number;
+					quote_id: number;
 				};
 				Insert: {
+					character_id: number;
 					created_at?: string;
+					crew_id: number;
 					id?: number;
+					location_id: number;
+					quote_id: number;
 				};
 				Update: {
+					character_id?: number;
 					created_at?: string;
+					crew_id?: number;
 					id?: number;
+					location_id?: number;
+					quote_id?: number;
 				};
 				Relationships: [
 					{
-						foreignKeyName: 'current_character_id_fkey';
-						columns: ['id'];
+						foreignKeyName: 'game_history_character_id_fkey';
+						columns: ['character_id'];
 						isOneToOne: true;
 						referencedRelation: 'characters';
 						referencedColumns: ['id'];
 					},
-				];
-			};
-			current_crew: {
-				Row: {
-					created_at: string;
-					id: number;
-				};
-				Insert: {
-					created_at?: string;
-					id?: number;
-				};
-				Update: {
-					created_at?: string;
-					id?: number;
-				};
-				Relationships: [
 					{
-						foreignKeyName: 'current_crew_id_fkey';
-						columns: ['id'];
+						foreignKeyName: 'game_history_crew_id_fkey';
+						columns: ['crew_id'];
 						isOneToOne: true;
 						referencedRelation: 'crews';
 						referencedColumns: ['id'];
 					},
-				];
-			};
-			current_location: {
-				Row: {
-					created_at: string;
-					id: number;
-				};
-				Insert: {
-					created_at?: string;
-					id?: number;
-				};
-				Update: {
-					created_at?: string;
-					id?: number;
-				};
-				Relationships: [
 					{
-						foreignKeyName: 'current_location_id_fkey';
-						columns: ['id'];
+						foreignKeyName: 'game_history_location_id_fkey';
+						columns: ['location_id'];
 						isOneToOne: true;
 						referencedRelation: 'locations';
 						referencedColumns: ['id'];
 					},
-				];
-			};
-			current_quote: {
-				Row: {
-					created_at: string;
-					id: number;
-				};
-				Insert: {
-					created_at?: string;
-					id?: number;
-				};
-				Update: {
-					created_at?: string;
-					id?: number;
-				};
-				Relationships: [
 					{
-						foreignKeyName: 'current_quote_id_fkey1';
-						columns: ['id'];
+						foreignKeyName: 'game_history_quote_id_fkey';
+						columns: ['quote_id'];
 						isOneToOne: true;
 						referencedRelation: 'quotes';
 						referencedColumns: ['id'];
@@ -285,11 +249,7 @@ export type Database = {
 			[_ in never]: never;
 		};
 		Functions: {
-			change_current_character: { Args: never; Returns: undefined };
-			change_current_crew: { Args: never; Returns: undefined };
-			change_current_location: { Args: never; Returns: undefined };
-			change_current_quote: { Args: never; Returns: undefined };
-			clear_leaderboard: { Args: never; Returns: undefined };
+			create_daily_game: { Args: never; Returns: undefined };
 		};
 		Enums: {
 			[_ in never]: never;

@@ -29,7 +29,12 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 };
 
 const getCurrentCrew = async (supabase: SupabaseClient<Database>) => {
-	const { data, error: err } = await supabase.from('current_crew').select('crews (*)').single();
+	const { data, error: err } = await supabase
+		.from('daily_games')
+		.select('crews (*)')
+		.order('created_at', { ascending: false })
+		.limit(1)
+		.single();
 
 	if (err || !data.crews) {
 		error(500, {

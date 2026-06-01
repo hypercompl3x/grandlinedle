@@ -33,8 +33,10 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 
 const getCurrentQuote = async (supabase: SupabaseClient<Database>): Promise<Quote> => {
 	const { data, error: err } = await supabase
-		.from('current_quote')
+		.from('daily_games')
 		.select('quotes (*, characters (*))')
+		.order('created_at', { ascending: false })
+		.limit(1)
 		.single();
 
 	if (err || !data.quotes || !data.quotes.characters) {

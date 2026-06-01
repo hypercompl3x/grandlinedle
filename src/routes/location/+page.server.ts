@@ -30,8 +30,10 @@ const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) 
 
 const getCurrentLocation = async (supabase: SupabaseClient<Database>) => {
 	const { data, error: err } = await supabase
-		.from('current_location')
+		.from('daily_games')
 		.select('locations (*)')
+		.order('created_at', { ascending: false })
+		.limit(1)
 		.single();
 
 	if (err || !data.locations) {

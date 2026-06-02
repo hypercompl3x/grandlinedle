@@ -7,7 +7,7 @@ export const getCharactersFromQuery = async (query: string, currentGuesses: Char
 	const { data: characters, error } = await supabase
 		.from('characters')
 		.select()
-		.or(`name.ilike.% ${query}%,name.ilike.${query}%`)
+		.or(`name.ilike.%${query}%`)
 		.not('id', 'in', `(${currentGuesses.join(',')})`);
 
 	if (error) {

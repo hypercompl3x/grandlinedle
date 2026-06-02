@@ -5,7 +5,7 @@ export const getCrewsFromQuery = async (query: string, currentGuesses: Crew['id'
 	const { data: crews, error } = await supabase
 		.from('crews')
 		.select()
-		.or(`name.ilike.% ${query}%,name.ilike.${query}%`)
+		.or(`name.ilike.%${query}%`)
 		.not('id', 'in', `(${currentGuesses.join(',')})`);
 
 	if (error) {

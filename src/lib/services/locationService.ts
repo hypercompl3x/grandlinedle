@@ -5,7 +5,7 @@ export const getLocationsFromQuery = async (query: string, currentGuesses: Locat
 	const { data: locations, error } = await supabase
 		.from('locations')
 		.select()
-		.or(`name.ilike.% ${query}%,name.ilike.${query}%`)
+		.or(`name.ilike.%${query}%`)
 		.not('id', 'in', `(${currentGuesses.join(',')})`);
 
 	if (error) {

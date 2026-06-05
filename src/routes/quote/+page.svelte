@@ -5,7 +5,7 @@
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import QuoteCharacters from '$lib/components/QuoteCharacters.svelte';
 	import Hint from '$lib/components/Hint.svelte';
-	import { animateNewItem, preloadImage } from '$lib/utils/helpers.js';
+	import { animateNewItem, formatBounty, preloadImage } from '$lib/utils/helpers.js';
 	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 
 	type Result = Awaited<typeof data.pageData>;
@@ -54,12 +54,20 @@
 		{@const quoteHasBeenGuessed = guessIds.includes(result.currentQuote.character_id)}
 
 		{#if !quoteHasBeenGuessed}
-			<Hint
-				category="Affiliation"
-				hint={result.currentQuote.affiliation}
-				numberOfGuesses={guessIds.length}
-				guessesToReveal={3}
-			/>
+			<div class="flex gap-x-8">
+				<Hint
+					category="Bounty"
+					hint={formatBounty(result.currentQuote.bounty)}
+					numberOfGuesses={guessIds.length}
+					guessesToReveal={3}
+				/>
+				<Hint
+					category="Affiliation"
+					hint={result.currentQuote.affiliation}
+					numberOfGuesses={guessIds.length}
+					guessesToReveal={5}
+				/>
+			</div>
 		{/if}
 		<div
 			class="p-2 mx-4 text-2xl font-semibold text-center text-white bg-black bg-opacity-50 rounded-md sm:text-3xl sm:p-6 text-shadow-1"

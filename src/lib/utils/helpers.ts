@@ -15,7 +15,7 @@ export const formatBounty = (bounty: Character['last_bounty']) => {
 	} else if (bounty >= 1_000_000) {
 		return `${(bounty / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
 	} else {
-		return bounty;
+		return bounty.toString();
 	}
 };
 

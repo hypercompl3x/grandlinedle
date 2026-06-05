@@ -10,7 +10,10 @@ export type Crew = Tables<'crews'>;
 
 export type CrewWithImage = Crew & { url: string };
 
-export type Quote = Tables<'quotes'> & { affiliation: Character['affiliation'] };
+export type Quote = Tables<'quotes'> & {
+	affiliation: Character['affiliation'];
+	bounty: Character['last_bounty'];
+};
 
 export type Leaderboard = Tables<'leaderboard'>[];
 

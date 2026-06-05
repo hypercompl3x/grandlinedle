@@ -47,7 +47,7 @@ const getCurrentQuote = async (supabase: SupabaseClient<Database>): Promise<Quot
 
 	const { characters, ...rest } = data.quotes;
 
-	return { ...rest, affiliation: characters.affiliation };
+	return { ...rest, affiliation: characters.affiliation, bounty: characters.last_bounty };
 };
 
 const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies) => ({

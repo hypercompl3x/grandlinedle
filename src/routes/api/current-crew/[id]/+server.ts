@@ -45,18 +45,21 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const left = Math.floor((metadata.width - cropSize) / 2);
 	const top = Math.floor((metadata.height - cropSize) / 2);
 
-	const output = await sharpImage
-		.extract({
-			left,
-			top,
-			width: cropSize,
-			height: cropSize,
-		})
-		.resize(1280, 720, {
-			fit: zoom === 1 ? 'contain' : 'cover',
-		})
-		.jpeg({ quality: 90 })
-		.toBuffer();
+	const output =
+		zoom === 1
+			? await sharpImage.jpeg({ quality: 90 }).toBuffer()
+			: await sharpImage
+					.extract({
+						left,
+						top,
+						width: cropSize,
+						height: cropSize,
+					})
+					.resize(1280, 720, {
+						fit: 'cover',
+					})
+					.jpeg({ quality: 90 })
+					.toBuffer();
 
 	return new Response(new Uint8Array(output), {
 		headers: {

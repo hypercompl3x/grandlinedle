@@ -21,7 +21,7 @@
 	const copyText = $derived(
 		() => `I've completed all the modes of Grandlinedle #${data.todayNumber} today:
 ❓ Classic: ${data.characterGuessesLen}
-🌍 Location: ${data.locationGuessesLen}
+🌍  ${data.locationHardMode ? 'Hard' : 'Easy'} Location: ${data.locationGuessesLen}
 💬 Quote: ${data.quoteCharacterGuessesLen}
 🏴‍☠️ Crew: ${data.crewGuessesLen}
 https://grandlinedle.com`,
@@ -68,7 +68,9 @@ https://grandlinedle.com`,
 			<div>I've completed all the modes of <b>Grandlinedle</b> #{data.todayNumber} today:</div>
 			<div>
 				<div>❓ Classic: {data.characterGuessesLen}</div>
-				<div>🌍 Location: {data.locationGuessesLen}</div>
+				<div>
+					🌍 {data.locationHardMode ? 'Hard' : 'Easy'} Location: {data.locationGuessesLen}
+				</div>
 				<div>💬 Quote: {data.quoteCharacterGuessesLen}</div>
 				<div>🏴‍☠️ Crew: {data.crewGuessesLen}</div>
 			</div>

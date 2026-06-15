@@ -53,13 +53,15 @@ const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies)
 
 	const guessIds = guesses.map(g => g.id);
 	const locationHasBeenGuessed = guessIds.includes(currentLocation.id);
+	const isHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
 
 	return {
 		guesses,
 		currentLocation: {
 			...currentLocation,
-			url: `/api/current-location/${currentLocation.id}?guessCount=${guessIds.length}&locationGuessed=${locationHasBeenGuessed}`,
+			url: `/api/current-location/${currentLocation.id}?guessCount=${guessIds.length}&locationGuessed=${locationHasBeenGuessed}&isHardMode=${isHardModeStr}`,
 		},
+		isHardMode: isHardModeStr === 'true',
 	};
 };
 

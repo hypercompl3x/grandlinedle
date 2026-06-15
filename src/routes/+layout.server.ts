@@ -20,6 +20,8 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
 	const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
 
+	const locationHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
+
 	const today = new Date(
 		new Intl.DateTimeFormat('en-CA', {
 			timeZone: 'Europe/London',
@@ -41,5 +43,6 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		completed: true,
 		submittedEntry,
 		playerName,
+		locationHardMode: locationHardModeStr === 'true',
 	};
 };

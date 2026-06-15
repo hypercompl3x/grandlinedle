@@ -90,6 +90,7 @@ export const actions = {
 		const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
 		const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
 		const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
+		const locationHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
 
 		if (characterGuessesLen < 2) {
 			const ip = getClientAddress() || '127.0.0.1';
@@ -113,6 +114,7 @@ export const actions = {
 			location: locationGuessesLen,
 			quote: quoteCharacterGuessesLen,
 			crew: crewGuessesLen,
+			location_hard_mode: locationHardModeStr === 'true',
 		};
 
 		const response = await addLeaderboardEntry(locals.supabase, entry);

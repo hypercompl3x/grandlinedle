@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NUMBER_OF_GAME_MODES } from '$lib/utils/constants.js';
-	import { Loader2 } from 'lucide-svelte';
+	import { Loader2, Star } from 'lucide-svelte';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -50,7 +50,7 @@
 					<div class="flex-[1]">Quote</div>
 					<div class="flex-[1]">Crew</div>
 				</div>
-				{#each result.leaderboard as { id, player, classic, location, quote, crew }, index (`desktop-table-${id}`)}
+				{#each result.leaderboard as { id, player, classic, location, quote, crew, location_hard_mode }, index (`desktop-table-${id}`)}
 					<div
 						class="flex items-center w-full h-16 text-lg font-semibold text-center text-white rounded-md shadow-lg bg-green-primary md:text-2xl"
 					>
@@ -63,8 +63,16 @@
 						<div class="flex-[1]">
 							{classic}
 						</div>
-						<div class="flex-[1]">
-							{location}
+						<div class="flex-[1] flex justify-center">
+							{#if location_hard_mode}
+								<div class="relative inline-grid">
+									<Star class="text-red-primary fill-red-primary size-10 md:size-12" />
+
+									<div class="absolute inset-0 grid place-items-center">{location}</div>
+								</div>
+							{:else}
+								{location}
+							{/if}
 						</div>
 						<div class="flex-[1]">
 							{quote}

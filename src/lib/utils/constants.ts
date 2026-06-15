@@ -52,4 +52,5 @@ export const COOKIE = {
 	SUBMITTED_ENTRY: 'submittedentry',
 	PLAYER_NAME: 'playername',
 	CREWS: 'crews',
+	LOCATION_HARD_MODE: 'locationhardmode',
 } as const;

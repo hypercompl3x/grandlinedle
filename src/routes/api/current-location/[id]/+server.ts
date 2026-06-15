@@ -11,6 +11,15 @@ const BLUR_MAP = {
 	5: 10,
 } as const;
 
+const HARD_MODE_BLUR_MAP = {
+	0: 110,
+	1: 90,
+	2: 80,
+	3: 60,
+	4: 40,
+	5: 20,
+} as const;
+
 export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const supabase = locals.supabase;
 
@@ -21,6 +30,7 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const id = params.id;
 	const guessCount = Number(url.searchParams.get('guessCount') ?? 0);
 	const locationGuessed = url.searchParams.get('locationGuessed') === 'true';
+	const isHardMode = url.searchParams.get('isHardMode') === 'true';
 
 	const { data, error: imageError } = await supabase.storage
 		.from('locations')
@@ -35,17 +45,24 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const sharpImage = sharp(input);
 
 	const blur =
-		locationGuessed || guessCount > 5 ? 0 : BLUR_MAP[guessCount as keyof typeof BLUR_MAP];
+		locationGuessed || guessCount > 5
+			? 0
+			: isHardMode
+				? HARD_MODE_BLUR_MAP[guessCount as keyof typeof BLUR_MAP]
+				: BLUR_MAP[guessCount as keyof typeof BLUR_MAP];
 
 	const output =
 		blur > 0
-			? await sharpImage.blur(blur).jpeg({ quality: 80 }).toBuffer()
-			: await sharpImage.jpeg({ quality: 90 }).toBuffer();
+			? await sharpImage.blur(blur).jpeg({ quality: 80 }).grayscale(isHardMode).toBuffer()
+			: await sharpImage
+					.jpeg({ quality: 90 })
+					.grayscale(isHardMode && !locationGuessed)
+					.toBuffer();
 
 	return new Response(new Uint8Array(output), {
 		headers: {
 			'content-type': 'image/jpeg',
-			'cache-control': 'public, max-age=86400',
+			// 'cache-control': 'public, max-age=86400',
 		},
 	});
 };

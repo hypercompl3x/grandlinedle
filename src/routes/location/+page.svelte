@@ -3,6 +3,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Locations from '$lib/components/Locations.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
+	import HardModeSwitch from '$lib/components/HardModeSwitch.svelte';
 	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import { getLocationsFromQuery } from '$lib/services/locationService.js';
@@ -13,6 +14,7 @@
 
 	let result = $state<Result>();
 	let gettingNewData = $state(false);
+	let isHardMode = $derived(!!result?.isHardMode);
 
 	$effect(() => {
 		(async () => {
@@ -56,7 +58,10 @@
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
 
-		<div class="w-full max-w-screen-sm px-4">
+		<div class="w-full max-w-screen-sm px-4 space-y-2">
+			{#if !locationHasBeenGuessed}
+				<HardModeSwitch checked={result.isHardMode} />
+			{/if}
 			<div class="overflow-hidden border border-black rounded-md">
 				<img
 					data-testid="current-location"

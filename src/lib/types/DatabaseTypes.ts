@@ -179,6 +179,7 @@ export type Database = {
 					crew: number;
 					id: number;
 					location: number;
+					location_hard_mode: boolean;
 					player: string;
 					quote: number;
 				};
@@ -187,6 +188,7 @@ export type Database = {
 					crew: number;
 					id?: number;
 					location: number;
+					location_hard_mode?: boolean;
 					player: string;
 					quote: number;
 				};
@@ -195,6 +197,7 @@ export type Database = {
 					crew?: number;
 					id?: number;
 					location?: number;
+					location_hard_mode?: boolean;
 					player?: string;
 					quote?: number;
 				};

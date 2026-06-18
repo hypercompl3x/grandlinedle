@@ -5,6 +5,8 @@ import { getImages } from '$lib/services/serviceHelpers';
 import type { Database } from '$lib/types/DatabaseTypes';
 import { getMidnightGMT } from '$lib/utils/helpers';
 import { COOKIE, GAME_MODE } from '$lib/utils/constants';
+import { createSignedImageState } from '$lib/api/state';
+import type { LocationImageState } from '$lib/types/ApiTypes';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const locationGuesses = cookies.get(COOKIE.LOCATIONS);
@@ -54,14 +56,22 @@ const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies)
 	const guessIds = guesses.map(g => g.id);
 	const locationHasBeenGuessed = guessIds.includes(currentLocation.id);
 	const isHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
+	const isHardMode = isHardModeStr === 'true';
+
+	const imageState = createSignedImageState<LocationImageState>({
+		locationId: currentLocation.id,
+		guessCount: guessIds.length,
+		locationGuessed: locationHasBeenGuessed,
+		isHardMode,
+	});
 
 	return {
 		guesses,
 		currentLocation: {
 			...currentLocation,
-			url: `/api/current-location/${currentLocation.id}?guessCount=${guessIds.length}&locationGuessed=${locationHasBeenGuessed}&isHardMode=${isHardModeStr}`,
+			url: `/api/current-location?state=${imageState}`,
 		},
-		isHardMode: isHardModeStr === 'true',
+		isHardMode,
 	};
 };
 

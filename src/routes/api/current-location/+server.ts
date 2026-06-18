@@ -1,6 +1,8 @@
 import { error } from '@sveltejs/kit';
-import sharp from 'sharp';
 import type { RequestHandler } from './$types';
+import sharp from 'sharp';
+import { readSignedImageState } from '$lib/api/state';
+import type { LocationImageState } from '$lib/types/ApiTypes';
 
 const BLUR_MAP = {
 	0: 180,
@@ -20,21 +22,30 @@ const HARD_MODE_BLUR_MAP = {
 	5: 20,
 } as const;
 
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 	const supabase = locals.supabase;
 
 	if (!supabase) {
 		error(500, 'Supabase client is not available');
 	}
 
-	const id = params.id;
-	const guessCount = Number(url.searchParams.get('guessCount') ?? 0);
-	const locationGuessed = url.searchParams.get('locationGuessed') === 'true';
-	const isHardMode = url.searchParams.get('isHardMode') === 'true';
+	const token = url.searchParams.get('state');
+
+	if (!token) {
+		error(400, 'Missing image state');
+	}
+
+	const state = readSignedImageState<LocationImageState>(token);
+
+	if (!state) {
+		error(403, 'Invalid image state');
+	}
+
+	const { guessCount, isHardMode, locationGuessed, locationId } = state;
 
 	const { data, error: imageError } = await supabase.storage
 		.from('locations')
-		.download(`${id}.webp`);
+		.download(`${locationId}.webp`);
 
 	if (imageError || !data) {
 		error(404, 'Location image not found');

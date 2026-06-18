@@ -1,6 +1,8 @@
 import { error } from '@sveltejs/kit';
 import sharp from 'sharp';
 import type { RequestHandler } from './$types';
+import { readSignedImageState } from '$lib/api/state';
+import type { CrewImageState } from '$lib/types/ApiTypes';
 
 const ZOOM_MAP = {
 	0: 0.1,
@@ -11,18 +13,30 @@ const ZOOM_MAP = {
 	5: 0.95,
 } as const;
 
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 	const supabase = locals.supabase;
 
 	if (!supabase) {
 		error(500, 'Supabase client is not available');
 	}
 
-	const id = params.id;
-	const guessCount = Number(url.searchParams.get('guessCount') ?? 0);
-	const crewGuessed = url.searchParams.get('crewGuessed') === 'true';
+	const token = url.searchParams.get('state');
 
-	const { data, error: imageError } = await supabase.storage.from('crews').download(`${id}.webp`);
+	if (!token) {
+		error(400, 'Missing image state');
+	}
+
+	const state = readSignedImageState<CrewImageState>(token);
+
+	if (!state) {
+		error(403, 'Invalid image state');
+	}
+
+	const { guessCount, crewGuessed, crewId } = state;
+
+	const { data, error: imageError } = await supabase.storage
+		.from('crews')
+		.download(`${crewId}.webp`);
 
 	if (imageError || !data) {
 		error(404, 'Crew image not found');

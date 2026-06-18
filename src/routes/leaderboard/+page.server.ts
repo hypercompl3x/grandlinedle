@@ -24,7 +24,11 @@ const getLeaderboard = async (supabase: SupabaseClient<Database>): Promise<Leade
 			const averageA = (a.classic + a.location + a.quote + a.crew) / NUMBER_OF_GAME_MODES;
 			const averageB = (b.classic + b.location + b.quote + b.crew) / NUMBER_OF_GAME_MODES;
 
-			return averageA - averageB;
+			if (averageA !== averageB) {
+				return averageA - averageB;
+			}
+
+			return Number(b.location_hard_mode) - Number(a.location_hard_mode);
 		})
 		.slice(0, 10);
 };

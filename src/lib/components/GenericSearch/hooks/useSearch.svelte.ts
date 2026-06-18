@@ -5,6 +5,7 @@ import { applyAction } from '$app/forms';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 
 const useSearch = <T extends { id: number; name: string; url?: string }>(
+	page: 'character' | 'location' | 'quote' | 'crew',
 	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
 	guessIds: () => T['id'][],
@@ -33,6 +34,12 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 
 		await currentSearchPromise;
 
+		if (query === '2D2Y' && page === 'character') {
+			const newItems = await getItemsFromQuery('Hyde D. Luffy', guessIds());
+			updateAllItems(newItems);
+			return;
+		}
+
 		if (!query) {
 			updateAllItems([]);
 			return;
@@ -45,7 +52,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 
 		currentSearchPromise = transition.startTransition(async () => {
 			const newItems = await getItemsFromQuery(query, guessIds());
-			updateAllItems(newItems);
+			updateAllItems(newItems.filter(i => i.id !== 9999));
 		});
 	};
 

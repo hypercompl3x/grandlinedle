@@ -5,6 +5,8 @@ import { getImages } from '$lib/services/serviceHelpers';
 import type { Database } from '$lib/types/DatabaseTypes';
 import { getMidnightGMT } from '$lib/utils/helpers';
 import { COOKIE, GAME_MODE } from '$lib/utils/constants';
+import { createSignedImageState } from '$lib/api/state';
+import type { CrewImageState } from '$lib/types/ApiTypes';
 
 const getGuesses = async (supabase: SupabaseClient<Database>, cookies: Cookies) => {
 	const crewGuesses = cookies.get(COOKIE.CREWS);
@@ -54,11 +56,17 @@ const getPageData = async (supabase: SupabaseClient<Database>, cookies: Cookies)
 	const guessIds = guesses.map(g => g.id);
 	const crewHasBeenGuessed = guessIds.includes(currentCrew.id);
 
+	const imageState = createSignedImageState<CrewImageState>({
+		crewId: currentCrew.id,
+		guessCount: guessIds.length,
+		crewGuessed: crewHasBeenGuessed,
+	});
+
 	return {
 		guesses,
 		currentCrew: {
 			...currentCrew,
-			url: `/api/current-crew/${currentCrew.id}?guessCount=${guessIds.length}&crewGuessed=${crewHasBeenGuessed}`,
+			url: `/api/current-crew?state=${imageState}`,
 		},
 	};
 };

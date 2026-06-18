@@ -62,7 +62,7 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 	return new Response(new Uint8Array(output), {
 		headers: {
 			'content-type': 'image/jpeg',
-			// 'cache-control': 'public, max-age=86400',
+			'cache-control': 'public, max-age=86400',
 		},
 	});
 };

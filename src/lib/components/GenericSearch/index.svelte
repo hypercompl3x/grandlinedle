@@ -38,7 +38,7 @@
 
 	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
 
-	const search = useSearch(buttonName, props.getItemsFromQuery, () => props.guessIds);
+	const search = useSearch(props.page, buttonName, props.getItemsFromQuery, () => props.guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 

@@ -34,7 +34,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 
 		await currentSearchPromise;
 
-		if (query === '2D2Y' && page === 'character') {
+		if (query === '3D2Y' && page === 'character') {
 			const newItems = await getItemsFromQuery('Hyde D. Luffy', guessIds());
 			updateAllItems(newItems);
 			return;

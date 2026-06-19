@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
+	import Tabs from '$lib/components/Tabs.svelte';
 	import CongratsModal from '$lib/components/CongratsModal.svelte';
 	import Banner from '$lib/components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
@@ -10,14 +11,6 @@
 	let { data, children }: LayoutProps = $props();
 
 	let dialog = $state<HTMLDialogElement>();
-
-	const LINKS = [
-		{ name: 'Classic', href: '/' },
-		{ name: 'Location', href: '/location' },
-		{ name: 'Quote', href: '/quote' },
-		{ name: 'Crew', href: '/crew' },
-		{ name: 'Leaderboard', href: '/leaderboard' },
-	];
 </script>
 
 <div class="h-[100dvh] min-h-[100dvh] overflow-hidden overflow-y-auto">
@@ -38,21 +31,7 @@
 				onclick={() => dialog?.showModal()}>Share your results!</button
 			>
 		{/if}
-		<nav
-			class="flex items-center p-1.5 bg-white rounded-md shrink-0 gap-x-1.5 mb-2 max-sm:flex-col"
-		>
-			{#each LINKS as { name, href } (`${name}-link`)}
-				<a
-					{href}
-					class={cn('py-1.5 px-3 font-bold text-lg rounded-md max-sm:w-full max-sm:text-center', {
-						'bg-blue-dark text-white': page.url.pathname === href,
-					})}
-				>
-					{name}
-				</a>
-			{/each}
-		</nav>
-
+		<Tabs />
 		{@render children()}
 	</div>
 </div>

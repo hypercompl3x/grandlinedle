@@ -5,6 +5,7 @@ import { kv } from '$lib/kv';
 import type { Database } from '$lib/types/DatabaseTypes';
 
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_API_KEY } from '$env/static/public';
+import { VERCEL_ENV } from '$env/static/private';
 
 const ratelimit = new Ratelimit({
 	redis: kv,
@@ -12,15 +13,17 @@ const ratelimit = new Ratelimit({
 });
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const ip = event.getClientAddress() || '127.0.0.1';
+	if (VERCEL_ENV !== 'development') {
+		const ip = event.getClientAddress() || '127.0.0.1';
 
-	const { success, reset } = await ratelimit.limit(ip);
+		const { success, reset } = await ratelimit.limit(ip);
 
-	if (!success) {
-		const timeRemaining = Math.floor((reset - new Date().getTime()) / 1000);
-		error(429, {
-			message: `Too many requests. Please try again in ${timeRemaining} seconds.`,
-		});
+		if (!success) {
+			const timeRemaining = Math.floor((reset - new Date().getTime()) / 1000);
+			error(429, {
+				message: `Too many requests. Please try again in ${timeRemaining} seconds.`,
+			});
+		}
 	}
 
 	event.locals.supabase = createServerClient<Database>(

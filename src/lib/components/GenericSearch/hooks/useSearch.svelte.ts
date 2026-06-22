@@ -35,7 +35,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		await currentSearchPromise;
 
 		if (query === '3D2Y' && page === 'character') {
-			const newItems = await getItemsFromQuery('Hyde D. Luffy', guessIds());
+			const newItems = await getItemsFromQuery('Hyde', guessIds());
 			updateAllItems(newItems);
 			return;
 		}
@@ -52,7 +52,7 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 
 		currentSearchPromise = transition.startTransition(async () => {
 			const newItems = await getItemsFromQuery(query, guessIds());
-			updateAllItems(newItems.filter(i => i.id !== 9999));
+			updateAllItems(newItems.filter(i => i.id < 9000));
 		});
 	};
 

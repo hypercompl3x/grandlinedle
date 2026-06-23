@@ -2,7 +2,13 @@ import type { FormEventHandler } from 'svelte/elements';
 import type { SubmitFunction } from '@sveltejs/kit';
 import { invalidateAll } from '$app/navigation';
 import { applyAction } from '$app/forms';
+import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
+import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
+
+const hisashiburidana_mugiwara_sound = new Sound(hisashiburidanaMugiwara, {
+	volume: 0.8,
+});
 
 const useSearch = <T extends { id: number; name: string; url?: string }>(
 	page: 'character' | 'location' | 'quote' | 'crew',
@@ -37,6 +43,13 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		if (query === '3D2Y' && page === 'character') {
 			const newItems = await getItemsFromQuery('Hyde', guessIds());
 			updateAllItems(newItems);
+			return;
+		}
+
+		if (query === 'Mugiwara' && page === 'character') {
+			hisashiburidana_mugiwara_sound.stop();
+			hisashiburidana_mugiwara_sound.play();
+			updateAllItems([]);
 			return;
 		}
 

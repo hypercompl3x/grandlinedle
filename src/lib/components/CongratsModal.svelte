@@ -11,8 +11,7 @@
 
 	let { dialog = $bindable(), data }: Props = $props();
 
-	const initialPlayerName = () => data.playerName;
-	let playerName = $state(initialPlayerName());
+	let playerName = $state('');
 	let submissionError = $state('');
 	let submitting = $state(false);
 	let submitSuccessful = $state(false);
@@ -26,6 +25,10 @@
 🏴‍☠️ Crew: ${data.crewGuessesLen}
 https://grandlinedle.com`,
 	);
+
+	$effect(() => {
+		playerName = data.playerName || '';
+	});
 
 	$effect(() => {
 		if (!dialog) return;
@@ -112,7 +115,6 @@ https://grandlinedle.com`,
 						}
 
 						if (result.type === 'success' && !result.data?.errorMessage) {
-							playerName = '';
 							submitSuccessful = true;
 						}
 					};

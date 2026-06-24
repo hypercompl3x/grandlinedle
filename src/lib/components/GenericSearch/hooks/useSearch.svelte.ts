@@ -5,10 +5,10 @@ import { applyAction } from '$app/forms';
 import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
+import theOnePieceIsReal from '$lib/assets/the-one-piece-is-real.m4a';
 
-const hisashiburidana_mugiwara_sound = new Sound(hisashiburidanaMugiwara, {
-	volume: 0.8,
-});
+let hisashiburidanaMugiwaraSound: Sound | undefined;
+let theOnePieceIsRealSound: Sound | undefined;
 
 const useSearch = <T extends { id: number; name: string; url?: string }>(
 	page: 'character' | 'location' | 'quote' | 'crew',
@@ -32,6 +32,18 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 	};
 
 	const handleSearch: FormEventHandler<HTMLInputElement> = async e => {
+		if (!hisashiburidanaMugiwaraSound) {
+			hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
+				volume: 0.8,
+			});
+		}
+
+		if (!theOnePieceIsRealSound) {
+			theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
+				volume: 0.8,
+			});
+		}
+
 		const { value } = e.currentTarget;
 		const oldQuery = query;
 
@@ -47,8 +59,15 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 		}
 
 		if (query === 'Mugiwara' && page === 'character') {
-			hisashiburidana_mugiwara_sound.stop();
-			hisashiburidana_mugiwara_sound.play();
+			hisashiburidanaMugiwaraSound.stop();
+			hisashiburidanaMugiwaraSound.play();
+			updateAllItems([]);
+			return;
+		}
+
+		if (query === 'Laugh Tale' && page === 'location') {
+			theOnePieceIsRealSound.stop();
+			theOnePieceIsRealSound.play();
 			updateAllItems([]);
 			return;
 		}

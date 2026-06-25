@@ -58,7 +58,7 @@
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
 
-		<div class="w-full max-w-screen-sm px-4 space-y-2">
+		<div class="w-full max-w-(--breakpoint-sm) px-4 space-y-2">
 			{#if !locationHasBeenGuessed}
 				<HardModeSwitch checked={result.isHardMode} />
 			{/if}

@@ -56,7 +56,7 @@
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const crewHasBeenGuessed = guessIds.includes(result.currentCrew.id)}
 
-		<div class="w-full max-w-screen-sm px-4">
+		<div class="w-full max-w-(--breakpoint-sm) px-4">
 			<div class="overflow-hidden border border-black rounded-md">
 				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
 			</div>

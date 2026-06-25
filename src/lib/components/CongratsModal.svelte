@@ -62,7 +62,7 @@ https://grandlinedle.com`,
 			type="button"
 			disabled={submitting}
 			onclick={() => dialog?.close()}
-			class="absolute inset-y-0 focus:ring-0 focus:outline-none right-2"
+			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
 			><X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" /></button
 		>
 	</div>
@@ -126,7 +126,7 @@ https://grandlinedle.com`,
 						id="playername"
 						name="playername"
 						class={cn(
-							'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-none',
+							'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-hidden',
 							{
 								'border-red-primary': !!submissionError,
 							},

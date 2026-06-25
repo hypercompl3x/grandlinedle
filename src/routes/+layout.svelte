@@ -12,10 +12,10 @@
 	let dialog = $state<HTMLDialogElement>();
 </script>
 
-<div class="h-[100dvh] min-h-[100dvh] overflow-hidden overflow-y-auto">
+<div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
 	<div
-		class={cn('flex flex-col items-center h-full max-w-screen-md mx-auto', {
-			'max-w-screen-lg': page.url.pathname === '/leaderboard',
+		class={cn('flex flex-col items-center h-full max-w-(--breakpoint-md) mx-auto', {
+			'max-w-(--breakpoint-lg)': page.url.pathname === '/leaderboard',
 		})}
 	>
 		<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">

@@ -1,6 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+	--color-*: initial;
+	--color-transparent: transparent;
+	--color-white: #fff;
+	--color-black: #000;
+
+	--color-yellow-primary: #e0d561;
+	--color-yellow-dark: #f3e033;
+
+	--color-green-light: #24d475;
+	--color-green-primary: #3da75e;
+
+	--color-red-light: #d53633;
+	--color-red-primary: #e30c0c;
+	--color-red-dark: #80201f;
+
+	--color-blue-light: #4abfff;
+	--color-blue-dark: #1e4de0;
+
+	--color-grey: #696969;
+
+	--background-image-page-background: url('/src/lib/assets/one-piece-bg.webp');
+}
 
 @layer base {
 	html {

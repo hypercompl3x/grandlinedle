@@ -43,27 +43,27 @@
 				<div
 					class="flex items-center w-full text-lg font-bold text-center bg-white rounded-md shadow-lg h-14 md:text-2xl"
 				>
-					<div class="flex-[1]">Position</div>
+					<div class="flex-1">Position</div>
 					<div class="flex-[1.5]">Player</div>
-					<div class="flex-[1]">Classic</div>
-					<div class="flex-[1]">Location</div>
-					<div class="flex-[1]">Quote</div>
-					<div class="flex-[1]">Crew</div>
+					<div class="flex-1">Classic</div>
+					<div class="flex-1">Location</div>
+					<div class="flex-1">Quote</div>
+					<div class="flex-1">Crew</div>
 				</div>
 				{#each result.leaderboard as { id, player, classic, location, quote, crew, location_hard_mode }, index (`desktop-table-${id}`)}
 					<div
 						class="flex items-center w-full h-16 text-lg font-semibold text-center text-white rounded-md shadow-lg bg-green-primary md:text-2xl"
 					>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							#{index + 1}
 						</div>
 						<div class="truncate flex-[1.5] min-w-0">
 							{player}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{classic}
 						</div>
-						<div class="flex-[1] flex justify-center">
+						<div class="flex-1 flex justify-center">
 							{#if location_hard_mode}
 								<div class="relative inline-grid">
 									<Star class="text-red-primary fill-red-primary size-10 md:size-12" />
@@ -74,10 +74,10 @@
 								{location}
 							{/if}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{quote}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{crew}
 						</div>
 					</div>

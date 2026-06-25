@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts"> TODO
 	let open = $state(true);
 </script>
 
@@ -61,4 +61,4 @@
 			</div>
 		</div>
 	</div>
-{/if}
+{/if} -->

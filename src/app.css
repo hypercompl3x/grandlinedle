@@ -11,8 +11,79 @@
 
 .text-shadow-1 {
 	text-shadow:
+		-1px 0 0 #000,
+		1px 0 0 #000,
+		0 1px 0 #000,
+		0 -1px 0 #000,
 		-1px 1px 0 #000,
 		1px 1px 0 #000,
 		1px -1px 0 #000,
 		-1px -1px 0 #000;
+}
+
+.text-shadow-2 {
+	text-shadow:
+		-2px 0 0 #000,
+		2px 0 0 #000,
+		0 2px 0 #000,
+		0 -2px 0 #000,
+		-2px 2px 0 #000,
+		2px 2px 0 #000,
+		2px -2px 0 #000,
+		-2px -2px 0 #000;
+}
+
+.mode-button {
+	width: 180px;
+	height: 48px;
+
+	border: 3px solid #3a1d0d;
+	border-radius: 999px;
+
+	background: linear-gradient(to bottom, #fff0b8, #f2b84b);
+	box-shadow:
+		0 4px 0 #6b3514,
+		0 8px 14px rgba(0, 0, 0, 0.25);
+
+	color: #ffffff;
+	font-weight: 900;
+	font-size: 1.1rem;
+	letter-spacing: 0.02em;
+
+	text-shadow:
+		-1px 0 0 #2a1207,
+		1px 0 0 #2a1207,
+		0 1px 0 #2a1207,
+		0 -1px 0 #2a1207,
+		-1px 1px 0 #2a1207,
+		1px 1px 0 #2a1207,
+		1px -1px 0 #2a1207,
+		-1px -1px 0 #2a1207;
+
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease,
+		filter 120ms ease;
+}
+
+.mode-button:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.05);
+	box-shadow:
+		0 6px 0 #6b3514,
+		0 10px 16px rgba(0, 0, 0, 0.28);
+}
+
+.mode-button:active {
+	transform: translateY(3px);
+	box-shadow:
+		0 1px 0 #6b3514,
+		0 4px 8px rgba(0, 0, 0, 0.22);
+}
+.mode-button.blue {
+	background: linear-gradient(to bottom, #4aa3ff, #1767bd);
+	border-color: #2a1207;
+	box-shadow:
+		0 4px 0 #0b3a70,
+		0 8px 14px rgba(0, 0, 0, 0.25);
 }

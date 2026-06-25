@@ -5,7 +5,7 @@
 	import { cn } from '$lib/utils/helpers';
 
 	const LINKS = [
-		{ name: 'Classic', href: '/' },
+		{ name: 'Classic', href: '/classic' },
 		{ name: 'Location', href: '/location' },
 		{ name: 'Quote', href: '/quote' },
 		{ name: 'Crew', href: '/crew' },

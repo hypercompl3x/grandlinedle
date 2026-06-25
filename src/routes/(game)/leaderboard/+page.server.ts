@@ -5,7 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { kv } from '$lib/kv';
 import { getMidnightGMT, getArrayLengthFromCookie } from '$lib/utils/helpers';
 import type { Database, Leaderboard, LeaderboardEntry } from '$lib/types/DatabaseTypes';
-import type { Actions } from '../$types';
+import type { Actions } from './$types';
 import { COOKIE, NUMBER_OF_GAME_MODES } from '$lib/utils/constants';
 
 import { IP_HASH_SECRET } from '$env/static/private';

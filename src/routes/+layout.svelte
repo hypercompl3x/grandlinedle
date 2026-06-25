@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
-	import Tabs from '$lib/components/Tabs.svelte';
 	import CongratsModal from '$lib/components/CongratsModal.svelte';
 	import Banner from '$lib/components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
@@ -19,11 +18,9 @@
 			'max-w-screen-lg': page.url.pathname === '/leaderboard',
 		})}
 	>
-		<img
-			alt="The grandlinedle logo"
-			src={GrandlinedleLogo}
-			class="my-4 transition-transform duration-300 ease-in-out rounded-lg w-96 hover:scale-105"
-		/>
+		<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
+			<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="my-4 w-96" />
+		</a>
 		{#if data.completed}
 			<button
 				type="button"
@@ -31,7 +28,6 @@
 				onclick={() => dialog?.showModal()}>Share your results!</button
 			>
 		{/if}
-		<Tabs />
 		{@render children()}
 	</div>
 </div>

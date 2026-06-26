@@ -53,4 +53,7 @@ export const COOKIE = {
 	PLAYER_NAME: 'playername',
 	CREWS: 'crews',
 	LOCATION_HARD_MODE: 'locationhardmode',
+	HIDE_SUGGESTION_BANNER: 'hidesuggestionbanner',
 } as const;
+
+export const TEN_YEARS = 60 * 60 * 24 * 365 * 10;

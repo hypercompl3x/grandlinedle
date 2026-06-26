@@ -6,7 +6,7 @@ import { kv } from '$lib/kv';
 import { getMidnightGMT, getArrayLengthFromCookie } from '$lib/utils/helpers';
 import type { Database, Leaderboard, LeaderboardEntry } from '$lib/types/DatabaseTypes';
 import type { Actions } from './$types';
-import { COOKIE, NUMBER_OF_GAME_MODES } from '$lib/utils/constants';
+import { COOKIE, NUMBER_OF_GAME_MODES, TEN_YEARS } from '$lib/utils/constants';
 
 import { IP_HASH_SECRET } from '$env/static/private';
 
@@ -67,7 +67,6 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 };
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
-const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
 
 const hashIp = (ip: string) => crypto.createHmac('sha256', IP_HASH_SECRET).update(ip).digest('hex');
 

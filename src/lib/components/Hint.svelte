@@ -16,7 +16,7 @@
 	<button
 		disabled={!guessesReached()}
 		onclick={() => (showHint = !showHint)}
-		class="bg-blue-dark text-white p-1.5 font-bold text-lg rounded-md disabled:bg-grey"
+		class="text-white p-2 font-bold text-base rounded-md disabled:bg-red-light bg-green-primary"
 	>
 		{#if guessesReached()}
 			{category} clue
@@ -29,6 +29,6 @@
 	</button>
 
 	{#if showHint}
-		<div class="text-black bg-white p-1.5 font-bold text-lg rounded-md">{hint}</div>
+		<div class="text-black bg-white p-2 font-bold text-base rounded-md">{hint}</div>
 	{/if}
 </div>

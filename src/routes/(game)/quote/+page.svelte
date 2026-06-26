@@ -46,7 +46,7 @@
 	<meta name="description" content="Guess One Piece quotes daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		Guess who said today's One Piece quote!
 	</h1>
 	{#if result}
@@ -70,7 +70,7 @@
 			</div>
 		{/if}
 		<div
-			class="p-2 mx-4 text-2xl font-semibold text-center text-white bg-black bg-opacity-50 rounded-md sm:text-3xl sm:p-6 text-shadow-1"
+			class="p-2 mx-4 text-2xl font-semibold text-center text-white bg-black/20 rounded-md sm:text-3xl sm:p-6 text-shadow-sm"
 		>
 			"{result.currentQuote.quote}"
 		</div>

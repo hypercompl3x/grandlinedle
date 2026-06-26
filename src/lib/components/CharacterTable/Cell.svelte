@@ -18,10 +18,10 @@
 <div
 	{id}
 	class={cn(
-		'flex items-center justify-center border border-green-light rounded-md bg-green-primary px-1 relative',
+		'flex items-center justify-center rounded-md bg-green-primary px-1 relative hover:brightness-110',
 		{
-			'bg-red-light border-red-dark': red,
-			'bg-yellow-primary border-yellow-dark': yellow,
+			'bg-red-light': red,
+			'bg-yellow-primary': yellow,
 		},
 		className,
 	)}

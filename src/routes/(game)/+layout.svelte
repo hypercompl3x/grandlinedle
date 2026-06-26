@@ -5,5 +5,5 @@
 	let { children }: LayoutProps = $props();
 </script>
 
-<Tabs />
+<Tabs isHomePage={false} />
 {@render children()}

@@ -15,17 +15,13 @@
 		<div
 			id={`quotecharacter-${i}`}
 			class={cn(
-				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex max-sm:flex-col items-center gap-4',
+				'p-4 leading-tight text-white rounded-md bg-green-primary flex max-sm:flex-col items-center gap-4',
 				{
-					'bg-red-light border-red-dark': character.id !== currentQuote.character_id,
+					'bg-red-light': character.id !== currentQuote.character_id,
 				},
 			)}
 		>
-			<img
-				src={character.url}
-				alt={character.name}
-				class="w-20 border border-black rounded-md sm:w-24 grow-0"
-			/>
+			<img src={character.url} alt={character.name} class="w-20 rounded-md sm:w-24 grow-0" />
 			<div class="text-2xl font-bold">{character.name}</div>
 		</div>
 	{/each}

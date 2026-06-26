@@ -48,7 +48,7 @@
 		name={buttonName}
 		type="submit"
 		value={id}
-		class="flex items-center w-full px-4 py-2 text-xl font-bold text-left hover:bg-white gap-x-5 focus-visible:outline-hidden focus:bg-white"
+		class="flex items-center w-full px-4 py-2 text-xl font-bold text-left hover:bg-blue-primary hover:text-white gap-x-5 focus-visible:outline-hidden focus:bg-blue-primary focus:text-white"
 	>
 		{#if url}
 			<img src={url} alt={`${name} Image`} class="h-16 rounded-md" />
@@ -68,19 +68,19 @@
 			onclick={() => (search.isDropdownOpen = true)}
 			disabled={props.gettingNewData}
 			placeholder={searchPlaceholder}
-			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white border border-black rounded-md focus-visible:outline-hidden"
+			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white rounded-md focus-visible:outline-hidden shadow-md"
 		/>
 		{#if props.gettingNewData}
-			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin" />
+			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin text-grey" />
 		{:else}
-			<Search size={20} class="absolute inset-y-0 my-auto right-3" />
+			<Search size={20} class="absolute inset-y-0 my-auto right-3 text-grey" />
 		{/if}
 		{#if search.isDropdownOpen && search.query}
 			<form
 				bind:this={search.form}
 				use:enhance={search.pickItem}
 				method="POST"
-				class="absolute top-9.5 bg-white bg-opacity-95 inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20"
+				class="absolute top-9.5 bg-white inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20"
 			>
 				{#if search.transition.isPending}
 					<div class="flex items-center w-full h-20 px-4 text-xl font-bold animate-pulse">

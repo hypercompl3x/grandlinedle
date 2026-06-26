@@ -49,7 +49,7 @@
 	<meta name="description" content="Guess One Piece crews daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		Guess today's One Piece crew!
 	</h1>
 	{#if result}
@@ -57,7 +57,7 @@
 		{@const crewHasBeenGuessed = guessIds.includes(result.currentCrew.id)}
 
 		<div class="w-full max-w-(--breakpoint-sm) px-4">
-			<div class="overflow-hidden border border-black rounded-md">
+			<div class="overflow-hidden shadow-sm rounded-md">
 				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
 			</div>
 		</div>

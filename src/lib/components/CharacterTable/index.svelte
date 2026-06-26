@@ -22,7 +22,7 @@
 	>
 		{#each COLUMNS as col (`${col}-column`)}
 			<div
-				class="flex items-center justify-center p-1 text-sm font-bold text-black bg-white border border-black rounded-md"
+				class="flex items-center justify-center p-1 text-sm font-bold text-black bg-white rounded-md"
 			>
 				{col}
 			</div>
@@ -44,12 +44,15 @@
 				(currentCharacter.height_m === character.height_m &&
 					currentCharacter.height_cm > character.height_cm)}
 
-			<div class="relative overflow-hidden border border-black rounded-md group">
+			<div class="relative overflow-hidden rounded-md group">
 				<img src={character.url} alt={`${character.name} Image Guess`} />
 				<div
 					class={cn(
 						'absolute top-0 flex items-center justify-center w-full h-full px-1 text-sm font-bold text-transparent transition-colors duration-200 group-hover:bg-blue-dark group-hover:text-white',
-						{ 'text-xs': character.name.split(' ').some(word => word.length > 9) },
+						{
+							'text-xs': character.name.split(' ').some(word => word.length > 9),
+							'text-[10px]': character.name.split(' ').some(word => word.length > 11),
+						},
 					)}
 				>
 					{character.name}

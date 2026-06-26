@@ -1,11 +1,17 @@
 <script lang="ts">
-	let open = $state(true);
+	type Props = {
+		hideSuggestionBanner: boolean;
+	};
+
+	let { hideSuggestionBanner }: Props = $props();
+
+	let open = $derived(!hideSuggestionBanner);
 </script>
 
 {#if open}
 	<div class="fixed inset-x-0 bottom-0 z-50 pb-2 sm:pb-5">
 		<div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
-			<div class="p-2 rounded-lg shadow-lg bg-blue-dark sm:p-3">
+			<div class="p-2 rounded-lg shadow-lg bg-green-primary sm:p-3">
 				<div class="flex flex-wrap items-center justify-between">
 					<div class="flex items-center flex-1 w-0">
 						<span class="flex p-2 rounded-lg">
@@ -29,19 +35,19 @@
 							<span class="hidden sm:inline">Have an idea to improve the site?</span>
 						</p>
 					</div>
-					<div class="flex-shrink-0 order-3 w-full mt-2 sm:order-2 sm:mt-0 sm:w-auto">
+					<div class="shrink-0 order-3 w-full mt-2 sm:order-2 sm:mt-0 sm:w-auto">
 						<a
-							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-black bg-white border border-transparent rounded-md shadow-sm"
+							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-black bg-white rounded-md"
 							href="https://tally.so/r/vGJR8A"
 							target="_blank"
 							rel="noopener noreferrer"
 							>Send a suggestion
 						</a>
 					</div>
-					<div class="flex-shrink-0 order-2 sm:order-3 sm:ml-2">
+					<div class="shrink-0 order-2 sm:order-3 sm:ml-2">
 						<button
 							type="button"
-							class="flex p-2 -mr-1 rounded-md focus:outline-none"
+							class="flex p-2 -mr-1 rounded-md focus:outline-hidden"
 							onclick={() => (open = false)}
 							><span class="sr-only">Dismiss</span><svg
 								xmlns="http://www.w3.org/2000/svg"

@@ -26,14 +26,14 @@
 </script>
 
 <div class="flex items-center justify-center gap-x-2">
-	<div class="text-xl font-bold text-white text-shadow-1">Easy</div>
+	<div class="text-xl font-bold text-white text-shadow-xs text-shadow-black">Easy</div>
 	<div class="relative flex items-center">
 		<button
 			type="button"
 			role="switch"
 			aria-label="Is hard mode"
 			aria-checked={checked}
-			class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none {checked
+			class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none shadow-xs shadow-black {checked
 				? 'bg-red-primary'
 				: 'bg-green-primary'}"
 			disabled={!checked || updatingDifficulty}
@@ -46,7 +46,7 @@
 		>
 			<span
 				class="pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform {checked
-					? 'translate-x-[22px]'
+					? 'translate-x-5.5'
 					: 'translate-x-0.5'}"
 			></span>
 		</button>
@@ -60,5 +60,5 @@
 			</div>
 		{/if}
 	</div>
-	<div class="text-xl font-bold text-white text-shadow-1">Hard</div>
+	<div class="text-xl font-bold text-white text-shadow-xs text-shadow-black">Hard</div>
 </div>

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
+	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import Crews from '$lib/components/Crews.svelte';
-	import { getCrewsFromQuery } from '$lib/services/crewService.js';
+	import { getCharactersFromQuery } from '$lib/services/characterService.js';
+	import Hint from '$lib/components/Hint.svelte';
 
 	type Result = Awaited<typeof data.pageData>;
 
@@ -22,11 +23,7 @@
 				gettingNewData = true;
 
 				const newResult = await data.pageData;
-
-				await Promise.all([
-					...newResult.guesses.map(i => preloadImage(i.url)),
-					preloadImage(newResult.currentCrew.url),
-				]);
+				await Promise.all(newResult.guesses.map(i => preloadImage(i.url)));
 
 				result = newResult;
 				gettingNewData = false;
@@ -34,8 +31,8 @@
 				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
 
 				if (firstIdChanged) {
-					const playerHasWon = result?.currentCrew?.id === result?.guesses?.[0]?.id;
-					await animateNewItem(playerHasWon, 'crew');
+					const playerHasWon = result?.currentCharacter?.id === result?.guesses?.[0]?.id;
+					await animateNewItem(playerHasWon, 'character');
 				}
 			} catch (error) {
 				console.error(error);
@@ -45,35 +42,36 @@
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Crew</title>
-	<meta name="description" content="Guess One Piece crews daily!" />
+	<title>Grandlinedle - Classic</title>
+	<meta name="description" content="Guess One Piece characters daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
-		Guess today's One Piece crew!
+	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
+		Guess today's One Piece character!
 	</h1>
 	{#if result}
 		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const crewHasBeenGuessed = guessIds.includes(result.currentCrew.id)}
+		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 
-		<div class="w-full max-w-screen-sm px-4">
-			<div class="overflow-hidden border border-black rounded-md">
-				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
-			</div>
-		</div>
-		{#if !crewHasBeenGuessed}
+		{#if !characterHasBeenGuessed}
+			<Hint
+				category="Affiliation"
+				hint={result.currentCharacter.affiliation}
+				numberOfGuesses={guessIds.length}
+				guessesToReveal={5}
+			/>
 			<GenericSearch
 				{guessIds}
 				{gettingNewData}
-				getItemsFromQuery={getCrewsFromQuery}
-				page="crew"
+				getItemsFromQuery={getCharactersFromQuery}
+				page="character"
 			/>
 		{/if}
 		{#if result.guesses.length > 0}
-			<Crews guesses={result.guesses} currentCrew={result.currentCrew} />
+			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />
 		{/if}
-		{#if crewHasBeenGuessed}
-			<SuccessBox correctGuess={result.guesses[0]} page="crew" />
+		{#if characterHasBeenGuessed}
+			<SuccessBox correctGuess={result.guesses[0]} page="character" />
 		{/if}
 	{:else}
 		<Loader2 class="text-white animate-spin" size={80} />

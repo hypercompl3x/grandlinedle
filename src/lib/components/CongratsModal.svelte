@@ -3,6 +3,7 @@
 	import type { LayoutData } from '../../routes/$types';
 	import { enhance } from '$app/forms';
 	import { cn } from '$lib/utils/helpers';
+	import { untrack } from 'svelte';
 
 	type Props = {
 		dialog: HTMLDialogElement | undefined;
@@ -11,6 +12,7 @@
 
 	let { dialog = $bindable(), data }: Props = $props();
 
+	let previousCompleted = $state(false);
 	let playerName = $state('');
 	let submissionError = $state('');
 	let submitting = $state(false);
@@ -33,11 +35,15 @@ https://grandlinedle.com`,
 	$effect(() => {
 		if (!dialog) return;
 
-		if (data.completed) {
+		const oldCompleted = untrack(() => previousCompleted);
+
+		if (data.completed && !oldCompleted) {
 			if (!dialog.open) dialog.showModal();
 		} else {
 			if (dialog.open) dialog.close();
 		}
+
+		previousCompleted = data.completed;
 	});
 
 	const copyToClipboard = () => {
@@ -49,7 +55,7 @@ https://grandlinedle.com`,
 
 <dialog
 	bind:this={dialog}
-	class="w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:bg-opacity-40"
+	class="w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:opacity-40 fixed inset-0 m-auto h-fit"
 	onclick={e => {
 		if (e.target === dialog && !submitting) {
 			dialog.close();
@@ -62,7 +68,7 @@ https://grandlinedle.com`,
 			type="button"
 			disabled={submitting}
 			onclick={() => dialog?.close()}
-			class="absolute inset-y-0 focus:ring-0 focus:outline-none right-2"
+			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
 			><X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" /></button
 		>
 	</div>
@@ -94,7 +100,7 @@ https://grandlinedle.com`,
 			<form
 				class="w-4/5 px-2 pt-2 pb-4 space-y-3"
 				method="POST"
-				action="/leaderboard?/submit-entry"
+				action="/rankings?/submit-entry"
 				use:enhance={() => {
 					submissionError = '';
 					submitting = true;
@@ -126,7 +132,7 @@ https://grandlinedle.com`,
 						id="playername"
 						name="playername"
 						class={cn(
-							'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-none',
+							'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-hidden',
 							{
 								'border-red-primary': !!submissionError,
 							},
@@ -141,7 +147,7 @@ https://grandlinedle.com`,
 					disabled={!playerName}
 					class="py-1.5 px-3 font-bold text-lg rounded-md bg-green-primary text-white w-full h-10 flex justify-center items-center disabled:opacity-50"
 					>{#if submitting}<Loader2 class="text-white animate-spin" size={25} />{:else}Submit to
-						leaderboard{/if}</button
+						rankings{/if}</button
 				>
 			</form>
 		{/if}

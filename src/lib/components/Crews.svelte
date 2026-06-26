@@ -15,17 +15,13 @@
 		<div
 			id={`crew-${i}`}
 			class={cn(
-				'p-4 leading-tight text-white border border-green-light rounded-md bg-green-primary flex max-sm:flex-col items-center gap-4',
+				'p-4 leading-tight text-white rounded-md bg-green-primary flex max-sm:flex-col items-center gap-4',
 				{
-					'bg-red-light border-red-dark': crew.id !== currentCrew.id,
+					'bg-red-light': crew.id !== currentCrew.id,
 				},
 			)}
 		>
-			<img
-				src={crew.url}
-				alt={crew.name}
-				class="w-40 border border-black rounded-md sm:w-52 grow-0"
-			/>
+			<img src={crew.url} alt={crew.name} class="w-40 rounded-md sm:w-52 grow-0" />
 			<div class="text-2xl font-bold text-center">
 				{crew.name}
 			</div>

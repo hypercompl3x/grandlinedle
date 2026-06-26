@@ -1,79 +1,17 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
-	import { Loader2 } from 'lucide-svelte';
-	import CharacterTable from '$lib/components/CharacterTable/index.svelte';
-	import SuccessBox from '$lib/components/SuccessBox.svelte';
-	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
-	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import { getCharactersFromQuery } from '$lib/services/characterService.js';
-	import Hint from '$lib/components/Hint.svelte';
-
-	type Result = Awaited<typeof data.pageData>;
-
-	let { data } = $props();
-
-	let result = $state<Result>();
-	let gettingNewData = $state(false);
-
-	$effect(() => {
-		(async () => {
-			try {
-				const oldResult = untrack(() => result);
-
-				gettingNewData = true;
-
-				const newResult = await data.pageData;
-				await Promise.all(newResult.guesses.map(i => preloadImage(i.url)));
-
-				result = newResult;
-				gettingNewData = false;
-
-				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
-
-				if (firstIdChanged) {
-					const playerHasWon = result?.currentCharacter?.id === result?.guesses?.[0]?.id;
-					await animateNewItem(playerHasWon, 'character');
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		})();
-	});
+	import Tabs from '$lib/components/Tabs.svelte';
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Classic</title>
+	<title>Grandlinedle - Home</title>
 	<meta name="description" content="Guess One Piece characters daily!" />
 </svelte:head>
-<main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
-		Guess today's One Piece character!
-	</h1>
-	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
 
-		{#if !characterHasBeenGuessed}
-			<Hint
-				category="Affiliation"
-				hint={result.currentCharacter.affiliation}
-				numberOfGuesses={guessIds.length}
-				guessesToReveal={5}
-			/>
-			<GenericSearch
-				{guessIds}
-				{gettingNewData}
-				getItemsFromQuery={getCharactersFromQuery}
-				page="character"
-			/>
-		{/if}
-		{#if result.guesses.length > 0}
-			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />
-		{/if}
-		{#if characterHasBeenGuessed}
-			<SuccessBox correctGuess={result.guesses[0]} page="character" />
-		{/if}
-	{:else}
-		<Loader2 class="text-white animate-spin" size={80} />
-	{/if}
+<main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
+	<h1
+		class="p-2 text-4xl font-bold text-center text-white rounded-md text-shadow-sm text-shadow-black"
+	>
+		Guess One Piece characters daily!
+	</h1>
+	<Tabs isHomePage={true} />
 </main>

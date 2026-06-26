@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
-	import Tabs from '$lib/components/Tabs.svelte';
+	import Settings from '$lib/components/Settings.svelte';
 	import CongratsModal from '$lib/components/CongratsModal.svelte';
 	import Banner from '$lib/components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
@@ -13,17 +13,19 @@
 	let dialog = $state<HTMLDialogElement>();
 </script>
 
-<div class="h-[100dvh] min-h-[100dvh] overflow-hidden overflow-y-auto">
+<div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
 	<div
-		class={cn('flex flex-col items-center h-full max-w-screen-md mx-auto', {
-			'max-w-screen-lg': page.url.pathname === '/leaderboard',
+		class={cn('flex flex-col items-center h-full mx-auto', {
+			'max-w-(--breakpoint-lg)': page.url.pathname === '/rankings',
+			'max-w-(--breakpoint-md)': page.url.pathname !== '/rankings',
 		})}
 	>
-		<img
-			alt="The grandlinedle logo"
-			src={GrandlinedleLogo}
-			class="my-4 transition-transform duration-300 ease-in-out rounded-lg w-96 hover:scale-105"
-		/>
+		<div class="w-full flex justify-center items-center">
+			<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
+				<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="my-4 w-96" />
+			</a>
+			<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
+		</div>
 		{#if data.completed}
 			<button
 				type="button"
@@ -31,10 +33,9 @@
 				onclick={() => dialog?.showModal()}>Share your results!</button
 			>
 		{/if}
-		<Tabs />
 		{@render children()}
 	</div>
 </div>
 
 <CongratsModal {data} bind:dialog></CongratsModal>
-<Banner></Banner>
+<Banner hideSuggestionBanner={data.hideSuggestionBanner} />

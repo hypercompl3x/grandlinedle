@@ -26,11 +26,11 @@
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Leaderboard</title>
-	<meta name="description" content="View the top 10 players daily!" />
+	<title>Grandlinedle - Rankings</title>
+	<meta name="description" content="View the top 10 players of the day!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		Top 10 players of the day!
 	</h1>
 	{#if result}
@@ -41,43 +41,47 @@
 		{:else}
 			<div class="w-full px-4 space-y-4 max-sm:hidden">
 				<div
-					class="flex items-center w-full text-lg font-bold text-center bg-white rounded-md shadow-lg h-14 md:text-2xl"
+					class="flex items-center w-full text-lg font-bold text-center bg-white rounded-md h-14 md:text-xl"
 				>
-					<div class="flex-[1]">Position</div>
+					<div class="flex-1">Position</div>
 					<div class="flex-[1.5]">Player</div>
-					<div class="flex-[1]">Classic</div>
-					<div class="flex-[1]">Location</div>
-					<div class="flex-[1]">Quote</div>
-					<div class="flex-[1]">Crew</div>
+					<div class="flex-1">Classic</div>
+					<div class="flex-1">Location</div>
+					<div class="flex-1">Quote</div>
+					<div class="flex-1">Crew</div>
 				</div>
 				{#each result.leaderboard as { id, player, classic, location, quote, crew, location_hard_mode }, index (`desktop-table-${id}`)}
 					<div
-						class="flex items-center w-full h-16 text-lg font-semibold text-center text-white rounded-md shadow-lg bg-green-primary md:text-2xl"
+						class="flex items-center w-full h-16 text-lg font-semibold text-center text-white rounded-md bg-red-light md:text-2xl"
 					>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							#{index + 1}
 						</div>
 						<div class="truncate flex-[1.5] min-w-0">
 							{player}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{classic}
 						</div>
-						<div class="flex-[1] flex justify-center">
+						<div class="flex-1 flex justify-center">
 							{#if location_hard_mode}
 								<div class="relative inline-grid">
-									<Star class="text-red-primary fill-red-primary size-10 md:size-12" />
+									<Star
+										class="text-yellow-dark fill-yellow-dark size-10 md:size-12 text-shadow-sm"
+									/>
 
-									<div class="absolute inset-0 grid place-items-center">{location}</div>
+									<div class="absolute inset-0 grid place-items-center text-white">
+										{location}
+									</div>
 								</div>
 							{:else}
 								{location}
 							{/if}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{quote}
 						</div>
-						<div class="flex-[1]">
+						<div class="flex-1">
 							{crew}
 						</div>
 					</div>

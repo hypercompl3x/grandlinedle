@@ -51,18 +51,18 @@
 	<meta name="description" content="Guess One Piece locations daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
-	<h1 class="p-2 text-4xl font-bold text-center text-white rounded-md bg-opacity-35 text-shadow-1">
+	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		Guess today's One Piece location!
 	</h1>
 	{#if result}
 		{@const guessIds = result.guesses.map(guess => guess.id)}
 		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
 
-		<div class="w-full max-w-screen-sm px-4 space-y-2">
+		<div class="w-full max-w-(--breakpoint-sm) px-4 space-y-2">
 			{#if !locationHasBeenGuessed}
 				<HardModeSwitch checked={result.isHardMode} />
 			{/if}
-			<div class="overflow-hidden border border-black rounded-md">
+			<div class="overflow-hidden shadow-sm rounded-md">
 				<img
 					data-testid="current-location"
 					src={result.currentLocation.url}

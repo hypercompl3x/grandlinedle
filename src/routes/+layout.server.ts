@@ -10,7 +10,10 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 	const completed = JSON.parse(completedString);
 
-	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false };
+	const hideSuggestionBanner = cookies.get(COOKIE.HIDE_SUGGESTION_BANNER) === 'true';
+
+	if (GAME_MODES.some(m => !completed.includes(m)))
+		return { completed: false, hideSuggestionBanner };
 
 	const playerName = cookies.get(COOKIE.PLAYER_NAME) || '';
 	const submittedEntry = !!cookies.get(COOKIE.SUBMITTED_ENTRY);
@@ -44,5 +47,6 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		submittedEntry,
 		playerName,
 		locationHardMode: locationHardModeStr === 'true',
+		hideSuggestionBanner,
 	};
 };

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { NUMBER_OF_GAME_MODES } from '$lib/utils/constants.js';
+	import { cn } from '$lib/utils/helpers';
 	import { Loader2, Star } from 'lucide-svelte';
 
 	type Result = Awaited<typeof data.pageData>;
@@ -35,13 +36,13 @@
 	</h1>
 	{#if result}
 		{#if result.leaderboard.length === 0}
-			<div class="text-5xl font-bold text-center text-white text-shadow-1">
+			<div class="text-5xl font-bold text-center text-white text-shadow-lg">
 				QUICK... submit your score to be first!
 			</div>
 		{:else}
-			<div class="w-full px-4 space-y-4 max-sm:hidden">
+			<div class="w-full px-4 max-sm:hidden">
 				<div
-					class="flex items-center w-full text-lg font-bold text-center bg-white rounded-md h-14 md:text-xl"
+					class="flex items-center w-full text-lg font-bold text-center bg-blue-primary text-white rounded-t-md h-14 md:text-xl"
 				>
 					<div class="flex-1">Position</div>
 					<div class="flex-[1.5]">Player</div>
@@ -52,7 +53,12 @@
 				</div>
 				{#each result.leaderboard as { id, player, classic, location, quote, crew, location_hard_mode }, index (`desktop-table-${id}`)}
 					<div
-						class="flex items-center w-full h-16 text-lg font-semibold text-center text-white rounded-md bg-red-light md:text-2xl"
+						class={cn(
+							'flex items-center w-full h-16 text-lg font-semibold text-center text-black bg-white md:text-2xl',
+							{
+								'rounded-b-md': index === result.leaderboard.length - 1,
+							},
+						)}
 					>
 						<div class="flex-1">
 							#{index + 1}
@@ -67,7 +73,7 @@
 							{#if location_hard_mode}
 								<div class="relative inline-grid">
 									<Star
-										class="text-yellow-dark fill-yellow-dark size-10 md:size-12 text-shadow-sm"
+										class="text-red-primary fill-red-primary size-10 md:size-12 text-shadow-sm"
 									/>
 
 									<div class="absolute inset-0 grid place-items-center text-white">

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { CrewWithImage } from '$lib/types/DatabaseTypes';
 	import { cn } from '$lib/utils/helpers';
+	import type { CrewWithImage } from '$lib/types/DatabaseTypes';
 
 	type Props = {
 		currentCrew: CrewWithImage;

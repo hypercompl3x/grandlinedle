@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils/helpers';
-	import Arrow from '../Arrow.svelte';
+	import Arrow from './Arrow.svelte';
 
 	type Props = {
 		red: boolean;

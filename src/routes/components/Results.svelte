@@ -1,28 +1,29 @@
 <script lang="ts">
-	import { Loader2, X } from 'lucide-svelte';
-	import type { LayoutData } from '../../routes/$types';
-	import { enhance } from '$app/forms';
-	import { cn } from '$lib/utils/helpers';
 	import { untrack } from 'svelte';
+	import type { LayoutData } from '../$types';
+	import { enhance } from '$app/forms';
+	import { Loader2, X } from 'lucide-svelte';
+	import { cn } from '$lib/utils/helpers';
 
 	type Props = {
-		dialog: HTMLDialogElement | undefined;
 		data: LayoutData;
 	};
 
-	let { dialog = $bindable(), data }: Props = $props();
+	let { data }: Props = $props();
+
+	let dialog = $state<HTMLDialogElement>();
 
 	let previousCompleted = $state(false);
 	let playerName = $state('');
 	let submissionError = $state('');
 	let submitting = $state(false);
 	let submitSuccessful = $state(false);
-
 	let showCopiedMessage = $state(false);
+
 	const copyText = $derived(
 		() => `I've completed all the modes of Grandlinedle #${data.todayNumber} today:
 ❓ Classic: ${data.characterGuessesLen}
-🌍  ${data.locationHardMode ? 'Hard' : 'Easy'} Location: ${data.locationGuessesLen}
+🌍 ${data.locationHardMode ? 'Hard' : 'Easy'} Location: ${data.locationGuessesLen}
 💬 Quote: ${data.quoteCharacterGuessesLen}
 🏴‍☠️ Crew: ${data.crewGuessesLen}
 https://grandlinedle.com`,
@@ -53,6 +54,13 @@ https://grandlinedle.com`,
 	};
 </script>
 
+<button
+	type="button"
+	class="py-1.5 px-3 font-semibold text-2xl rounded-md bg-red-primary text-white mb-4"
+	onclick={() => dialog?.showModal()}
+>
+	Share your results!
+</button>
 <dialog
 	bind:this={dialog}
 	class="w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:opacity-40 fixed inset-0 m-auto h-fit"
@@ -69,12 +77,16 @@ https://grandlinedle.com`,
 			disabled={submitting}
 			onclick={() => dialog?.close()}
 			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
-			><X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" /></button
 		>
+			<X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" />
+		</button>
 	</div>
 	<div class="flex flex-col items-center text-lg text-center">
 		<div class="w-4/5 px-2 pt-2 pb-4 space-y-2">
-			<div>I've completed all the modes of <b>Grandlinedle</b> #{data.todayNumber} today:</div>
+			<div>
+				I've completed all the modes of <b>Grandlinedle</b>
+				#{data.todayNumber} today:
+			</div>
 			<div>
 				<div>❓ Classic: {data.characterGuessesLen}</div>
 				<div>
@@ -90,8 +102,10 @@ https://grandlinedle.com`,
 				<button
 					type="button"
 					class="py-1.5 px-3 font-bold text-lg rounded-md bg-blue-dark text-white"
-					onclick={copyToClipboard}>COPY</button
+					onclick={copyToClipboard}
 				>
+					COPY
+				</button>
 			</div>
 		</div>
 
@@ -141,14 +155,17 @@ https://grandlinedle.com`,
 					/>
 					<p class="text-sm text-left text-red-primary">{submissionError}</p>
 				</div>
-
 				<button
 					type="submit"
 					disabled={!playerName}
 					class="py-1.5 px-3 font-bold text-lg rounded-md bg-green-primary text-white w-full h-10 flex justify-center items-center disabled:opacity-50"
-					>{#if submitting}<Loader2 class="text-white animate-spin" size={25} />{:else}Submit to
-						rankings{/if}</button
 				>
+					{#if submitting}
+						<Loader2 class="text-white animate-spin" size={25} />
+					{:else}
+						Submit to rankings
+					{/if}
+				</button>
 			</form>
 		{/if}
 	</div>

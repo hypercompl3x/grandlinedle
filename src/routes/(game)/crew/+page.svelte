@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
+	import type { PageData } from './$types';
 	import { Loader2 } from 'lucide-svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import Crews from '$lib/components/Crews.svelte';
-	import { getCrewsFromQuery } from '$lib/services/crewService.js';
+	import Crews from './components/Crews.svelte';
+	import { getCrewsFromQuery } from './services';
 
-	type Result = Awaited<typeof data.pageData>;
+	type Result = Awaited<PageData['pageData']>;
 
 	let { data } = $props();
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { LayoutProps } from './$types';
 	import Tabs from '$lib/components/Tabs.svelte';
+	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 </script>

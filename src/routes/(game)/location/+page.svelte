@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
+	import type { PageData } from './$types';
 	import { Loader2 } from 'lucide-svelte';
-	import Locations from '$lib/components/Locations.svelte';
+	import Locations from './components/Locations.svelte';
+	import HardModeSwitch from './components/HardModeSwitch.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
-	import HardModeSwitch from '$lib/components/HardModeSwitch.svelte';
-	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import { getLocationsFromQuery } from '$lib/services/locationService.js';
+	import { getLocationsFromQuery } from './services';
+	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 
-	type Result = Awaited<typeof data.pageData>;
+	type Result = Awaited<PageData['pageData']>;
 
 	let { data } = $props();
 
 	let result = $state<Result>();
 	let gettingNewData = $state(false);
-	let isHardMode = $derived(!!result?.isHardMode);
 
 	$effect(() => {
 		(async () => {

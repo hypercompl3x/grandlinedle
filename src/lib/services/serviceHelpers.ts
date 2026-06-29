@@ -1,6 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Character, Crew, Location } from '$lib/types/DatabaseTypes';
-import type { Database } from '$lib/types/DatabaseTypes';
+import type { Character, Crew, Location, Database } from '$lib/types/DatabaseTypes';
 
 const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<Database>) => {
 	const {

@@ -2,16 +2,14 @@
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
-	import Settings from '$lib/components/Settings.svelte';
-	import PatchNotes from '$lib/components/PatchNotes.svelte';
-	import CongratsModal from '$lib/components/CongratsModal.svelte';
-	import Banner from '$lib/components/Banner.svelte';
+	import Settings from './components/Settings.svelte';
+	import PatchNotes from './components/PatchNotes.svelte';
+	import Results from './components/Results.svelte';
+	import Banner from './components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
 	let { data, children }: LayoutProps = $props();
-
-	let dialog = $state<HTMLDialogElement>();
 </script>
 
 <div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
@@ -29,15 +27,10 @@
 			<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
 		</div>
 		{#if data.completed}
-			<button
-				type="button"
-				class="py-1.5 px-3 font-semibold text-2xl rounded-md bg-red-primary text-white mb-4"
-				onclick={() => dialog?.showModal()}>Share your results!</button
-			>
+			<Results {data} />
 		{/if}
 		{@render children()}
 	</div>
 </div>
 
-<CongratsModal {data} bind:dialog></CongratsModal>
 <Banner hideSuggestionBanner={data.hideSuggestionBanner} />

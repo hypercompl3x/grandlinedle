@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { CharacterWithImage, Quote } from '$lib/types/DatabaseTypes';
 	import { cn } from '$lib/utils/helpers';
+	import type { CharacterWithImage, Quote } from '$lib/types/DatabaseTypes';
 
 	type Props = {
 		currentQuote: Quote;

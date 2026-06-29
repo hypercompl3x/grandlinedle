@@ -3,6 +3,7 @@
 	import type { LayoutProps } from './$types';
 	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
 	import Settings from '$lib/components/Settings.svelte';
+	import PatchNotes from '$lib/components/PatchNotes.svelte';
 	import CongratsModal from '$lib/components/CongratsModal.svelte';
 	import Banner from '$lib/components/Banner.svelte';
 	import { cn } from '$lib/utils/helpers';
@@ -21,6 +22,7 @@
 		})}
 	>
 		<div class="w-full flex justify-center items-center">
+			<PatchNotes />
 			<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
 				<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="my-4 w-96" />
 			</a>

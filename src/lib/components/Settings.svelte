@@ -50,7 +50,12 @@
 	onclick={() => dialog?.showModal()}
 	onmouseenter={onMouseEnter}
 	onmouseleave={onMouseLeave}
-	class="h-fit"><Settings id="settings-icon" size={40} class="text-grey" /></button
+	class="h-fit group/settings"
+	><Settings
+		id="settings-icon"
+		size={40}
+		class="text-grey group-hover/settings:text-grey-dark transition-colors duration-500"
+	/></button
 >
 
 <dialog

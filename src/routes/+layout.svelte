@@ -10,6 +10,8 @@
 	import '../app.css';
 
 	let { data, children }: LayoutProps = $props();
+
+	let pageHasError = $derived(!!page.error?.message);
 </script>
 
 <div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
@@ -20,17 +22,25 @@
 		})}
 	>
 		<div class="w-full flex justify-center items-center px-4 my-4">
-			<PatchNotes />
-			<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
-				<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="w-96" />
-			</a>
-			<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
+			{#if !pageHasError}
+				<PatchNotes />
+				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
+					<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="w-96" />
+				</a>
+				<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
+			{:else}
+				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
+					<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="w-96" />
+				</a>
+			{/if}
 		</div>
-		{#if data.completed}
+		{#if data.completed && !pageHasError}
 			<Results {data} />
 		{/if}
 		{@render children()}
 	</div>
 </div>
 
-<Banner hideSuggestionBanner={data.hideSuggestionBanner} />
+{#if !pageHasError}
+	<Banner hideSuggestionBanner={data.hideSuggestionBanner} />
+{/if}

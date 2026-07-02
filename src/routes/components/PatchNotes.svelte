@@ -10,6 +10,17 @@
 
 	const PATCH_NOTES: PatchNote[] = [
 		{
+			date: '03/07/26',
+			parts: [
+				{ text: 'Monkey D. Luffy', type: 'character' },
+				{ text: ' is now ' },
+				{ text: 'Zoan', type: 'updated_value' },
+				{
+					text: ' (formerly Paramecia).',
+				},
+			],
+		},
+		{
 			date: '02/07/26',
 			parts: [
 				{ text: 'Crocodile', type: 'character' },

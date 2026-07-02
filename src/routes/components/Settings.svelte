@@ -54,8 +54,7 @@
 	>
 		<Settings
 			id="settings-icon"
-			size={40}
-			class="text-grey group-hover/settings:text-grey-dark transition-colors duration-500"
+			class="text-grey group-hover/settings:text-grey-dark transition-colors duration-500 sm:size-12 xs:size-10 size-8"
 		/>
 	</button>
 {/snippet}

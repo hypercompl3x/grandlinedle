@@ -59,7 +59,7 @@
 
 		<div class="w-full max-w-(--breakpoint-sm) px-4">
 			<div class="overflow-hidden shadow-sm rounded-md">
-				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
+				<enhanced:img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
 			</div>
 		</div>
 		{#if !crewHasBeenGuessed}

@@ -63,7 +63,7 @@
 				<HardModeSwitch checked={result.isHardMode} />
 			{/if}
 			<div class="overflow-hidden shadow-sm rounded-md">
-				<img
+				<enhanced:img
 					data-testid="current-location"
 					src={result.currentLocation.url}
 					alt="Today's location"

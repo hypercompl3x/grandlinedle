@@ -10,6 +10,17 @@
 
 	const PATCH_NOTES: PatchNote[] = [
 		{
+			date: '02/07/26',
+			parts: [
+				{ text: 'Crocodile', type: 'character' },
+				{ text: ' now has ' },
+				{ text: 'Observation, Armament', type: 'updated_value' },
+				{
+					text: ' (formerly None).',
+				},
+			],
+		},
+		{
 			date: '29/06/26',
 			parts: [
 				{ text: 'Camie', type: 'character' },
@@ -26,8 +37,7 @@
 {#snippet button(onClick: () => void)}
 	<button type="button" onclick={onClick} class="h-fit group/patchnotes">
 		<ScrollText
-			size={40}
-			class="text-grey group-hover/patchnotes:text-grey-dark transition-colors duration-500"
+			class="text-grey group-hover/patchnotes:text-grey-dark transition-colors duration-500 sm:size-12 xs:size-10 size-8"
 		/>
 	</button>
 {/snippet}

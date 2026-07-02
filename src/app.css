@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 @theme {
+	--breakpoint-xs: 400px;
+
 	--color-*: initial;
 	--color-transparent: transparent;
 	--color-white: #fff;

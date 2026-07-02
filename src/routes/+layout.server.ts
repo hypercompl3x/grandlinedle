@@ -1,12 +1,18 @@
+import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { GAME_MODE } from '$lib/utils/constants';
-import { objectAsValues } from '$lib/utils/helpers';
-import { getArrayLengthFromCookie } from '$lib/utils/helpers';
-import { COOKIE } from '$lib/utils/constants';
+import { kv } from '$lib/kv';
+import { GAME_MODE, COOKIE } from '$lib/utils/constants';
+import { objectAsValues, getArrayLengthFromCookie } from '$lib/utils/helpers';
 
 const GAME_MODES = objectAsValues(GAME_MODE);
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
+	const maintenanceEnabled = await kv.get<boolean>('maintenance:enabled');
+
+	if (maintenanceEnabled) {
+		error(503, `Grandlinedle is down for planned maintenance. We'll be back soon!`);
+	}
+
 	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 	const completed = JSON.parse(completedString);
 

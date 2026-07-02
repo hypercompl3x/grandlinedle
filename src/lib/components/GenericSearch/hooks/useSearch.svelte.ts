@@ -4,13 +4,15 @@ import { invalidateAll } from '$app/navigation';
 import { applyAction } from '$app/forms';
 import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
+import { getEasterEggCharacters } from '$lib/services/characterService';
+import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
 import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
 import theOnePieceIsReal from '$lib/assets/the-one-piece-is-real.m4a';
 
 let hisashiburidanaMugiwaraSound: Sound | undefined;
 let theOnePieceIsRealSound: Sound | undefined;
 
-const useSearch = <T extends { id: number; name: string; url?: string }>(
+const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	page: 'character' | 'location' | 'quote' | 'crew',
 	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
@@ -34,13 +36,13 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 	const handleSearch: FormEventHandler<HTMLInputElement> = async e => {
 		if (!hisashiburidanaMugiwaraSound) {
 			hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
-				volume: 0.8,
+				volume: 0.7,
 			});
 		}
 
 		if (!theOnePieceIsRealSound) {
 			theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
-				volume: 0.8,
+				volume: 0.7,
 			});
 		}
 
@@ -52,20 +54,20 @@ const useSearch = <T extends { id: number; name: string; url?: string }>(
 
 		await currentSearchPromise;
 
-		if (query === '3D2Y' && page === 'character') {
-			const newItems = await getItemsFromQuery('Hyde', guessIds());
-			updateAllItems(newItems);
+		if (query.toLowerCase().includes('hyde') && page === 'character') {
+			const newItems = await getEasterEggCharacters(guessIds());
+			updateAllItems(newItems as T[]);
 			return;
 		}
 
-		if (query === 'Mugiwara' && page === 'character') {
+		if (query.toLowerCase() === 'mugiwara' && page === 'character') {
 			hisashiburidanaMugiwaraSound.stop();
 			hisashiburidanaMugiwaraSound.play();
 			updateAllItems([]);
 			return;
 		}
 
-		if (query === 'Laugh Tale' && page === 'location') {
+		if (query.toLowerCase() === 'laugh tale' && page === 'location') {
 			theOnePieceIsRealSound.stop();
 			theOnePieceIsRealSound.play();
 			updateAllItems([]);

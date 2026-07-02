@@ -25,9 +25,9 @@
 			parts: [
 				{ text: 'Camie', type: 'character' },
 				{ text: ' is now from ' },
-				{ text: 'Summit War', type: 'updated_value' },
+				{ text: 'Sabaody Archipelago', type: 'updated_value' },
 				{
-					text: " (formerly Alabasta). The cover pages are no longer taken into account for a character's first saga.",
+					text: " (formerly Alabasta). The cover pages are no longer taken into account for a character's first arc.",
 				},
 			],
 		},

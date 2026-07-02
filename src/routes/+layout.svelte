@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
-	import GrandlinedleLogo from '$lib/assets/grandlinedle-logo.png';
 	import Settings from './components/Settings.svelte';
 	import PatchNotes from './components/PatchNotes.svelte';
 	import Results from './components/Results.svelte';
@@ -25,12 +24,12 @@
 			{#if !pageHasError}
 				<PatchNotes />
 				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
-					<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="w-96" />
+					<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
 				</a>
 				<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
 			{:else}
 				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
-					<img alt="The grandlinedle logo" src={GrandlinedleLogo} class="w-96" />
+					<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
 				</a>
 			{/if}
 		</div>

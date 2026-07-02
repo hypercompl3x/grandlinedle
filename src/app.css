@@ -24,7 +24,7 @@
 	--color-grey: #696969;
 	--color-grey-dark: #424242;
 
-	--background-image-page-background: url('/src/lib/assets/one-piece-bg.webp');
+	--background-image-page-background: url('/one-piece-bg.webp');
 }
 
 @layer base {

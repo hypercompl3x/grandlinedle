@@ -62,7 +62,7 @@ export const animateNewItem = async (
 			.from('#last_bounty-0', {})
 			.from('#height-0', {})
 			.from('#origin-0', {})
-			.from('#first_saga-0', {});
+			.from('#first_arc-0', {});
 	} else if (variant === 'location') {
 		tl.from('#location-0', {});
 	} else if (variant === 'crew') {

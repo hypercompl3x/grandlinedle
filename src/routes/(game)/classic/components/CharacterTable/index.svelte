@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Character, CharacterWithImage } from '$lib/types/DatabaseTypes';
-	import { COLUMNS, HAKI_MAP, SAGA_MAP } from '$lib/utils/constants';
-	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import Cell from './Cell.svelte';
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry.png';
+	import { ARCS, COLUMNS, HAKI_MAP } from '$lib/utils/constants';
+	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
+	import type { Character, CharacterWithImage } from '$lib/types/DatabaseTypes';
 
 	type Props = {
 		guesses: CharacterWithImage[];
@@ -13,12 +13,20 @@
 
 	let { guesses, currentCharacter }: Props = $props();
 
-	const getSagaIndex = (saga: string) => SAGA_MAP?.[saga] || 0;
+	const getArcArrow = (answerArc: string, guessArc: string) => {
+		const answerIndex = ARCS.indexOf(answerArc);
+		const guessIndex = ARCS.indexOf(guessArc);
+
+		if (answerIndex === -1 || guessIndex === -1) return undefined;
+		if (answerIndex === guessIndex) return undefined;
+
+		return answerIndex > guessIndex ? 'up' : 'down';
+	};
 </script>
 
 <div class="w-full px-8 pb-8 lg:px-2">
 	<div
-		class="grid w-full overflow-x-auto grid-cols-[75px_75px_75px_75px_75px_75px_75px_75px_75px] text-base font-semibold leading-tight text-center text-white gap-x-2 gap-y-3"
+		class="grid w-full overflow-x-auto grid-cols-[repeat(9,75px)] text-base font-semibold leading-tight text-center text-white gap-x-2 gap-y-3"
 	>
 		{#each COLUMNS as col (`${col}-column`)}
 			<div
@@ -116,15 +124,13 @@
 				{character.origin}
 			</Cell>
 			<Cell
-				id={`first_saga-${i}`}
-				red={character.first_saga !== currentCharacter.first_saga}
-				class={{ 'text-sm': character.first_saga === 'Dressrosa' }}
-				arrow={getSagaIndex(currentCharacter.first_saga) > getSagaIndex(character.first_saga)
-					? 'up'
-					: 'down'}
+				id={`first_arc-${i}`}
+				red={character.first_arc !== currentCharacter.first_arc}
+				class={{ 'text-sm': character.first_arc === 'Dressrosa' }}
+				arrow={getArcArrow(currentCharacter.first_arc, character.first_arc)}
 			>
 				<div class="z-10">
-					{character.first_saga}
+					{character.first_arc}
 				</div>
 			</Cell>
 		{/each}

@@ -59,7 +59,7 @@ export type Database = {
 					affiliation: string;
 					created_at: string;
 					devil_fruit: string;
-					first_saga: string;
+					first_arc: string;
 					gender: string;
 					haki: string[];
 					height_cm: number;
@@ -73,7 +73,7 @@ export type Database = {
 					affiliation: string;
 					created_at?: string;
 					devil_fruit: string;
-					first_saga: string;
+					first_arc: string;
 					gender: string;
 					haki: string[];
 					height_cm: number;
@@ -87,7 +87,7 @@ export type Database = {
 					affiliation?: string;
 					created_at?: string;
 					devil_fruit?: string;
-					first_saga?: string;
+					first_arc?: string;
 					gender?: string;
 					haki?: string[];
 					height_cm?: number;
@@ -146,28 +146,28 @@ export type Database = {
 					{
 						foreignKeyName: 'game_history_character_id_fkey';
 						columns: ['character_id'];
-						isOneToOne: true;
+						isOneToOne: false;
 						referencedRelation: 'characters';
 						referencedColumns: ['id'];
 					},
 					{
 						foreignKeyName: 'game_history_crew_id_fkey';
 						columns: ['crew_id'];
-						isOneToOne: true;
+						isOneToOne: false;
 						referencedRelation: 'crews';
 						referencedColumns: ['id'];
 					},
 					{
 						foreignKeyName: 'game_history_location_id_fkey';
 						columns: ['location_id'];
-						isOneToOne: true;
+						isOneToOne: false;
 						referencedRelation: 'locations';
 						referencedColumns: ['id'];
 					},
 					{
 						foreignKeyName: 'game_history_quote_id_fkey';
 						columns: ['quote_id'];
-						isOneToOne: true;
+						isOneToOne: false;
 						referencedRelation: 'quotes';
 						referencedColumns: ['id'];
 					},

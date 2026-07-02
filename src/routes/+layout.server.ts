@@ -4,13 +4,17 @@ import { kv } from '$lib/kv';
 import { GAME_MODE, COOKIE } from '$lib/utils/constants';
 import { objectAsValues, getArrayLengthFromCookie } from '$lib/utils/helpers';
 
+import { VERCEL_ENV } from '$env/static/private';
+
 const GAME_MODES = objectAsValues(GAME_MODE);
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-	const maintenanceEnabled = await kv.get<boolean>('maintenance:enabled');
+	if (VERCEL_ENV !== 'development') {
+		const maintenanceEnabled = await kv.get<boolean>('maintenance:enabled');
 
-	if (maintenanceEnabled) {
-		error(503, `Grandlinedle is down for planned maintenance. We'll be back soon!`);
+		if (maintenanceEnabled) {
+			error(503, `Grandlinedle is down for planned maintenance. We'll be back soon!`);
+		}
 	}
 
 	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';

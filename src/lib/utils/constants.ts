@@ -11,7 +11,7 @@ export const COLUMNS = [
 	'Last Bounty',
 	'Height',
 	'Origin',
-	'First Saga',
+	'First Arc',
 ];
 
 export const HAKI_MAP: Record<string, string> = {
@@ -20,20 +20,41 @@ export const HAKI_MAP: Record<string, string> = {
 	Observation: Observation,
 };
 
-export const SAGA_MAP: Record<string, number> = {
-	'East Blue': 0,
-	Alabasta: 1,
-	'Sky Island': 2,
-	'Water 7': 3,
-	'Thriller Bark': 4,
-	'Summit War': 5,
-	'Fish-Man Island': 6,
-	Dressrosa: 7,
-	'Whole Cake Island': 8,
-	'Wano Country': 9,
-	Egghead: 10,
-	Elbaph: 11,
-};
+export const ARCS: string[] = [
+	'Romance Dawn',
+	'Orange Town',
+	'Syrup Village',
+	'Baratie',
+	'Arlong Park',
+	'Loguetown',
+	'Reverse Mountain',
+	'Whiskey Peak',
+	'Little Garden',
+	'Drum Island',
+	'Alabasta',
+	'Jaya',
+	'Skypiea',
+	'Long Ring Long Land',
+	'Water 7',
+	'Enies Lobby',
+	'Post-Enies Lobby',
+	'Thriller Bark',
+	'Sabaody Archipelago',
+	'Amazon Lily',
+	'Impel Down',
+	'Marineford',
+	'Post-War',
+	'Return to Sabaody',
+	'Fish-Man Island',
+	'Punk Hazard',
+	'Dressrosa',
+	'Zou',
+	'Whole Cake Island',
+	'Reverie',
+	'Wano Country',
+	'Egghead',
+	'Elbaph',
+];
 
 export const GAME_MODE = {
 	CHARACTER: 'character',

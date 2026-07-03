@@ -6,6 +6,7 @@ import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 import { getEasterEggCharacters } from '$lib/services/characterService';
 import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
+import type { Page } from '$lib/types/SearchTypes';
 import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
 import theOnePieceIsReal from '$lib/assets/the-one-piece-is-real.m4a';
 
@@ -13,7 +14,7 @@ let hisashiburidanaMugiwaraSound: Sound | undefined;
 let theOnePieceIsRealSound: Sound | undefined;
 
 const useSearch = <T extends CharacterWithImage | Location | Crew>(
-	page: 'character' | 'location' | 'quote' | 'crew',
+	page: Page,
 	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
 	guessIds: () => T['id'][],

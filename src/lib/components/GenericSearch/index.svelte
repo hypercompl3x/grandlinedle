@@ -1,37 +1,17 @@
-<script lang="ts" generics="T extends {id: number, name: string, url?: string}">
+<script lang="ts" generics="T extends CharacterWithImage | Location | Crew">
 	import { enhance } from '$app/forms';
 	import { Loader2, Search } from 'lucide-svelte';
 	import useOnClickOutside from '$lib/hooks/useOnClickOutside.svelte';
 	import useSearch from './hooks/useSearch.svelte';
-
-	const SEARCH_MAP = {
-		character: {
-			noItemsFoundMessage: 'No characters found',
-			searchPlaceholder: 'Search for a character...',
-			buttonName: 'characterId',
-		},
-		location: {
-			noItemsFoundMessage: 'No locations found',
-			searchPlaceholder: 'Search for a location...',
-			buttonName: 'locationId',
-		},
-		quote: {
-			noItemsFoundMessage: 'No characters found',
-			searchPlaceholder: 'Search for a character...',
-			buttonName: 'characterId',
-		},
-		crew: {
-			noItemsFoundMessage: 'No crews found',
-			searchPlaceholder: 'Search for a crew...',
-			buttonName: 'crewId',
-		},
-	};
+	import { SEARCH_MAP } from '$lib/utils/constants';
+	import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
+	import type { Page } from '$lib/types/SearchTypes';
 
 	type Props = {
 		guessIds: T['id'][];
 		gettingNewData: boolean;
 		getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>;
-		page: keyof typeof SEARCH_MAP;
+		page: Page;
 	};
 
 	let props: Props = $props();
@@ -42,7 +22,7 @@
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
-{#snippet dropdownItem({id, name, url}: Pick<T, 'id' | 'name' | 'url'>)}
+{#snippet dropdownItem({id, name, url}: {id: number, name: string, url?: string})}
 	<button
 		data-testid={`dropdown-item-${name}`}
 		name={buttonName}
@@ -92,7 +72,8 @@
 					</div>
 				{:else}
 					{#each search.filteredItems as item (`${item.id}-dropdown-item`)}
-						{@const { name, id, url } = item}
+						{@const { name, id } = item}
+						{@const url = 'url' in item ? item.url : undefined}
 						{@render dropdownItem({ name, id, url })}
 					{/each}
 				{/if}

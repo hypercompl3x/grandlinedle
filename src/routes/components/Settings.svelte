@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Settings } from 'lucide-svelte';
 	import gsap, { Power1 } from 'gsap';
-	import { invalidateAll } from '$app/navigation';
 	import Modal from '$lib/components/Modal.svelte';
+	import { updateSettings } from '$lib/remote/settings.remote';
 
 	type Props = {
 		hideSuggestionBanner: boolean;
@@ -10,7 +10,15 @@
 
 	let { hideSuggestionBanner }: Props = $props();
 
+	$effect(() => {
+		updateSettings.fields.set({
+			hideSuggestionBanner,
+		});
+	});
+
 	let submitting = $state(false);
+
+	let formEl = $state<HTMLFormElement>();
 
 	const onMouseEnter = () => {
 		gsap.to('#settings-icon', {
@@ -27,20 +35,6 @@
 			duration: 1,
 			ease: Power1.easeOut,
 		});
-	};
-
-	const handleCheck = async (checked: boolean) => {
-		try {
-			submitting = true;
-			await fetch(`/api/settings?hideSuggestionBanner=${checked}`, {
-				method: 'POST',
-			});
-			await invalidateAll();
-		} catch (error) {
-			console.error(error);
-		} finally {
-			submitting = false;
-		}
 	};
 </script>
 
@@ -60,17 +54,28 @@
 {/snippet}
 
 <Modal {button} headerClass="bg-grey" containerClass="text-center" name="Settings">
-	<div class="flex items-center py-3 gap-x-3">
-		<input
-			id="hidesuggestionbanner"
-			type="checkbox"
-			disabled={submitting}
-			checked={hideSuggestionBanner}
-			class="hover:cursor-pointer disabled:hover:cursor-auto peer"
-			onchange={e => handleCheck(e.currentTarget.checked)}
-		/>
-		<label for="hidesuggestionbanner" class="hover:cursor-pointer peer-disabled:hover:cursor-auto">
+	<form
+		bind:this={formEl}
+		class="flex items-center py-3 gap-x-3"
+		{...updateSettings.enhance(async form => {
+			try {
+				submitting = true;
+				await form.submit();
+			} catch (error) {
+				console.error(error);
+			} finally {
+				submitting = false;
+			}
+		})}
+	>
+		<label class="hover:cursor-pointer has-disabled:hover:cursor-auto">
+			<input
+				disabled={submitting}
+				class="hover:cursor-pointer disabled:hover:cursor-auto"
+				{...updateSettings.fields.hideSuggestionBanner.as('checkbox')}
+				onchange={() => formEl?.requestSubmit()}
+			/>
 			Hide suggestion banner
 		</label>
-	</div>
+	</form>
 </Modal>

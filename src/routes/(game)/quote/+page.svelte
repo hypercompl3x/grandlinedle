@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 	let gettingNewData = $state(false);
 
 	$effect(() => {
@@ -51,8 +51,8 @@
 		Guess who said today's One Piece quote!
 	</h1>
 	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const quoteHasBeenGuessed = guessIds.includes(result.currentQuote.character_id)}
+		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
+		{const quoteHasBeenGuessed = $derived(guessIds.includes(result.currentQuote.character_id))}
 
 		{#if !quoteHasBeenGuessed}
 			<div class="flex gap-x-8">

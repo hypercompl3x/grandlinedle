@@ -7,7 +7,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 
 	$effect(() => {
 		(async () => {

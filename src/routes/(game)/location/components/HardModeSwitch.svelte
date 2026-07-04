@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { switchDifficulty } from '$lib/remote/location.remote';
 
 	type Props = {
 		checked: boolean;
@@ -9,27 +9,26 @@
 
 	let updatingDifficulty = $state(false);
 	let showTooltip = $state(false);
+</script>
 
-	const check = async () => {
+<form
+	class="flex items-center justify-center gap-x-2"
+	{...switchDifficulty.enhance(async form => {
 		try {
+			showTooltip = false;
 			updatingDifficulty = true;
-			await fetch('/api/difficulty', {
-				method: 'POST',
-			});
-			await invalidateAll();
+			await form.submit();
 		} catch (error) {
 			console.error(error);
 		} finally {
 			updatingDifficulty = false;
 		}
-	};
-</script>
-
-<div class="flex items-center justify-center gap-x-2">
+	})}
+>
 	<div class="text-xl font-bold text-white text-shadow-xs text-shadow-black">Easy</div>
 	<div class="relative flex items-center">
 		<button
-			type="button"
+			type="submit"
 			role="switch"
 			aria-label="Is hard mode"
 			aria-checked={checked}
@@ -39,10 +38,6 @@
 			disabled={!checked || updatingDifficulty}
 			onmouseenter={() => (showTooltip = true)}
 			onmouseleave={() => (showTooltip = false)}
-			onclick={() => {
-				showTooltip = false;
-				check();
-			}}
 		>
 			<span
 				class="pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform {checked
@@ -61,4 +56,4 @@
 		{/if}
 	</div>
 	<div class="text-xl font-bold text-white text-shadow-xs text-shadow-black">Hard</div>
-</div>
+</form>

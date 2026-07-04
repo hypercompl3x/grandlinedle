@@ -14,24 +14,20 @@
 	let dialog = $state<HTMLDialogElement>();
 
 	let previousCompleted = $state(false);
-	let playerName = $state('');
 	let submissionError = $state('');
 	let submitting = $state(false);
 	let submitSuccessful = $state(false);
 	let showCopiedMessage = $state(false);
 
+	let playerName = $derived(data.playerName || '');
 	const copyText = $derived(
 		() => `I've completed all the modes of Grandlinedle #${data.todayNumber} today:
-❓ Classic: ${data.characterGuessesLen}
-🌍 ${data.locationHardMode ? 'Hard' : 'Easy'} Location: ${data.locationGuessesLen}
-💬 Quote: ${data.quoteCharacterGuessesLen}
-🏴‍☠️ Crew: ${data.crewGuessesLen}
-https://grandlinedle.com`,
+			❓ Classic: ${data.characterGuessesLen}
+			🌍 ${data.locationHardMode ? 'Hard' : 'Easy'} Location: ${data.locationGuessesLen}
+			💬 Quote: ${data.quoteCharacterGuessesLen}
+			🏴‍☠️ Crew: ${data.crewGuessesLen}
+			https://grandlinedle.com`,
 	);
-
-	$effect(() => {
-		playerName = data.playerName || '';
-	});
 
 	$effect(() => {
 		if (!dialog) return;

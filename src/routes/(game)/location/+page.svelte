@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 	let gettingNewData = $state(false);
 
 	$effect(() => {
@@ -55,15 +55,15 @@
 		Guess today's One Piece location!
 	</h1>
 	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
+		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
+		{const locationHasBeenGuessed = $derived(guessIds.includes(result.currentLocation.id))}
 
 		<div class="w-full max-w-(--breakpoint-sm) px-4 space-y-2">
 			{#if !locationHasBeenGuessed}
 				<HardModeSwitch checked={result.isHardMode} />
 			{/if}
 			<div class="overflow-hidden shadow-sm rounded-md">
-				<enhanced:img
+				<img
 					data-testid="current-location"
 					src={result.currentLocation.url}
 					alt="Today's location"

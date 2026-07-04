@@ -71,8 +71,8 @@
 		<div class="basis-1/3">Avg Guesses</div>
 	</div>
 	{#each leaderboard as { id, player, classic, location, quote, crew }, index (`mobile-table-${id}`)}
-		{@const averageGuesses =
-			Math.round(((classic + location + quote + crew) / NUMBER_OF_GAME_MODES) * 10) / 10}
+		{const averageGuesses =
+			$derived(Math.round(((classic + location + quote + crew) / NUMBER_OF_GAME_MODES) * 10) / 10)}
 		<div
 			class="flex items-center w-full h-12 text-sm font-semibold text-center text-white rounded-md shadow-lg bg-green-primary"
 		>

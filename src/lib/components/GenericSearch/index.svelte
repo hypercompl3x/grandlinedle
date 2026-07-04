@@ -1,48 +1,29 @@
-<script lang="ts" generics="T extends {id: number, name: string, url?: string}">
+<script lang="ts" generics="T extends CharacterWithImage | Location | Crew">
 	import { enhance } from '$app/forms';
 	import { Loader2, Search } from 'lucide-svelte';
 	import useOnClickOutside from '$lib/hooks/useOnClickOutside.svelte';
 	import useSearch from './hooks/useSearch.svelte';
-
-	const SEARCH_MAP = {
-		character: {
-			noItemsFoundMessage: 'No characters found',
-			searchPlaceholder: 'Search for a character...',
-			buttonName: 'characterId',
-		},
-		location: {
-			noItemsFoundMessage: 'No locations found',
-			searchPlaceholder: 'Search for a location...',
-			buttonName: 'locationId',
-		},
-		quote: {
-			noItemsFoundMessage: 'No characters found',
-			searchPlaceholder: 'Search for a character...',
-			buttonName: 'characterId',
-		},
-		crew: {
-			noItemsFoundMessage: 'No crews found',
-			searchPlaceholder: 'Search for a crew...',
-			buttonName: 'crewId',
-		},
-	};
+	import { SEARCH_MAP } from '$lib/utils/constants';
+	import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
+	import type { Page } from '$lib/types/SearchTypes';
 
 	type Props = {
 		guessIds: T['id'][];
 		gettingNewData: boolean;
 		getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>;
-		page: keyof typeof SEARCH_MAP;
+		page: Page;
 	};
 
-	let props: Props = $props();
+	let { page, getItemsFromQuery, gettingNewData, guessIds }: Props = $props();
 
-	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
+	let { noItemsFoundMessage, searchPlaceholder, buttonName } = $derived(SEARCH_MAP[page]);
 
-	const search = useSearch(props.page, buttonName, props.getItemsFromQuery, () => props.guessIds);
+	// svelte-ignore state_referenced_locally
+	const search = useSearch(page, buttonName, getItemsFromQuery, () => guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
-{#snippet dropdownItem({id, name, url}: Pick<T, 'id' | 'name' | 'url'>)}
+{#snippet dropdownItem({id, name, url}: {id: number, name: string, url?: string})}
 	<button
 		data-testid={`dropdown-item-${name}`}
 		name={buttonName}
@@ -60,17 +41,17 @@
 <div class="w-full px-4 max-w-96">
 	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
-			data-testid={`search-input-${props.page}`}
+			data-testid={`search-input-${page}`}
 			type="text"
 			oninput={search.handleSearch}
 			onkeydown={search.handleKeyDown}
 			value={search.query}
 			onclick={() => (search.isDropdownOpen = true)}
-			disabled={props.gettingNewData}
+			disabled={gettingNewData}
 			placeholder={searchPlaceholder}
 			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white rounded-md focus-visible:outline-hidden shadow-md"
 		/>
-		{#if props.gettingNewData}
+		{#if gettingNewData}
 			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin text-grey" />
 		{:else}
 			<Search size={20} class="absolute inset-y-0 my-auto right-3 text-grey" />
@@ -92,7 +73,8 @@
 					</div>
 				{:else}
 					{#each search.filteredItems as item (`${item.id}-dropdown-item`)}
-						{@const { name, id, url } = item}
+						{const { name, id } = $derived(item)}
+						{const url = $derived('url' in item ? item.url : undefined)}
 						{@render dropdownItem({ name, id, url })}
 					{/each}
 				{/if}

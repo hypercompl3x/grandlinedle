@@ -25,9 +25,9 @@
 		page: keyof typeof SUCCESS_MAP;
 	};
 
-	let props: Props = $props();
+	let { page, correctGuess }: Props = $props();
 
-	const { imgAlt, nextMessage } = SUCCESS_MAP[props.page];
+	let { imgAlt, nextMessage } = $derived(SUCCESS_MAP[page]);
 
 	const getTimeLeft = () => {
 		const now = new Date();
@@ -58,10 +58,10 @@
 	<div class="p-4 space-y-5 leading-tight text-center text-white rounded-md bg-green-light">
 		<div class="text-3xl font-bold">Well Played!</div>
 		<div class="flex items-center justify-center gap-4 max-sm:flex-col">
-			<img src={props.correctGuess.url} alt={imgAlt} class="h-24 rounded-md" />
+			<img src={correctGuess.url} alt={imgAlt} class="h-24 rounded-md" />
 			<div>
 				<div class="font-semibold">You Guessed</div>
-				<div class="text-2xl font-bold">{props.correctGuess.name}</div>
+				<div class="text-2xl font-bold">{correctGuess.name}</div>
 			</div>
 		</div>
 		<div>

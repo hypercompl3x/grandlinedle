@@ -78,3 +78,26 @@ export const COOKIE = {
 } as const;
 
 export const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+
+export const SEARCH_MAP = {
+	character: {
+		noItemsFoundMessage: 'No characters found',
+		searchPlaceholder: 'Search for a character...',
+		buttonName: 'characterId',
+	},
+	location: {
+		noItemsFoundMessage: 'No locations found',
+		searchPlaceholder: 'Search for a location...',
+		buttonName: 'locationId',
+	},
+	quote: {
+		noItemsFoundMessage: 'No characters found',
+		searchPlaceholder: 'Search for a character...',
+		buttonName: 'characterId',
+	},
+	crew: {
+		noItemsFoundMessage: 'No crews found',
+		searchPlaceholder: 'Search for a crew...',
+		buttonName: 'crewId',
+	},
+} as const;

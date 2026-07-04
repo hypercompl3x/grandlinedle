@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 	let gettingNewData = $state(false);
 
 	$effect(() => {
@@ -51,8 +51,8 @@
 		Guess today's One Piece character!
 	</h1>
 	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const characterHasBeenGuessed = guessIds.includes(result.currentCharacter.id)}
+		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
+		{const characterHasBeenGuessed = $derived(guessIds.includes(result.currentCharacter.id))}
 
 		{#if !characterHasBeenGuessed}
 			<Hint

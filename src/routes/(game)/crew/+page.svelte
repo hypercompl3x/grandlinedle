@@ -12,7 +12,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 	let gettingNewData = $state(false);
 
 	$effect(() => {
@@ -54,12 +54,12 @@
 		Guess today's One Piece crew!
 	</h1>
 	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const crewHasBeenGuessed = guessIds.includes(result.currentCrew.id)}
+		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
+		{const crewHasBeenGuessed = $derived(guessIds.includes(result.currentCrew.id))}
 
 		<div class="w-full max-w-(--breakpoint-sm) px-4">
 			<div class="overflow-hidden shadow-sm rounded-md">
-				<enhanced:img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
+				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
 			</div>
 		</div>
 		{#if !crewHasBeenGuessed}

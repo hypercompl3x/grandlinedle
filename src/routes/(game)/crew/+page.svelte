@@ -12,7 +12,7 @@
 
 	let { data } = $props();
 
-	let result = $state<Result>();
+	let result = $state.raw<Result>();
 	let gettingNewData = $state(false);
 
 	$effect(() => {

@@ -9,21 +9,22 @@
 	let { hint, category, numberOfGuesses, guessesToReveal }: Props = $props();
 
 	let showHint = $state(false);
-	let guessesReached = $derived(() => numberOfGuesses > guessesToReveal - 1);
+	let guessesReached = $derived(numberOfGuesses > guessesToReveal - 1);
+	let remainingGuesses = $derived(guessesToReveal - numberOfGuesses);
+	let triesText = $derived(
+		`${category} clue in ${remainingGuesses} ${remainingGuesses === 1 ? 'try' : 'tries'}`,
+	);
 </script>
 
 <div class="flex flex-col items-center gap-y-2">
 	<button
-		disabled={!guessesReached()}
+		disabled={!guessesReached}
 		onclick={() => (showHint = !showHint)}
 		class="text-white p-2 font-bold text-base rounded-md disabled:bg-red-light bg-green-primary"
 	>
-		{#if guessesReached()}
+		{#if guessesReached}
 			{category} clue
 		{:else}
-			{@const remainingGuesses = guessesToReveal - numberOfGuesses}
-			{@const triesText = remainingGuesses === 1 ? 'try' : 'tries'}
-			{category} clue in {remainingGuesses}
 			{triesText}
 		{/if}
 	</button>

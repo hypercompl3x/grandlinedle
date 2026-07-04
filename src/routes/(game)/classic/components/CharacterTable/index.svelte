@@ -36,21 +36,23 @@
 			</div>
 		{/each}
 		{#each guesses as character, i (`${character.id}-guess`)}
-			{@const noHakiMatches =
-				currentCharacter.haki.length === 0
-					? character.haki.length > 0
-					: currentCharacter.haki.every(haki => !character.haki.includes(haki))}
-			{@const someHakiMatches = currentCharacter.haki.some(haki => character.haki.includes(haki))}
-			{@const allHakiMatches = currentCharacter.haki.every(haki => character.haki.includes(haki))}
-			{@const sameNumberOfHaki = currentCharacter.haki.length === character.haki.length}
+			{const hakiMatch = $derived({
+				none:
+					currentCharacter.haki.length === 0
+						? character.haki.length > 0
+						: currentCharacter.haki.every(haki => !character.haki.includes(haki)),
+				some: currentCharacter.haki.some(haki => character.haki.includes(haki)),
+				all: currentCharacter.haki.every(haki => character.haki.includes(haki)),
+				sameCount: currentCharacter.haki.length === character.haki.length,
+			})}
 
-			{@const heightMatches =
-				currentCharacter.height_cm === character.height_cm &&
-				currentCharacter.height_m === character.height_m}
-			{@const heightIsLarger =
-				currentCharacter.height_m > character.height_m ||
+			{const heightMatches =
+				$derived(currentCharacter.height_cm === character.height_cm &&
+				currentCharacter.height_m === character.height_m)}
+			{const heightIsLarger =
+				$derived(currentCharacter.height_m > character.height_m ||
 				(currentCharacter.height_m === character.height_m &&
-					currentCharacter.height_cm > character.height_cm)}
+					currentCharacter.height_cm > character.height_cm))}
 
 			<div class="relative overflow-hidden rounded-md group">
 				<img src={character.url} alt={`${character.name} Image Guess`} />
@@ -93,8 +95,8 @@
 			</Cell>
 			<Cell
 				id={`haki-${i}`}
-				red={noHakiMatches}
-				yellow={someHakiMatches && (!allHakiMatches || !sameNumberOfHaki)}
+				red={hakiMatch.none}
+				yellow={hakiMatch.some && (!hakiMatch.all || !hakiMatch.sameCount)}
 				class="flex-wrap content-center"
 			>
 				{#if character.haki.length > 0}

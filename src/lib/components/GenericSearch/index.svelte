@@ -14,11 +14,12 @@
 		page: Page;
 	};
 
-	let props: Props = $props();
+	let { page, getItemsFromQuery, gettingNewData, guessIds }: Props = $props();
 
-	const { noItemsFoundMessage, searchPlaceholder, buttonName } = SEARCH_MAP[props.page];
+	let { noItemsFoundMessage, searchPlaceholder, buttonName } = $derived(SEARCH_MAP[page]);
 
-	const search = useSearch(props.page, buttonName, props.getItemsFromQuery, () => props.guessIds);
+	// svelte-ignore state_referenced_locally
+	const search = useSearch(page, buttonName, getItemsFromQuery, () => guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 
@@ -40,17 +41,17 @@
 <div class="w-full px-4 max-w-96">
 	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
-			data-testid={`search-input-${props.page}`}
+			data-testid={`search-input-${page}`}
 			type="text"
 			oninput={search.handleSearch}
 			onkeydown={search.handleKeyDown}
 			value={search.query}
 			onclick={() => (search.isDropdownOpen = true)}
-			disabled={props.gettingNewData}
+			disabled={gettingNewData}
 			placeholder={searchPlaceholder}
 			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white rounded-md focus-visible:outline-hidden shadow-md"
 		/>
-		{#if props.gettingNewData}
+		{#if gettingNewData}
 			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin text-grey" />
 		{:else}
 			<Search size={20} class="absolute inset-y-0 my-auto right-3 text-grey" />
@@ -72,8 +73,8 @@
 					</div>
 				{:else}
 					{#each search.filteredItems as item (`${item.id}-dropdown-item`)}
-						{@const { name, id } = item}
-						{@const url = 'url' in item ? item.url : undefined}
+						{const { name, id } = $derived(item)}
+						{const url = $derived('url' in item ? item.url : undefined)}
 						{@render dropdownItem({ name, id, url })}
 					{/each}
 				{/if}

@@ -55,8 +55,8 @@
 		Guess today's One Piece location!
 	</h1>
 	{#if result}
-		{@const guessIds = result.guesses.map(guess => guess.id)}
-		{@const locationHasBeenGuessed = guessIds.includes(result.currentLocation.id)}
+		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
+		{const locationHasBeenGuessed = $derived(guessIds.includes(result.currentLocation.id))}
 
 		<div class="w-full max-w-(--breakpoint-sm) px-4 space-y-2">
 			{#if !locationHasBeenGuessed}

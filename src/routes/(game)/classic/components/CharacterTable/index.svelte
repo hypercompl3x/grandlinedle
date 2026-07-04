@@ -24,7 +24,7 @@
 	};
 </script>
 
-<div class="w-full px-8 pb-8 lg:px-2">
+<div class="w-full px-4 pb-8 lg:px-2">
 	<div
 		class="grid w-full overflow-x-auto grid-cols-[repeat(9,75px)] text-base font-semibold leading-tight text-center text-white gap-x-2 gap-y-3"
 	>

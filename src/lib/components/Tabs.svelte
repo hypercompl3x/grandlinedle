@@ -29,8 +29,11 @@
 					{
 						'from-green-light to-green-primary': name === 'Rankings',
 					},
-				)}><span>{icon}</span><span>{name}</span></a
+				)}
 			>
+				<span>{icon}</span>
+				<span>{name}</span>
+			</a>
 		{/each}
 	</nav>
 {:else}

@@ -16,8 +16,6 @@
 		});
 	});
 
-	let submitting = $state(false);
-
 	let formEl = $state<HTMLFormElement>();
 
 	const onMouseEnter = () => {
@@ -53,24 +51,21 @@
 	</button>
 {/snippet}
 
-<Modal {button} headerClass="bg-grey" containerClass="text-center" name="Settings">
+<Modal {button} headerClass="bg-grey" containerClass="text-center p-2" name="Settings">
 	<form
 		bind:this={formEl}
 		class="flex items-center py-3 gap-x-3"
 		{...updateSettings.enhance(async form => {
 			try {
-				submitting = true;
 				await form.submit();
 			} catch (error) {
 				console.error(error);
-			} finally {
-				submitting = false;
 			}
 		})}
 	>
-		<label class="hover:cursor-pointer has-disabled:hover:cursor-auto">
+		<label>
 			<input
-				disabled={submitting}
+				disabled={!!updateSettings.pending}
 				class="hover:cursor-pointer disabled:hover:cursor-auto"
 				{...updateSettings.fields.hideSuggestionBanner.as('checkbox')}
 				onchange={() => formEl?.requestSubmit()}

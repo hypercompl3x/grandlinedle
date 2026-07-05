@@ -5,6 +5,7 @@
 	import PatchNotes from './components/PatchNotes.svelte';
 	import Results from './components/Results.svelte';
 	import Banner from './components/Banner.svelte';
+	import Footer from './components/Footer.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
@@ -37,6 +38,7 @@
 			<Results {data} />
 		{/if}
 		{@render children()}
+		<Footer />
 	</div>
 </div>
 

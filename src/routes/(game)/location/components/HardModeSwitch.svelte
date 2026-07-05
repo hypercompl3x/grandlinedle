@@ -7,7 +7,6 @@
 
 	let { checked }: Props = $props();
 
-	let updatingDifficulty = $state(false);
 	let showTooltip = $state(false);
 </script>
 
@@ -16,12 +15,9 @@
 	{...switchDifficulty.enhance(async form => {
 		try {
 			showTooltip = false;
-			updatingDifficulty = true;
 			await form.submit();
 		} catch (error) {
 			console.error(error);
-		} finally {
-			updatingDifficulty = false;
 		}
 	})}
 >
@@ -35,7 +31,7 @@
 			class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none shadow-xs shadow-black {checked
 				? 'bg-red-primary'
 				: 'bg-green-primary'}"
-			disabled={!checked || updatingDifficulty}
+			disabled={!checked || !!switchDifficulty.pending}
 			onmouseenter={() => (showTooltip = true)}
 			onmouseleave={() => (showTooltip = false)}
 		>

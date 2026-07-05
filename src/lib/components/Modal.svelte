@@ -7,11 +7,19 @@
 		name: string;
 		children: Snippet;
 		button: Snippet<[() => void]>;
+		disableClose?: boolean;
 		headerClass?: string;
 		containerClass?: string;
 	};
 
-	let { name, headerClass, containerClass, children, button }: Props = $props();
+	let {
+		name,
+		headerClass,
+		containerClass,
+		children,
+		button,
+		disableClose = false,
+	}: Props = $props();
 
 	let dialog = $state<HTMLDialogElement>();
 </script>
@@ -21,7 +29,7 @@
 	bind:this={dialog}
 	class="w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:opacity-40 fixed inset-0 m-auto h-fit"
 	onclick={e => {
-		if (e.target === dialog) {
+		if (e.target === dialog && !disableClose) {
 			dialog.close();
 		}
 	}}
@@ -30,13 +38,15 @@
 		<div class="text-xl font-semibold sm:text-3xl">{name}</div>
 		<button
 			type="button"
-			onclick={() => dialog?.close()}
+			onclick={() => {
+				if (!disableClose) dialog?.close();
+			}}
 			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
 		>
 			<X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" />
 		</button>
 	</div>
-	<div class={cn('flex flex-col items-center text-lg p-2', containerClass)}>
+	<div class={cn('flex flex-col items-center text-lg', containerClass)}>
 		{@render children()}
 	</div>
 </dialog>

@@ -137,18 +137,19 @@
 				}}
 			>
 				<div class="flex flex-col space-y-1">
-					<label for="playername" class="text-lg font-medium text-left">Player Name</label>
-					<input
-						id="playername"
-						name="playername"
-						class={cn(
-							'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-hidden',
-							{
-								'border-red-primary': !!submissionError,
-							},
-						)}
-						bind:value={playerName}
-					/>
+					<label class="text-lg font-medium text-left">
+						Player Name
+						<input
+							name="playername"
+							class={cn(
+								'w-full h-10 px-3 py-2 border border-black rounded-md focus-visible:outline-hidden mt-0.5',
+								{
+									'border-red-primary': !!submissionError,
+								},
+							)}
+							bind:value={playerName}
+						/>
+					</label>
 					<p class="text-sm text-left text-red-primary">{submissionError}</p>
 				</div>
 				<button

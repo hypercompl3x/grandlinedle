@@ -53,7 +53,7 @@
 	</button>
 {/snippet}
 
-<Modal {button} headerClass="bg-grey" containerClass="gap-y-3" name="Patch Notes">
+<Modal {button} headerClass="bg-grey" containerClass="gap-y-3 p-2" name="Patch Notes">
 	{#each PATCH_NOTES as { date, parts }, i (`patch-note-${i}`)}
 		<div>
 			{#each parts as { text, type }, j (`patch-note-part-${i}-${j}`)}

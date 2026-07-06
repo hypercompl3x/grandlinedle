@@ -9,7 +9,11 @@ const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 export const supportGrandlinedle = form(
 	v.object({
-		amount: v.pipe(v.number(), v.maxValue(1000, 'The maximum amount is £1000')),
+		amount: v.pipe(
+			v.number(),
+			v.minValue(1, 'The minimum amount is £1'),
+			v.maxValue(1000, 'The maximum amount is £1000'),
+		),
 		displayName: v.optional(v.string()),
 		yourMessage: v.optional(v.string()),
 	}),

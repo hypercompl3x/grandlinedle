@@ -128,7 +128,12 @@
 			<Cell
 				id={`first_arc-${i}`}
 				red={character.first_arc !== currentCharacter.first_arc}
-				class={{ 'text-sm': character.first_arc === 'Dressrosa' }}
+				class={{
+					'text-sm': character.first_arc === 'Dressrosa',
+					'text-xs': character.first_arc
+							.split(' ')
+							.some(word => word.length > 9)
+				}}
 				arrow={getArcArrow(currentCharacter.first_arc, character.first_arc)}
 			>
 				<div class="z-10">

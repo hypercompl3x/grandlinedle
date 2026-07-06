@@ -5,12 +5,12 @@ import { getMidnightGMT } from '$lib/utils/helpers';
 
 export const updateSettings = form(
 	v.object({
-		hideSuggestionBanner: v.optional(v.boolean(), false),
+		enableEasterEggs: v.optional(v.boolean(), false),
 	}),
-	async ({ hideSuggestionBanner }) => {
+	async ({ enableEasterEggs }) => {
 		const { cookies } = getRequestEvent();
 
-		cookies.set(COOKIE.HIDE_SUGGESTION_BANNER, hideSuggestionBanner.toString(), {
+		cookies.set(COOKIE.ENABLE_EASTER_EGGS, enableEasterEggs.toString(), {
 			path: '/',
 			expires: getMidnightGMT(),
 		});

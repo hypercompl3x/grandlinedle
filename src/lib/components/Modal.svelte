@@ -38,9 +38,8 @@
 		<div class="text-xl font-semibold sm:text-3xl">{name}</div>
 		<button
 			type="button"
-			onclick={() => {
-				if (!disableClose) dialog?.close();
-			}}
+			onclick={() => dialog?.close()}
+			disabled={disableClose}
 			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
 		>
 			<X class="stroke-2 sm:stroke-[3px] size-6 sm:size-8" />

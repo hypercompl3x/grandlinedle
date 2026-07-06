@@ -20,10 +20,9 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 	const completed = JSON.parse(completedString);
 
-	const hideSuggestionBanner = cookies.get(COOKIE.HIDE_SUGGESTION_BANNER) === 'true';
+	const enableEasterEggs = (cookies.get(COOKIE.ENABLE_EASTER_EGGS) || 'true') === 'true';
 
-	if (GAME_MODES.some(m => !completed.includes(m)))
-		return { completed: false, hideSuggestionBanner };
+	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false, enableEasterEggs };
 
 	const playerName = cookies.get(COOKIE.PLAYER_NAME) || '';
 	const submittedEntry = !!cookies.get(COOKIE.SUBMITTED_ENTRY);
@@ -57,6 +56,6 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		submittedEntry,
 		playerName,
 		locationHardMode: locationHardModeStr === 'true',
-		hideSuggestionBanner,
+		enableEasterEggs,
 	};
 };

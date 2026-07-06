@@ -5,14 +5,14 @@
 	import { updateSettings } from '$lib/remote/settings.remote';
 
 	type Props = {
-		hideSuggestionBanner: boolean;
+		enableEasterEggs: boolean;
 	};
 
-	let { hideSuggestionBanner }: Props = $props();
+	let { enableEasterEggs }: Props = $props();
 
 	$effect(() => {
 		updateSettings.fields.set({
-			hideSuggestionBanner,
+			enableEasterEggs,
 		});
 	});
 
@@ -67,10 +67,10 @@
 			<input
 				disabled={!!updateSettings.pending}
 				class="hover:cursor-pointer disabled:hover:cursor-auto"
-				{...updateSettings.fields.hideSuggestionBanner.as('checkbox')}
+				{...updateSettings.fields.enableEasterEggs.as('checkbox')}
 				onchange={() => formEl?.requestSubmit()}
 			/>
-			Hide suggestion banner
+			Enable easter eggs
 		</label>
 	</form>
 </Modal>

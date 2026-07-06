@@ -68,6 +68,7 @@
 				{gettingNewData}
 				getItemsFromQuery={getCrewsFromQuery}
 				page="crew"
+				enableEasterEggs={data.enableEasterEggs}
 			/>
 		{/if}
 		{#if result.guesses.length > 0}

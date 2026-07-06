@@ -82,7 +82,9 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 		}
 
 		if (oldQuery[0] === value[0]) {
-			filteredItems = items.filter(item => item.name.toLowerCase().includes(value.toLowerCase()));
+			filteredItems = items.filter(
+				item => item.name.toLowerCase().includes(value.toLowerCase()) && item.id < 9000,
+			);
 			return;
 		}
 

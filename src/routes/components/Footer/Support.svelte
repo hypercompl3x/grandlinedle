@@ -43,7 +43,7 @@
 	};
 
 	const closeDialog = async () => {
-		if (supportGrandlinedle.pending) return;
+		if (!!supportGrandlinedle.pending) return;
 
 		dialog?.close();
 
@@ -75,6 +75,7 @@
 		<div class="text-xl font-semibold sm:text-3xl">Support</div>
 		<button
 			type="button"
+			disabled={!!supportGrandlinedle.pending}
 			onclick={closeDialog}
 			class="absolute inset-y-0 focus:ring-0 focus:outline-hidden right-2"
 		>

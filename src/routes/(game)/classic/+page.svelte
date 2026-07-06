@@ -66,6 +66,7 @@
 				{gettingNewData}
 				getItemsFromQuery={getCharactersFromQuery}
 				page="character"
+				enableEasterEggs={data.enableEasterEggs}
 			/>
 		{/if}
 		{#if result.guesses.length > 0}

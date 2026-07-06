@@ -4,14 +4,11 @@
 	import Settings from './components/Settings.svelte';
 	import PatchNotes from './components/PatchNotes.svelte';
 	import Results from './components/Results.svelte';
-	import Banner from './components/Banner.svelte';
-	import Footer from './components/Footer.svelte';
+	import Footer from './components/Footer/index.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
 	let { data, children }: LayoutProps = $props();
-
-	let pageHasError = $derived(!!page.error?.message);
 </script>
 
 <div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
@@ -22,26 +19,16 @@
 		})}
 	>
 		<div class="w-full flex justify-center items-center px-4 my-4">
-			{#if !pageHasError}
-				<PatchNotes />
-				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
-					<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
-				</a>
-				<Settings hideSuggestionBanner={data.hideSuggestionBanner} />
-			{:else}
-				<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
-					<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
-				</a>
-			{/if}
+			<PatchNotes />
+			<a href="/" class="transition-transform duration-300 ease-in-out hover:scale-105">
+				<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
+			</a>
+			<Settings enableEasterEggs={data.enableEasterEggs} />
 		</div>
-		{#if data.completed && !pageHasError}
+		{#if data.completed}
 			<Results {data} />
 		{/if}
 		{@render children()}
 		<Footer />
 	</div>
 </div>
-
-{#if !pageHasError}
-	<Banner hideSuggestionBanner={data.hideSuggestionBanner} />
-{/if}

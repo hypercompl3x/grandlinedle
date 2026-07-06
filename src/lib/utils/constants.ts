@@ -74,7 +74,7 @@ export const COOKIE = {
 	PLAYER_NAME: 'playername',
 	CREWS: 'crews',
 	LOCATION_HARD_MODE: 'locationhardmode',
-	HIDE_SUGGESTION_BANNER: 'hidesuggestionbanner',
+	ENABLE_EASTER_EGGS: 'enableeastereggs',
 } as const;
 
 export const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
@@ -101,3 +101,5 @@ export const SEARCH_MAP = {
 		buttonName: 'crewId',
 	},
 } as const;
+
+export const DEVELOPER_EMAIL = 'hypercompl3x@gmail.com';

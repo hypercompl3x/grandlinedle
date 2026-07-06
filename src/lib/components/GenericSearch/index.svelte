@@ -12,14 +12,15 @@
 		gettingNewData: boolean;
 		getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>;
 		page: Page;
+		enableEasterEggs: boolean
 	};
 
-	let { page, getItemsFromQuery, gettingNewData, guessIds }: Props = $props();
+	let { page, getItemsFromQuery, gettingNewData, guessIds, enableEasterEggs }: Props = $props();
 
 	let { noItemsFoundMessage, searchPlaceholder, buttonName } = $derived(SEARCH_MAP[page]);
 
 	// svelte-ignore state_referenced_locally
-	const search = useSearch(page, buttonName, getItemsFromQuery, () => guessIds);
+	const search = useSearch(page, buttonName, getItemsFromQuery, enableEasterEggs, () => guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 

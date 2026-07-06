@@ -76,6 +76,7 @@
 				{gettingNewData}
 				getItemsFromQuery={getLocationsFromQuery}
 				page="location"
+				enableEasterEggs={data.enableEasterEggs}
 			/>
 		{/if}
 		{#if result.guesses.length > 0}

@@ -17,7 +17,7 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	page: Page,
 	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
-	enableEasterEggs: boolean,
+	enableEasterEggs: () => boolean,
 	guessIds: () => T['id'][],
 ) => {
 	let isDropdownOpen = $state(false);
@@ -56,20 +56,20 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 
 		await currentSearchPromise;
 
-		if (query.toLowerCase().includes('hyde') && page === 'character' && enableEasterEggs) {
+		if (query.toLowerCase().includes('hyde') && page === 'character' && enableEasterEggs()) {
 			const newItems = await getEasterEggCharacters(guessIds());
 			updateAllItems(newItems as T[]);
 			return;
 		}
 
-		if (query.toLowerCase() === 'mugiwara' && page === 'character' && enableEasterEggs) {
+		if (query.toLowerCase() === 'mugiwara' && page === 'character' && enableEasterEggs()) {
 			hisashiburidanaMugiwaraSound.stop();
 			hisashiburidanaMugiwaraSound.play();
 			updateAllItems([]);
 			return;
 		}
 
-		if (query.toLowerCase() === 'laugh tale' && page === 'location' && enableEasterEggs) {
+		if (query.toLowerCase() === 'laugh tale' && page === 'location' && enableEasterEggs()) {
 			theOnePieceIsRealSound.stop();
 			theOnePieceIsRealSound.play();
 			updateAllItems([]);

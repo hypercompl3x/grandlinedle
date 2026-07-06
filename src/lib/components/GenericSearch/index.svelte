@@ -20,7 +20,7 @@
 	let { noItemsFoundMessage, searchPlaceholder, buttonName } = $derived(SEARCH_MAP[page]);
 
 	// svelte-ignore state_referenced_locally
-	const search = useSearch(page, buttonName, getItemsFromQuery, enableEasterEggs, () => guessIds);
+	const search = useSearch(page, buttonName, getItemsFromQuery, () => enableEasterEggs, () => guessIds);
 	const onClickOutside = useOnClickOutside(() => (search.isDropdownOpen = false));
 </script>
 

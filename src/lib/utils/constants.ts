@@ -103,3 +103,13 @@ export const SEARCH_MAP = {
 } as const;
 
 export const DEVELOPER_EMAIL = 'hypercompl3x@gmail.com';
+
+export const SOLO_LINKS = [
+	{ name: 'Classic', href: '/classic', icon: '❓' },
+	{ name: 'Location', href: '/location', icon: '🌍' },
+	{ name: 'Quote', href: '/quote', icon: '💬' },
+	{ name: 'Crew', href: '/crew', icon: '🏴‍☠️' },
+	{ name: 'Rankings', href: '/rankings', icon: '🏆' },
+] as const;
+
+export const ONLINE_LINKS = [{ name: 'Online', href: '/online', icon: '⚔️' }] as const;

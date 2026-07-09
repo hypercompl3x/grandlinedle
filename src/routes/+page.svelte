@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Tabs from '$lib/components/Tabs.svelte';
+	import Links from './_components/Links.svelte';
 </script>
 
 <svelte:head>
@@ -13,5 +13,5 @@
 	>
 		Guess One Piece characters daily!
 	</h1>
-	<Tabs isHomePage={true} />
+	<Links />
 </main>

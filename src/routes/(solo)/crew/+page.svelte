@@ -2,12 +2,11 @@
 	import { untrack } from 'svelte';
 	import type { PageData } from './$types';
 	import { Loader2 } from 'lucide-svelte';
-	import Locations from './components/Locations.svelte';
-	import HardModeSwitch from './components/HardModeSwitch.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
-	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
-	import { getLocationsFromQuery } from './services';
 	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
+	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
+	import Crews from './_components/Crews.svelte';
+	import { getCrewsFromQuery } from './services';
 
 	type Result = Awaited<PageData['pageData']>;
 
@@ -27,7 +26,7 @@
 
 				await Promise.all([
 					...newResult.guesses.map(i => preloadImage(i.url)),
-					preloadImage(newResult.currentLocation.url),
+					preloadImage(newResult.currentCrew.url),
 				]);
 
 				result = newResult;
@@ -36,8 +35,8 @@
 				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
 
 				if (firstIdChanged) {
-					const playerHasWon = result?.currentLocation?.id === result?.guesses?.[0]?.id;
-					await animateNewItem(playerHasWon, 'location');
+					const playerHasWon = result?.currentCrew?.id === result?.guesses?.[0]?.id;
+					await animateNewItem(playerHasWon, 'crew');
 				}
 			} catch (error) {
 				console.error(error);
@@ -47,43 +46,36 @@
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Location</title>
-	<meta name="description" content="Guess One Piece locations daily!" />
+	<title>Grandlinedle - Crew</title>
+	<meta name="description" content="Guess One Piece crews daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
 	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
-		Guess today's One Piece location!
+		Guess today's One Piece crew!
 	</h1>
 	{#if result}
 		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
-		{const locationHasBeenGuessed = $derived(guessIds.includes(result.currentLocation.id))}
+		{const crewHasBeenGuessed = $derived(guessIds.includes(result.currentCrew.id))}
 
-		<div class="w-full max-w-(--breakpoint-sm) px-4 space-y-2">
-			{#if !locationHasBeenGuessed}
-				<HardModeSwitch checked={result.isHardMode} />
-			{/if}
+		<div class="w-full max-w-(--breakpoint-sm) px-4">
 			<div class="overflow-hidden shadow-sm rounded-md">
-				<img
-					data-testid="current-location"
-					src={result.currentLocation.url}
-					alt="Today's location"
-				/>
+				<img data-testid="current-crew" src={result.currentCrew.url} alt="Today's crew" />
 			</div>
 		</div>
-		{#if !locationHasBeenGuessed}
+		{#if !crewHasBeenGuessed}
 			<GenericSearch
 				{guessIds}
 				{gettingNewData}
-				getItemsFromQuery={getLocationsFromQuery}
-				page="location"
+				getItemsFromQuery={getCrewsFromQuery}
+				page="crew"
 				enableEasterEggs={data.enableEasterEggs}
 			/>
 		{/if}
 		{#if result.guesses.length > 0}
-			<Locations guesses={result.guesses} currentLocation={result.currentLocation} />
+			<Crews guesses={result.guesses} currentCrew={result.currentCrew} />
 		{/if}
-		{#if locationHasBeenGuessed}
-			<SuccessBox correctGuess={result.guesses[0]} page="location" />
+		{#if crewHasBeenGuessed}
+			<SuccessBox correctGuess={result.guesses[0]} page="crew" />
 		{/if}
 	{:else}
 		<Loader2 class="text-white animate-spin" size={80} />

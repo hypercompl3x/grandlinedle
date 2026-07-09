@@ -2,12 +2,12 @@
 	import { untrack } from 'svelte';
 	import type { PageData } from './$types';
 	import { Loader2 } from 'lucide-svelte';
-	import CharacterTable from './components/CharacterTable/index.svelte';
+	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import Hint from '$lib/components/Hint.svelte';
-	import GenericSearch from '$lib/components/GenericSearch/index.svelte';
+	import QuoteCharacters from './_components/QuoteCharacters.svelte';
+	import { animateNewItem, formatBounty, preloadImage } from '$lib/utils/helpers.js';
 	import { getCharactersFromQuery } from '$lib/services/characterService.js';
-	import { animateNewItem, preloadImage } from '$lib/utils/helpers';
 
 	type Result = Awaited<PageData['pageData']>;
 
@@ -32,8 +32,8 @@
 				const firstIdChanged = oldResult && oldResult.guesses?.[0]?.id !== result?.guesses?.[0]?.id;
 
 				if (firstIdChanged) {
-					const playerHasWon = result?.currentCharacter?.id === result?.guesses?.[0]?.id;
-					await animateNewItem(playerHasWon, 'character');
+					const playerHasWon = result?.currentQuote?.character_id === result?.guesses?.[0]?.id;
+					await animateNewItem(playerHasWon, 'quote');
 				}
 			} catch (error) {
 				console.error(error);
@@ -43,37 +43,52 @@
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Classic</title>
-	<meta name="description" content="Guess One Piece characters daily!" />
+	<title>Grandlinedle - Quote</title>
+	<meta name="description" content="Guess One Piece quotes daily!" />
 </svelte:head>
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">
 	<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
-		Guess today's One Piece character!
+		Guess who said today's One Piece quote!
 	</h1>
 	{#if result}
 		{const guessIds = $derived(result.guesses.map(guess => guess.id))}
-		{const characterHasBeenGuessed = $derived(guessIds.includes(result.currentCharacter.id))}
+		{const quoteHasBeenGuessed = $derived(guessIds.includes(result.currentQuote.character_id))}
 
-		{#if !characterHasBeenGuessed}
-			<Hint
-				category="Affiliation"
-				hint={result.currentCharacter.affiliation}
-				numberOfGuesses={guessIds.length}
-				guessesToReveal={5}
-			/>
+		{#if !quoteHasBeenGuessed}
+			<div class="flex gap-x-8">
+				<Hint
+					category="Bounty"
+					hint={formatBounty(result.currentQuote.bounty)}
+					numberOfGuesses={guessIds.length}
+					guessesToReveal={3}
+				/>
+				<Hint
+					category="Affiliation"
+					hint={result.currentQuote.affiliation}
+					numberOfGuesses={guessIds.length}
+					guessesToReveal={5}
+				/>
+			</div>
+		{/if}
+		<div
+			class="p-2 mx-4 text-2xl font-semibold text-center text-white bg-black/20 rounded-md sm:text-3xl sm:p-6 text-shadow-sm"
+		>
+			"{result.currentQuote.quote}"
+		</div>
+		{#if !quoteHasBeenGuessed}
 			<GenericSearch
 				{guessIds}
 				{gettingNewData}
 				getItemsFromQuery={getCharactersFromQuery}
-				page="character"
+				page="quote"
 				enableEasterEggs={data.enableEasterEggs}
 			/>
 		{/if}
 		{#if result.guesses.length > 0}
-			<CharacterTable guesses={result.guesses} currentCharacter={result.currentCharacter} />
+			<QuoteCharacters guesses={result.guesses} currentQuote={result.currentQuote} />
 		{/if}
-		{#if characterHasBeenGuessed}
-			<SuccessBox correctGuess={result.guesses[0]} page="character" />
+		{#if quoteHasBeenGuessed}
+			<SuccessBox correctGuess={result.guesses[0]} page="quote" />
 		{/if}
 	{:else}
 		<Loader2 class="text-white animate-spin" size={80} />

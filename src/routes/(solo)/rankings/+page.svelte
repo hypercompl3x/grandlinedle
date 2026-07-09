@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { Loader2 } from 'lucide-svelte';
-	import Table from './components/Table.svelte';
+	import Table from './_components/Table.svelte';
 
 	type Result = Awaited<PageData['pageData']>;
 

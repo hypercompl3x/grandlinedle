@@ -113,3 +113,5 @@ export const SOLO_LINKS = [
 ] as const;
 
 export const ONLINE_LINKS = [{ name: 'Online', href: '/online', icon: '⚔️' }] as const;
+
+export const GENERIC_ERROR = 'An unexpected error has occured';

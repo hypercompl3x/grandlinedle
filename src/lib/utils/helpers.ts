@@ -1,9 +1,9 @@
+import type { Cookies } from '@sveltejs/kit';
 import { tick } from 'svelte';
 import gsap, { Power2 } from 'gsap';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Character } from '$lib/types/DatabaseTypes';
-import type { Cookies } from '@sveltejs/kit';
 
 export const cn = (...inputs: ClassValue[]) => {
 	return twMerge(clsx(inputs));

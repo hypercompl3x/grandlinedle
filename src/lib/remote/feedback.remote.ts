@@ -11,9 +11,8 @@ export const submitFeedback = form(
 	v.object({
 		feedback: v.pipe(
 			v.string(),
-			v.nonEmpty(),
 			v.nonEmpty('Please enter some feedback'),
-			v.maxLength(1000, 'Feedback must be under 1000 characters'),
+			v.maxLength(999, 'Feedback must be under 1000 characters'),
 		),
 		displayName: v.optional(v.string()),
 	}),

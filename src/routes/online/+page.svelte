@@ -1,10 +1,17 @@
-<script lang="ts"></script>
+<script lang="ts">
+	import HostForm from './_components/HostForm.svelte';
+	import JoinForm from './_components/JoinForm.svelte';
+
+	// IF THE USER IS STILL LOGGED IN, ONLY SHOW A RECONNECT BUTTON OR PERMA LEAVE GAME
+</script>
 
 <svelte:head>
 	<title>Grandlinedle - Online</title>
 	<meta name="description" content="Play online against other players!" />
 </svelte:head>
 
-<h1 class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
-	Coming Soon!
-</h1>
+<main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8 px-2">
+	<JoinForm />
+	<div class="w-full h-px bg-grey"></div>
+	<HostForm />
+</main>

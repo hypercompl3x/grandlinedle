@@ -117,3 +117,6 @@ export const ONLINE_LINKS = [{ name: 'Online', href: '/online', icon: '⚔️' }
 export const GENERIC_ERROR = 'An unexpected error has occured';
 
 export const MAX_ONLINE_PLAYER_COUNT = 8;
+
+export const NUMBER_OF_ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8];
+export const GUESS_TIME_OPTIONS = [5, 10, 15, 20, 25, 30];

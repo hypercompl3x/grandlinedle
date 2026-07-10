@@ -367,6 +367,10 @@ export type Database = {
 		};
 		Functions: {
 			create_daily_game: { Args: never; Returns: undefined };
+			create_online_rounds: {
+				Args: { p_game_id: number; p_number_of_rounds: number };
+				Returns: undefined;
+			};
 		};
 		Enums: {
 			online_game_status: 'lobby' | 'ingame' | 'finished';

@@ -28,7 +28,7 @@ const hostSchema = v.object({
 });
 
 const generateRoomCode = () => {
-	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
 	let code = '';
 
 	for (let i = 0; i < 4; i++) {

@@ -26,5 +26,14 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 		redirect(303, roomCode ? `/online/${roomCode}` : '/online');
 	}
 
-	return { game: gameData };
+	const { players, rounds, ...game } = gameData;
+
+	const currentPlayer = players.find(p => p.user_id === user.id);
+
+	if (!currentPlayer) {
+		await supabase.auth.signOut();
+		redirect(303, '/online');
+	}
+
+	return { game, players, rounds, userId: user.id, currentPlayer };
 };

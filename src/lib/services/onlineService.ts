@@ -38,9 +38,18 @@ export const getGameFromRoomCode = async (
 		.select(
 			`
 		*,
-		players:online_players (*)
+		players:online_players (*),
+		rounds:online_rounds (*)
 	`,
 		)
+		.order('id', {
+			ascending: true,
+			referencedTable: 'online_players',
+		})
+		.order('round_number', {
+			ascending: true,
+			referencedTable: 'online_rounds',
+		})
 		.eq('room_code', roomCode)
 		.limit(1)
 		.single();

@@ -11,6 +11,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 
 	if (!session || !user) redirect(303, '/online');
 
+	// NEED TO GET ROUNDS AS WELL AS LONG AS NOT IN LOBBY
 	const { data: gameData, error: gameError } = await getGameFromRoomCode(supabase, params.roomCode);
 
 	if (gameError || !gameData) {

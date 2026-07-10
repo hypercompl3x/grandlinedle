@@ -1,9 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import * as v from 'valibot';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
+import { GENERIC_ERROR, MAX_ONLINE_PLAYER_COUNT } from '$lib/utils/constants';
 import type { Database } from '$lib/types/DatabaseTypes';
-import { GENERIC_ERROR } from '$lib/utils/constants';
 
 const joinSchema = v.object({
 	displayName: v.pipe(
@@ -24,13 +25,6 @@ const hostSchema = v.object({
 		v.nonEmpty('Please enter a display name'),
 		v.maxLength(14, 'Display name must be under 15 characters'),
 	),
-	numberOfRounds: v.pipe(
-		v.string(),
-		v.transform(Number),
-		v.integer(),
-		v.minValue(1, 'The minimum number is 1'),
-		v.maxValue(8, 'The maximum number is 8'),
-	),
 });
 
 const generateRoomCode = () => {
@@ -44,7 +38,7 @@ const generateRoomCode = () => {
 	return code;
 };
 
-const createOnlineGame = async (supabase: SupabaseClient<Database>, numberOfRounds: number) => {
+const createOnlineGame = async (supabase: SupabaseClient<Database>) => {
 	const maxAttempts = 5;
 
 	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -52,19 +46,19 @@ const createOnlineGame = async (supabase: SupabaseClient<Database>, numberOfRoun
 
 		const { data, error } = await supabase
 			.from('online_games')
-			.insert({ room_code: roomCode, number_of_rounds: numberOfRounds })
+			.insert({ room_code: roomCode })
 			.select('*')
 			.single();
 
-		if (!error) return data;
+		if (!error) return { data };
 
 		if (error.code !== '23505') {
 			console.error(error.message);
-			throw new Error('Failed to create online game');
+			return { error: 'Failed to create online game' };
 		}
 	}
 
-	throw new Error('Could not generate a unique room code');
+	return { error: 'Could not generate a unique room code' };
 };
 
 const createOnlinePlayer = async (
@@ -72,26 +66,35 @@ const createOnlinePlayer = async (
 	userId: string,
 	displayName: string,
 	gameId: number,
+	isHost = false,
 ) => {
 	const { error } = await supabase
 		.from('online_players')
-		.insert({ user_id: userId, display_name: displayName, game_id: gameId, is_host: true })
+		.insert({ user_id: userId, display_name: displayName, game_id: gameId, is_host: isHost })
 		.single();
 
 	if (!error) return;
 	console.error(error.message);
-	throw new Error('Failed to create online game');
+	return { error: 'Failed to create online player' };
+};
+
+export const load: PageServerLoad = async ({ cookies, locals: { session, user, supabase } }) => {
+	if (session && user) {
+		const roomCode = await getRoomCodeFromUser(supabase, user.id);
+
+		if (roomCode) {
+			redirect(303, `/online/${roomCode}`);
+		}
+	}
 };
 
 export const actions = {
 	join: async ({ request, locals: { supabase } }) => {
-		const data = await request.formData();
+		const formData = await request.formData();
 		const result = v.safeParse(joinSchema, {
-			displayName: data.get('displayName'),
-			roomCode: data.get('roomCode'),
+			displayName: formData.get('displayName'),
+			roomCode: formData.get('roomCode'),
 		});
-
-		await new Promise(res => setTimeout(res, 1000));
 
 		if (!result.success) {
 			return fail(400, {
@@ -99,22 +102,68 @@ export const actions = {
 			});
 		}
 
-		// NAME NEEDS TO BE UNIQUE PER GAME
-		// GAME NEEDS TO NOT HAVE MAXIMUM NUMBER OF PLAYERS...
+		const { displayName, roomCode } = result.output;
 
-		const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+		const { data: gameData, error: gameError } = await getGameFromRoomCode(supabase, roomCode);
 
-		if (authError) {
+		if (gameError || !gameData) {
+			return fail(400, {
+				errors: { roomCode: ['A game with this room code does not exist'] },
+			});
+		}
+
+		const nameIsUnique = gameData.players.every(
+			p => p.display_name.toLowerCase() !== displayName.toLowerCase(),
+		);
+
+		if (!nameIsUnique) {
+			return fail(400, {
+				errors: { displayName: ['This display name is already taken'] },
+			});
+		}
+
+		if (gameData.players.length === MAX_ONLINE_PLAYER_COUNT) {
+			return fail(400, {
+				errors: { roomCode: ['This game is already full'] },
+			});
+		}
+
+		if (gameData.status !== 'lobby') {
+			return fail(400, {
+				errors: { roomCode: ['This game has already started'] },
+			});
+		}
+
+		const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
+			options: { data: { displayName } },
+		});
+
+		if (authError || !authData.user) {
 			return fail(500, {
 				errors: { generic: [GENERIC_ERROR] },
 			});
 		}
+
+		const playerData = await createOnlinePlayer(
+			supabase,
+			authData.user.id,
+			displayName,
+			gameData.id,
+		);
+
+		if (playerData?.error) {
+			await supabase.auth.signOut();
+			return fail(500, {
+				errors: { generic: [playerData.error] },
+			});
+		}
+
+		redirect(303, `/online/${gameData.room_code}`);
 	},
 	host: async ({ request, locals: { supabase } }) => {
-		const data = await request.formData();
+		const formData = await request.formData();
 		const result = v.safeParse(hostSchema, {
-			displayName: data.get('displayName'),
-			numberOfRounds: data.get('numberOfRounds'),
+			displayName: formData.get('displayName'),
 		});
 
 		if (!result.success) {
@@ -123,23 +172,43 @@ export const actions = {
 			});
 		}
 
-		const { displayName, numberOfRounds } = result.output;
+		const { displayName } = result.output;
 
-		const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+		const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
+			options: { data: { displayName } },
+		});
 
-		if (authError) {
+		if (authError || !authData.user) {
 			return fail(500, {
 				errors: { generic: [GENERIC_ERROR] },
 			});
 		}
 
-		// LOGIN TO ANONYMOUS
-		// USE THAT USER TO CREATE A PLAYER
-		// FIGURE OUT HOW THAT IS TIED TO PRESENCE
+		const { data: gameData, error: gameError } = await createOnlineGame(supabase);
 
-		const game = await createOnlineGame(supabase, numberOfRounds);
-		await createOnlinePlayer(supabase, authData.user!.id, displayName, game.id);
+		if (gameError || !gameData) {
+			await supabase.auth.signOut();
+			return fail(500, {
+				errors: { generic: [gameError] },
+			});
+		}
 
-		redirect(303, `/online/${game.room_code}`);
+		const playerData = await createOnlinePlayer(
+			supabase,
+			authData.user.id,
+			displayName,
+			gameData.id,
+			true,
+		);
+
+		if (playerData?.error) {
+			await supabase.from('online_games').delete().eq('id', gameData.id);
+			await supabase.auth.signOut();
+			return fail(500, {
+				errors: { generic: [playerData.error] },
+			});
+		}
+
+		redirect(303, `/online/${gameData.room_code}`);
 	},
 } satisfies Actions;

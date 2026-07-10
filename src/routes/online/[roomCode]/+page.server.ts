@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
 
 export const load: PageServerLoad = async ({ locals: { supabase, session, user }, params }) => {
 	if (!supabase) {
@@ -10,45 +11,19 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 
 	if (!session || !user) redirect(303, '/online');
 
-	const { data: gameData, error: gameError } = await supabase
-		.from('online_games')
-		.select(
-			`
-		*,
-		players:online_players (*)
-	`,
-		)
-		.eq('room_code', params.roomCode)
-		.single();
+	const { data: gameData, error: gameError } = await getGameFromRoomCode(supabase, params.roomCode);
 
 	if (gameError || !gameData) {
-		await supabase.auth.signOut();
-		redirect(303, '/online');
+		const roomCode = await getRoomCodeFromUser(supabase, user.id);
+		redirect(303, roomCode ? `/online/${roomCode}` : '/online');
 	}
 
-	if (!gameData.players?.some(p => p.user_id === user.id)) {
-		const { data: playerData, error: playerError } = await supabase
-			.from('online_players')
-			.select(
-				`
-			*,
-			online_games (
-				room_code
-			)
-		`,
-			)
-			.eq('user_id', user.id)
-			.limit(1)
-			.single();
+	const userInGame = gameData.players.some(p => p.user_id === user.id);
 
-		if (playerError || !playerData) {
-			await supabase.auth.signOut();
-			redirect(303, '/online');
-		}
-
-		redirect(303, `/online/${playerData.online_games.room_code}`);
+	if (!userInGame) {
+		const roomCode = await getRoomCodeFromUser(supabase, user.id);
+		redirect(303, roomCode ? `/online/${roomCode}` : '/online');
 	}
-	console.log('🚀 ~ load ~ gameData:', gameData);
 
-	return {};
+	return { game: gameData };
 };

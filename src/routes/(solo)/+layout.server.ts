@@ -1,42 +1,19 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
+import { getRoomCodeFromUser } from '$lib/services/onlineService';
 import { GAME_MODE, COOKIE } from '$lib/utils/constants';
 import { objectAsValues, getArrayLengthFromCookie } from '$lib/utils/helpers';
 
 const GAME_MODES = objectAsValues(GAME_MODE);
 
-const authCheck = async ({ session, user, supabase }: App.Locals) => {
-	if (!session || !user) return;
+export const load: LayoutServerLoad = async ({ cookies, locals: { session, user, supabase } }) => {
+	if (session && user) {
+		const roomCode = await getRoomCodeFromUser(supabase, user.id);
 
-	const { data: playerData, error: playerError } = await supabase
-		.from('online_players')
-		.select(
-			`
-			*,
-			online_games (
-				room_code
-			)
-		`,
-		)
-		.eq('user_id', user.id)
-		.maybeSingle();
-
-	if (playerError) {
-		console.error(playerError.message);
-		await supabase.auth.signOut();
-		return;
+		if (roomCode) {
+			redirect(303, `/online/${roomCode}`);
+		}
 	}
-
-	if (!playerData) {
-		await supabase.auth.signOut();
-		return;
-	}
-
-	redirect(303, `/online/${playerData.online_games.room_code}`);
-};
-
-export const load: LayoutServerLoad = async ({ cookies, locals }) => {
-	await authCheck(locals);
 
 	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
 	const completed = JSON.parse(completedString);

@@ -115,3 +115,5 @@ export const SOLO_LINKS = [
 export const ONLINE_LINKS = [{ name: 'Online', href: '/online', icon: '⚔️' }] as const;
 
 export const GENERIC_ERROR = 'An unexpected error has occured';
+
+export const MAX_ONLINE_PLAYER_COUNT = 8;

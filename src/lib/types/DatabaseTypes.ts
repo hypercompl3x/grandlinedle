@@ -19,6 +19,10 @@ export type Leaderboard = Tables<'leaderboard'>[];
 
 export type LeaderboardEntry = Tables<'leaderboard'>;
 
+export type OnlineGame = Tables<'online_games'>;
+export type OnlinePlayer = Tables<'online_players'>;
+export type OnlineRound = Tables<'online_rounds'>;
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
@@ -221,6 +225,113 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			online_games: {
+				Row: {
+					created_at: string;
+					current_round_number: number;
+					guess_time: number;
+					id: number;
+					number_of_rounds: number;
+					room_code: string;
+					status: Database['public']['Enums']['online_game_status'];
+				};
+				Insert: {
+					created_at?: string;
+					current_round_number?: number;
+					guess_time?: number;
+					id?: number;
+					number_of_rounds?: number;
+					room_code: string;
+					status?: Database['public']['Enums']['online_game_status'];
+				};
+				Update: {
+					created_at?: string;
+					current_round_number?: number;
+					guess_time?: number;
+					id?: number;
+					number_of_rounds?: number;
+					room_code?: string;
+					status?: Database['public']['Enums']['online_game_status'];
+				};
+				Relationships: [];
+			};
+			online_players: {
+				Row: {
+					created_at: string;
+					display_name: string;
+					game_id: number;
+					id: number;
+					is_host: boolean;
+					user_id: string;
+				};
+				Insert: {
+					created_at?: string;
+					display_name: string;
+					game_id: number;
+					id?: number;
+					is_host?: boolean;
+					user_id: string;
+				};
+				Update: {
+					created_at?: string;
+					display_name?: string;
+					game_id?: number;
+					id?: number;
+					is_host?: boolean;
+					user_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'online_players_game_id_fkey';
+						columns: ['game_id'];
+						isOneToOne: false;
+						referencedRelation: 'online_games';
+						referencedColumns: ['id'];
+					},
+				];
+			};
+			online_rounds: {
+				Row: {
+					character_id: number | null;
+					created_at: string;
+					current_guess_number: number;
+					game_id: number;
+					id: number;
+					round_number: number;
+				};
+				Insert: {
+					character_id?: number | null;
+					created_at?: string;
+					current_guess_number?: number;
+					game_id: number;
+					id?: number;
+					round_number: number;
+				};
+				Update: {
+					character_id?: number | null;
+					created_at?: string;
+					current_guess_number?: number;
+					game_id?: number;
+					id?: number;
+					round_number?: number;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'online_rounds_character_id_fkey';
+						columns: ['character_id'];
+						isOneToOne: false;
+						referencedRelation: 'characters';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'online_rounds_game_id_fkey';
+						columns: ['game_id'];
+						isOneToOne: false;
+						referencedRelation: 'online_games';
+						referencedColumns: ['id'];
+					},
+				];
+			};
 			quotes: {
 				Row: {
 					character_id: number;
@@ -258,7 +369,7 @@ export type Database = {
 			create_daily_game: { Args: never; Returns: undefined };
 		};
 		Enums: {
-			[_ in never]: never;
+			online_game_status: 'lobby' | 'ingame' | 'finished';
 		};
 		CompositeTypes: {
 			[_ in never]: never;
@@ -386,6 +497,8 @@ export const Constants = {
 		Enums: {},
 	},
 	public: {
-		Enums: {},
+		Enums: {
+			online_game_status: ['lobby', 'ingame', 'finished'],
+		},
 	},
 } as const;

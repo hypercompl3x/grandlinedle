@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
-import { getImages } from '$lib/services/serviceHelpers';
+import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
 
 export const load: PageServerLoad = async ({ locals: { supabase, session, user }, params }) => {
 	if (!supabase) {
@@ -36,8 +36,16 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 	}
 
 	const playersWithImages = await getImages(players, supabase, 'icons');
+	const roundsWithImages = await getRoundImages(rounds, supabase);
 
-	return { game, players: playersWithImages, rounds, guesses, userId: user.id, currentPlayer };
+	return {
+		game,
+		players: playersWithImages,
+		rounds: roundsWithImages,
+		guesses,
+		userId: user.id,
+		currentPlayer,
+	};
 };
 
 export const actions = {

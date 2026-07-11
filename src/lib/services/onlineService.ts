@@ -42,7 +42,10 @@ export const getGameFromRoomCode = async (
 			*,
 			character:characters (*)
 		),
-		guesses:online_guesses (*)
+		guesses:online_guesses (
+			*,
+			character:characters (name)
+		)
 	`,
 		)
 		.order('id', {

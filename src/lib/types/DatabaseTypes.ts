@@ -24,7 +24,11 @@ export type OnlinePlayer = Tables<'online_players'>;
 export type OnlinePlayerWithImage = OnlinePlayer & { url: string };
 export type OnlineRound = Tables<'online_rounds'>;
 export type OnlineRoundWithCharacter = OnlineRound & { character: Character };
+export type OnlineRoundWithCharacterAndImage = OnlineRound & {
+	character: Character & { url: string };
+};
 export type OnlineGuess = Tables<'online_guesses'>;
+export type OnlineGuessWithCharacter = Tables<'online_guesses'> & { character: { name: string } };
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 

@@ -13,6 +13,10 @@
 
 	export const CHARACTER_CLUES = [
 		{
+			label: 'First Arc',
+			getValue: character => character.first_arc,
+		},
+		{
 			label: 'Gender',
 			getValue: character => character.gender,
 		},
@@ -35,10 +39,6 @@
 		{
 			label: 'Origin',
 			getValue: character => character.origin,
-		},
-		{
-			label: 'First Arc',
-			getValue: character => character.first_arc,
 		},
 		{
 			label: 'Affiliation',
@@ -65,6 +65,17 @@
 			g => g.round_id === currentRound?.id && g.player_id === room.currentPlayer.id,
 		),
 	);
+	const playersWithCurrentGuess = $derived(
+		room.players.map(p => ({
+			...p,
+			currentGuess: room.guesses.find(
+				g =>
+					g.round_id === currentRound?.id &&
+					g.player_id === p.id &&
+					g.guess_number === currentRound.current_guess_number,
+			),
+		})),
+	);
 
 	const visibleClues = $derived.by(() => {
 		if (!currentRound) return [];
@@ -73,13 +84,14 @@
 			getCharacterClue(currentRound.character, i + 1),
 		).filter(clue => clue !== null);
 	});
-
-	// TODO: GRAB CHARACTER AND CHARACTER IMAGES WITH GUESSES | TO SHOW GUESSES OF PLAYER AND OTHER PLAYER GUESSES END OF ROUND
-	// TODO: GRAB CHARACTER IMAGES WITH ROUND CHARACTER | TO SHOW CORRECT CHARACTER END OF ROUND
 </script>
 
 <div class="flex flex-col items-center gap-y-8 w-full">
 	{#if currentRound}
+		<div class="bg-red-dark text-white p-4">
+			<img alt="Round character" src={currentRound.character.url} />
+			<div>{currentRound.character.name}</div>
+		</div>
 		{#each visibleClues as clue, i (clue.label)}
 			<div class:font-bold={i === visibleClues.length - 1}>
 				{clue.label}: {clue.value}
@@ -95,6 +107,13 @@
 		{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
 			<div>
 				{guess.character_id}
+			</div>
+		{/each}
+		{#each playersWithCurrentGuess as player, i (`player-${i}`)}
+			<div>
+				<div>{player.display_name}</div>
+				<img alt="Player icon" src={player.url} />
+				<div>Current Guess: {player.currentGuess?.character.name}</div>
 			</div>
 		{/each}
 		<!-- SHOW PLAYERS IN A LINE, HIGHLIGHT THEM ONCE THEY HAVE GUESSED, ONCE EVERYONE GUESSED YOU CAN REVEAL THEIR ANSWERS AND THEN THE CORRECT ANSWER, CORRECT TURN GREEN, INCORRECT TURN RED -->

@@ -1,5 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Character, Crew, Location, Database, OnlinePlayer } from '$lib/types/DatabaseTypes';
+import type {
+	Character,
+	Crew,
+	Location,
+	Database,
+	OnlinePlayer,
+	OnlineRoundWithCharacter,
+} from '$lib/types/DatabaseTypes';
 
 const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<Database>) => {
 	const {
@@ -37,6 +44,25 @@ const imageFnMap = {
 	locations: getLocationImage,
 	crews: getCrewImage,
 	icons: getPlayerIconImage,
+};
+
+export const getRoundImages = async (
+	rounds: OnlineRoundWithCharacter[],
+	supabase: SupabaseClient<Database>,
+) => {
+	return await Promise.all(
+		rounds.map(async r => {
+			const url = await getCharacterImage(r.character.id, supabase);
+
+			return {
+				...r,
+				character: {
+					...r.character,
+					url,
+				},
+			};
+		}),
+	);
 };
 
 export const getImages = async <T extends { id: number; icon?: number }>(

@@ -152,7 +152,7 @@
 					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					room.addGuess(payload.new as OnlineGuess);
+					void room.addGuess(payload.new as OnlineGuess);
 				},
 			)
 			.on(

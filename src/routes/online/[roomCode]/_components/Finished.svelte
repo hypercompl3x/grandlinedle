@@ -18,4 +18,6 @@
 	};
 </script>
 
-<Button type="button" onclick={resetGame} submitting={resetting}>Back to lobby</Button>
+{#if room.currentPlayer.is_host}
+	<Button type="button" onclick={resetGame} submitting={resetting}>Back to lobby</Button>
+{/if}

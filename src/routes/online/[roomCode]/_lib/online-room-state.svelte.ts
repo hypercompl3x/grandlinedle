@@ -1,23 +1,24 @@
 import { goto } from '$app/navigation';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import { leaveGame } from '$lib/remote/online.remote';
-import { getImages } from '$lib/services/serviceHelpers';
+import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
 import type {
 	Database,
 	OnlineGame,
 	OnlineGuess,
+	OnlineGuessWithCharacter,
 	OnlinePlayer,
 	OnlinePlayerWithImage,
 	OnlineRound,
-	OnlineRoundWithCharacter,
+	OnlineRoundWithCharacterAndImage,
 } from '$lib/types/DatabaseTypes';
 
 type OnlineRoomStateArgs = {
 	supabase: SupabaseClient<Database>;
 	game: OnlineGame;
 	players: OnlinePlayerWithImage[];
-	rounds: OnlineRoundWithCharacter[];
-	guesses: OnlineGuess[];
+	rounds: OnlineRoundWithCharacterAndImage[];
+	guesses: OnlineGuessWithCharacter[];
 	currentPlayer: OnlinePlayer;
 	userId: User['id'];
 };
@@ -27,8 +28,8 @@ export class OnlineRoomState {
 
 	game = $state<OnlineGame>()!;
 	players = $state<OnlinePlayerWithImage[]>([]);
-	rounds = $state<OnlineRoundWithCharacter[]>([]);
-	guesses = $state<OnlineGuess[]>([]);
+	rounds = $state<OnlineRoundWithCharacterAndImage[]>([]);
+	guesses = $state<OnlineGuessWithCharacter[]>([]);
 	currentPlayer = $state<OnlinePlayer>()!;
 	userId = $state<User['id']>()!;
 
@@ -127,13 +128,13 @@ export class OnlineRoomState {
 			throw new Error(`Character ${round.character_id} not found for round ${round.id}`);
 		}
 
-		this.rounds = [
-			...this.rounds,
-			{
-				...round,
-				character,
-			},
-		].toSorted((a, b) => a.round_number - b.round_number);
+		const roundWithCharacter = { ...round, character };
+
+		const [roundWithImage] = await getRoundImages([roundWithCharacter], this.supabase);
+
+		this.rounds = [...this.rounds, roundWithImage].toSorted(
+			(a, b) => a.round_number - b.round_number,
+		);
 	}
 
 	updateRound(round: OnlineRound) {
@@ -142,7 +143,7 @@ export class OnlineRoomState {
 
 			return {
 				...round,
-				character: r.character,
+				character: { ...r.character, url: r.character.url },
 			};
 		});
 	}
@@ -151,14 +152,38 @@ export class OnlineRoomState {
 		this.rounds = this.rounds.filter(r => r.id !== roundId);
 	}
 
-	addGuess(guess: OnlineGuess) {
+	async addGuess(guess: OnlineGuess) {
 		if (this.guesses.some(g => g.id === guess.id)) return;
 
-		this.guesses = [...this.guesses, guess];
+		const { data: character, error } = await this.supabase
+			.from('characters')
+			.select('name')
+			.eq('id', guess.character_id)
+			.limit(1)
+			.single();
+
+		if (error) {
+			throw new Error(`Failed to fetch character ${guess.character_id}: ${error.message}`);
+		}
+
+		if (!character) {
+			throw new Error(`Character ${guess.character_id} not found for round ${guess.id}`);
+		}
+
+		const guessWithCharacter = { ...guess, character };
+
+		this.guesses = [...this.guesses, guessWithCharacter];
 	}
 
 	updateGuess(guess: OnlineGuess) {
-		this.guesses = this.guesses.map(g => (g.id === guess.id ? guess : g));
+		this.guesses = this.guesses.map(g => {
+			if (g.id !== guess.id) return g;
+
+			return {
+				...guess,
+				character: g.character,
+			};
+		});
 	}
 
 	deleteGuess(guessId: OnlineGuess['id']) {

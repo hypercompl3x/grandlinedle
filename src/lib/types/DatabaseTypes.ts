@@ -432,8 +432,24 @@ export type Database = {
 		};
 		Functions: {
 			create_daily_game: { Args: never; Returns: undefined };
-			create_online_rounds: {
-				Args: { p_game_id: number; p_number_of_rounds: number };
+			create_online_game_with_host: {
+				Args: { p_display_name: string; p_icon: number };
+				Returns: {
+					game_id: number;
+					player_id: number;
+					room_code: string;
+				}[];
+			};
+			reset_online_game_to_lobby: {
+				Args: { p_game_id: number };
+				Returns: undefined;
+			};
+			start_online_game: {
+				Args: {
+					p_game_id: number;
+					p_guess_time: number;
+					p_number_of_rounds: number;
+				};
 				Returns: undefined;
 			};
 			submit_online_guess: {

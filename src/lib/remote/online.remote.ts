@@ -28,27 +28,14 @@ export const startGame = command(
 			invalid('Failed to start game');
 		}
 
-		const { error: roundError } = await supabase.rpc('create_online_rounds', {
+		const { error: startGameError } = await supabase.rpc('start_online_game', {
 			p_game_id: gameId,
 			p_number_of_rounds: numberOfRounds,
+			p_guess_time: guessTime,
 		});
 
-		if (roundError) {
-			console.error(roundError.message);
-			invalid('Failed to create rounds');
-		}
-
-		const { error: gameError } = await supabase
-			.from('online_games')
-			.update({
-				guess_time: guessTime,
-				number_of_rounds: numberOfRounds,
-				status: 'ingame',
-			})
-			.eq('id', gameId);
-
-		if (gameError) {
-			console.error(gameError.message);
+		if (startGameError) {
+			console.error(startGameError.message);
 			invalid('Failed to start game');
 		}
 	},
@@ -93,6 +80,30 @@ export const leaveGame = command(
 				console.error(error.message);
 				invalid('Failed to leave game');
 			}
+		}
+	},
+);
+
+export const resetGameToLobby = command(
+	v.object({
+		gameId: v.pipe(v.number(), v.integer()),
+	}),
+	async ({ gameId }) => {
+		const {
+			locals: { session, user, supabase },
+		} = getRequestEvent();
+
+		if (!session || !user) {
+			invalid('Failed to go back to lobby');
+		}
+
+		const { error } = await supabase.rpc('reset_online_game_to_lobby', {
+			p_game_id: gameId,
+		});
+
+		if (error) {
+			console.error(error.message);
+			invalid('Failed to go back to lobby');
 		}
 	},
 );

@@ -87,9 +87,7 @@
 		{/each}
 		{#if !currentPlayerGuessesThisRound.some(g => g.guess_number === currentRound?.current_guess_number)}
 			<Search
-				guessIds={room.guesses
-					.filter(g => g.player_id === room.currentPlayer.id && g.round_id === currentRound?.id)
-					.map(g => g.character_id)}
+				guessIds={currentPlayerGuessesThisRound.map(g => g.character_id)}
 				roundId={currentRound?.id}
 				guessNumber={currentRound?.current_guess_number}
 			/>

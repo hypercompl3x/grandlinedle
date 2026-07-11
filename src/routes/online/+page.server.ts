@@ -27,40 +27,6 @@ const hostSchema = v.object({
 	),
 });
 
-const generateRoomCode = () => {
-	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
-	let code = '';
-
-	for (let i = 0; i < 4; i++) {
-		code += chars[Math.floor(Math.random() * chars.length)];
-	}
-
-	return code;
-};
-
-const createOnlineGame = async (supabase: SupabaseClient<Database>) => {
-	const maxAttempts = 5;
-
-	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-		const roomCode = generateRoomCode();
-
-		const { data, error } = await supabase
-			.from('online_games')
-			.insert({ room_code: roomCode })
-			.select('*')
-			.single();
-
-		if (!error) return { data };
-
-		if (error.code !== '23505') {
-			console.error(error.message);
-			return { error: 'Failed to create online game' };
-		}
-	}
-
-	return { error: 'Could not generate a unique room code' };
-};
-
 const getRandomIcon = (displayName: string, existingIcons: number[] = []) => {
 	if (displayName.toLowerCase().includes('hyde') && !existingIcons.includes(ICON.FOXY))
 		return ICON.FOXY;
@@ -202,33 +168,23 @@ export const actions = {
 			});
 		}
 
-		const { data: gameData, error: gameError } = await createOnlineGame(supabase);
-
-		if (gameError || !gameData) {
-			await supabase.auth.signOut();
-			return fail(500, {
-				errors: { generic: [gameError] },
-			});
-		}
-
 		const randomIcon = getRandomIcon(displayName);
-		const playerData = await createOnlinePlayer(
-			supabase,
-			authData.user.id,
-			displayName,
-			gameData.id,
-			randomIcon,
-			true,
+
+		const { data: gameData, error: gameError } = await supabase.rpc(
+			'create_online_game_with_host',
+			{
+				p_display_name: displayName,
+				p_icon: randomIcon,
+			},
 		);
 
-		if (playerData?.error) {
-			await supabase.from('online_games').delete().eq('id', gameData.id);
+		if (gameError || !gameData?.[0]) {
 			await supabase.auth.signOut();
 			return fail(500, {
-				errors: { generic: [playerData.error] },
+				errors: { generic: [gameError?.message ?? GENERIC_ERROR] },
 			});
 		}
 
-		redirect(303, `/online/${gameData.room_code}`);
+		redirect(303, `/online/${gameData[0].room_code}`);
 	},
 } satisfies Actions;

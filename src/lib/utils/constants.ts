@@ -121,6 +121,13 @@ export const MAX_ONLINE_PLAYER_COUNT = 8;
 export const NUMBER_OF_ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8];
 export const GUESS_TIME_OPTIONS = [5, 10, 15, 20, 25, 30];
 
+export const MAX_GUESSES = 8;
+
+export const TIMER = {
+	REVEAL: 3,
+	RESULTS: 5,
+};
+
 export const ICON = {
 	MIN: 1,
 	MAX: 38,

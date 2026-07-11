@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
-import { leaveGame } from '$lib/remote/online.remote';
+import { advanceGameIfReady, leaveGame } from '$lib/remote/online.remote';
 import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
 import type {
 	Database,
@@ -35,6 +35,9 @@ export class OnlineRoomState {
 
 	leaving = $state(false);
 	redirecting = $state(false);
+	advancing = $state(false);
+
+	currentRound = $derived(this.rounds.find(r => r.round_number === this.game.current_round_number));
 
 	constructor(args: OnlineRoomStateArgs) {
 		this.supabase = args.supabase;
@@ -189,4 +192,20 @@ export class OnlineRoomState {
 	deleteGuess(guessId: OnlineGuess['id']) {
 		this.guesses = this.guesses.filter(g => g.id !== guessId);
 	}
+
+	advanceGameIfReady = async () => {
+		if (this.advancing) return;
+
+		this.advancing = true;
+
+		try {
+			await advanceGameIfReady({
+				gameId: this.game.id,
+			});
+		} catch (error) {
+			console.error('Failed to advance game:', error);
+		} finally {
+			this.advancing = false;
+		}
+	};
 }

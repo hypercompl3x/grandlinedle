@@ -73,9 +73,8 @@ export const actions = {
 		});
 
 		if (submitGuessError) {
-			error(400, {
-				message: submitGuessError.message,
-			});
+			console.error(submitGuessError.message);
+			return { success: false };
 		}
 
 		return { success: true };

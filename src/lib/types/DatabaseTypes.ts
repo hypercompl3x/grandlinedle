@@ -1,13 +1,10 @@
 export type Character = Tables<'characters'>;
-
 export type CharacterWithImage = Character & { url: string };
 
 export type Location = Tables<'locations'>;
-
 export type LocationWithImage = Location & { url: string };
 
 export type Crew = Tables<'crews'>;
-
 export type CrewWithImage = Crew & { url: string };
 
 export type Quote = Tables<'quotes'> & {
@@ -242,6 +239,7 @@ export type Database = {
 					room_code: string;
 					status: Database['public']['Enums']['online_game_status'];
 					sub_status: Database['public']['Enums']['online_game_sub_status'];
+					sub_status_started_at: string;
 				};
 				Insert: {
 					created_at?: string;
@@ -252,6 +250,7 @@ export type Database = {
 					room_code: string;
 					status?: Database['public']['Enums']['online_game_status'];
 					sub_status?: Database['public']['Enums']['online_game_sub_status'];
+					sub_status_started_at?: string;
 				};
 				Update: {
 					created_at?: string;
@@ -262,6 +261,7 @@ export type Database = {
 					room_code?: string;
 					status?: Database['public']['Enums']['online_game_status'];
 					sub_status?: Database['public']['Enums']['online_game_sub_status'];
+					sub_status_started_at?: string;
 				};
 				Relationships: [];
 			};
@@ -438,6 +438,32 @@ export type Database = {
 			[_ in never]: never;
 		};
 		Functions: {
+			advance_online_game_from_results: {
+				Args: { p_game_id: number; p_max_guess_number: number };
+				Returns: {
+					current_guess_number: number;
+					current_round_number: number;
+					game_status: Database['public']['Enums']['online_game_status'];
+					game_sub_status: Database['public']['Enums']['online_game_sub_status'];
+					result: string;
+				}[];
+			};
+			advance_online_game_if_ready: {
+				Args: {
+					p_game_id: number;
+					p_max_guess_number: number;
+					p_results_seconds: number;
+					p_reveal_seconds: number;
+				};
+				Returns: {
+					current_guess_number: number;
+					current_round_number: number;
+					game_status: Database['public']['Enums']['online_game_status'];
+					game_sub_status: Database['public']['Enums']['online_game_sub_status'];
+					result: string;
+					sub_status_started_at: string;
+				}[];
+			};
 			create_daily_game: { Args: never; Returns: undefined };
 			create_online_game_with_host: {
 				Args: { p_display_name: string; p_icon: number };
@@ -471,6 +497,7 @@ export type Database = {
 					current_guess_number: number;
 					current_round_number: number;
 					game_status: Database['public']['Enums']['online_game_status'];
+					game_sub_status: Database['public']['Enums']['online_game_sub_status'];
 					guess_id: number;
 					result: string;
 					was_correct: boolean;

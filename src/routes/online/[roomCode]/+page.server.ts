@@ -1,6 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
+import { getImages } from '$lib/services/serviceHelpers';
 
 export const load: PageServerLoad = async ({ locals: { supabase, session, user }, params }) => {
 	if (!supabase) {
@@ -11,7 +12,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 
 	if (!session || !user) redirect(303, '/online');
 
-	// NEED TO GET ROUNDS AS WELL AS LONG AS NOT IN LOBBY
 	const { data: gameData, error: gameError } = await getGameFromRoomCode(supabase, params.roomCode);
 
 	if (gameError || !gameData) {
@@ -35,5 +35,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 		redirect(303, '/online');
 	}
 
-	return { game, players, rounds, userId: user.id, currentPlayer };
+	const playersWithImages = await getImages(players, supabase, 'icons');
+
+	return { game, players: playersWithImages, rounds, userId: user.id, currentPlayer };
 };

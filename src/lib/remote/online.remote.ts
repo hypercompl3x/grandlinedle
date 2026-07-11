@@ -84,13 +84,15 @@ export const leaveGame = command(
 				invalid('Failed to leave game');
 			}
 		} else {
-			const { error } = await supabase.from('online_players').delete().eq('user_id', user.id);
+			const { error } = await supabase
+				.from('online_players')
+				.delete()
+				.eq('user_id', user.id)
+				.eq('game_id', gameId);
 			if (error) {
 				console.error(error.message);
 				invalid('Failed to leave game');
 			}
 		}
-
-		await supabase.auth.signOut();
 	},
 );

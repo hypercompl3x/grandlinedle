@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Character, Crew, Location, Database } from '$lib/types/DatabaseTypes';
+import type { Character, Crew, Location, Database, OnlinePlayer } from '$lib/types/DatabaseTypes';
 
 const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<Database>) => {
 	const {
@@ -22,13 +22,24 @@ const getCrewImage = async (id: Crew['id'], supabase: SupabaseClient<Database>) 
 	return publicUrl;
 };
 
+const getPlayerIconImage = async (
+	icon: OnlinePlayer['icon'],
+	supabase: SupabaseClient<Database>,
+) => {
+	const {
+		data: { publicUrl },
+	} = supabase.storage.from('player_icons').getPublicUrl(`${icon}.png`);
+	return publicUrl;
+};
+
 const imageFnMap = {
 	characters: getCharacterImage,
 	locations: getLocationImage,
 	crews: getCrewImage,
+	icons: getPlayerIconImage,
 };
 
-export const getImages = async <T extends { id: number }>(
+export const getImages = async <T extends { id: number; icon?: number }>(
 	items: T[],
 	supabase: SupabaseClient<Database>,
 	table: keyof typeof imageFnMap,
@@ -36,7 +47,8 @@ export const getImages = async <T extends { id: number }>(
 	const getImage = imageFnMap[table];
 	return await Promise.all(
 		items.map(async item => {
-			const url = await getImage(item.id, supabase);
+			const imageId = 'icon' in item && item.icon ? item.icon : item.id;
+			const url = await getImage(imageId, supabase);
 
 			return {
 				...item,

@@ -21,6 +21,7 @@ export type LeaderboardEntry = Tables<'leaderboard'>;
 
 export type OnlineGame = Tables<'online_games'>;
 export type OnlinePlayer = Tables<'online_players'>;
+export type OnlinePlayerWithImage = OnlinePlayer & { url: string };
 export type OnlineRound = Tables<'online_rounds'>;
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
@@ -260,6 +261,7 @@ export type Database = {
 					created_at: string;
 					display_name: string;
 					game_id: number;
+					icon: number;
 					id: number;
 					is_host: boolean;
 					user_id: string;
@@ -268,6 +270,7 @@ export type Database = {
 					created_at?: string;
 					display_name: string;
 					game_id: number;
+					icon: number;
 					id?: number;
 					is_host?: boolean;
 					user_id: string;
@@ -276,6 +279,7 @@ export type Database = {
 					created_at?: string;
 					display_name?: string;
 					game_id?: number;
+					icon?: number;
 					id?: number;
 					is_host?: boolean;
 					user_id?: string;

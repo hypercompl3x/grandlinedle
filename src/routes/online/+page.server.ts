@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import * as v from 'valibot';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
-import { GENERIC_ERROR, MAX_ONLINE_PLAYER_COUNT } from '$lib/utils/constants';
+import { GENERIC_ERROR, ICON, MAX_ONLINE_PLAYER_COUNT } from '$lib/utils/constants';
 import type { Database } from '$lib/types/DatabaseTypes';
 
 const joinSchema = v.object({
@@ -61,16 +61,31 @@ const createOnlineGame = async (supabase: SupabaseClient<Database>) => {
 	return { error: 'Could not generate a unique room code' };
 };
 
+const getRandomIcon = (displayName: string, existingIcons: number[] = []) => {
+	if (displayName.toLowerCase().includes('hyde') && !existingIcons.includes(ICON.FOXY))
+		return ICON.FOXY;
+
+	const allowedNumbers = Array.from(
+		{ length: ICON.MAX - ICON.MIN + 1 },
+		(_, i) => ICON.MIN + i,
+	).filter(number => !existingIcons.includes(number));
+
+	const randomIndex = Math.floor(Math.random() * allowedNumbers.length);
+
+	return allowedNumbers[randomIndex];
+};
+
 const createOnlinePlayer = async (
 	supabase: SupabaseClient<Database>,
 	userId: string,
 	displayName: string,
 	gameId: number,
+	icon: number,
 	isHost = false,
 ) => {
 	const { error } = await supabase
 		.from('online_players')
-		.insert({ user_id: userId, display_name: displayName, game_id: gameId, is_host: isHost })
+		.insert({ user_id: userId, display_name: displayName, game_id: gameId, is_host: isHost, icon })
 		.single();
 
 	if (!error) return;
@@ -144,11 +159,14 @@ export const actions = {
 			});
 		}
 
+		const existingIcons = gameData.players.map(p => p.icon);
+		const randomIcon = getRandomIcon(displayName, existingIcons);
 		const playerData = await createOnlinePlayer(
 			supabase,
 			authData.user.id,
 			displayName,
 			gameData.id,
+			randomIcon,
 		);
 
 		if (playerData?.error) {
@@ -193,11 +211,13 @@ export const actions = {
 			});
 		}
 
+		const randomIcon = getRandomIcon(displayName);
 		const playerData = await createOnlinePlayer(
 			supabase,
 			authData.user.id,
 			displayName,
 			gameData.id,
+			randomIcon,
 			true,
 		);
 

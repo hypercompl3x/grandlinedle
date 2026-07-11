@@ -13,8 +13,10 @@
 <div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
 	<div
 		class={cn('flex flex-col items-center h-full mx-auto', {
-			'max-w-(--breakpoint-lg)': page.route.id === '/(solo)/rankings',
-			'max-w-(--breakpoint-md)': page.route.id !== '/(solo)/rankings',
+			'max-w-(--breakpoint-lg)':
+				page.route.id === '/(solo)/rankings' || page.route.id?.includes('/online'),
+			'max-w-(--breakpoint-md)':
+				page.route.id !== '/(solo)/rankings' && !page.route.id?.includes('/online'),
 		})}
 	>
 		<div class="w-full flex justify-center items-center px-4 my-4">

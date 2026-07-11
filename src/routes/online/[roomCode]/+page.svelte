@@ -1,86 +1,70 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import Slider from '$lib/components/Slider.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import Lobby from './_components/Lobby.svelte';
+	import Game from './_components/Game.svelte';
+	import Finished from './_components/Finished.svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { leaveGame, startGame } from '$lib/remote/online.remote';
-	import {
-		GENERIC_ERROR,
-		GUESS_TIME_OPTIONS,
-		NUMBER_OF_ROUNDS_OPTIONS,
-	} from '$lib/utils/constants';
+	import { GAME_STATUSES } from '$lib/utils/constants';
 	import type { OnlineGame, OnlinePlayer, OnlineRound } from '$lib/types/DatabaseTypes';
+	import { setOnlineRoom } from './_lib/online-room-context';
+	import { OnlineRoomState } from './_lib/online-room-state.svelte';
+	import { untrack } from 'svelte';
 
 	let { data } = $props();
 
-	// svelte-ignore state_referenced_locally
-	const {
-		players: initialPlayers,
-		game: initialGame,
-		rounds: initialRounds,
-		currentPlayer: initialCurrentPlayer,
-		userId,
-	} = data;
+	const VIEWS = {
+		[GAME_STATUSES.LOBBY]: Lobby,
+		[GAME_STATUSES.IN_GAME]: Game,
+		[GAME_STATUSES.FINISHED]: Finished,
+	} as const;
 
-	let game = $state(initialGame);
-	let players = $state(initialPlayers);
-	let rounds = $state(initialRounds);
-	let currentPlayer = $state(initialCurrentPlayer);
+	const room = setOnlineRoom(
+		untrack(
+			() =>
+				new OnlineRoomState({
+					supabase,
+					game: data.game,
+					players: data.players,
+					rounds: data.rounds,
+					currentPlayer: data.currentPlayer,
+					userId: data.userId,
+				}),
+		),
+	);
 
-	let numberOfRounds = $state(initialGame.number_of_rounds);
-	let guessTime = $state(initialGame.guess_time);
+	const View = $derived(VIEWS[room.game.status]);
 
-	let starting = $state(false);
-	let startingError = $state('');
-	let leaving = $state(false);
-	let leavingError = $state('');
+	$effect(() => {
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((event, session) => {
+			if (event === 'SIGNED_OUT') {
+				void room.kickToOnline();
+				return;
+			}
 
-	const handleLeaveGame = async () => {
-		leaving = true;
-		leavingError = '';
+			if (session?.user && session.user.id !== room.userId) {
+				void room.kickToOnline();
+			}
+		});
 
-		try {
-			await leaveGame({
-				gameId: game.id,
-			});
-			await goto('/online', { replaceState: true });
-		} catch (e) {
-			leavingError = GENERIC_ERROR;
-		} finally {
-			leaving = false;
-		}
-	};
-
-	const handleStartGame = async () => {
-		starting = true;
-		startingError = '';
-
-		try {
-			await startGame({
-				gameId: game.id,
-				guessTime,
-				numberOfRounds,
-			});
-		} catch (_) {
-			startingError = GENERIC_ERROR;
-		} finally {
-			starting = false;
-		}
-	};
+		return () => {
+			subscription.unsubscribe();
+		};
+	});
 
 	$effect(() => {
 		const channel = supabase
-			.channel(`online-room:${initialGame.room_code}`)
+			.channel(`online-room:${data.game.room_code}`)
 			.on(
 				'postgres_changes',
 				{
 					event: 'UPDATE',
 					schema: 'public',
 					table: 'online_games',
-					filter: `room_code=eq.${initialGame.room_code}`,
+					filter: `room_code=eq.${data.game.room_code}`,
 				},
 				payload => {
-					game = payload.new as OnlineGame;
+					room.updateGame(payload.new as OnlineGame);
 				},
 			)
 			.on(
@@ -89,13 +73,10 @@
 					event: 'INSERT',
 					schema: 'public',
 					table: 'online_players',
-					filter: `game_id=eq.${initialGame.id}`,
+					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					const newPlayer = payload.new as OnlinePlayer;
-					const playerAlreadyInPlayers = players.some(player => player.id === newPlayer.id);
-					if (playerAlreadyInPlayers) return;
-					players = [...players, newPlayer].toSorted((a, b) => a.id - b.id);
+					void room.addPlayer(payload.new as OnlinePlayer);
 				},
 			)
 			.on(
@@ -104,19 +85,10 @@
 					event: 'UPDATE',
 					schema: 'public',
 					table: 'online_players',
-					filter: `game_id=eq.${initialGame.id}`,
+					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					const newPlayer = payload.new as OnlinePlayer;
-
-					players = players.map(p => {
-						if (p.id !== payload.new.id) return p;
-						return newPlayer;
-					});
-
-					if (currentPlayer.id === newPlayer.id) {
-						currentPlayer = newPlayer;
-					}
+					room.updatePlayer(payload.new as OnlinePlayer);
 				},
 			)
 			.on(
@@ -127,13 +99,7 @@
 					table: 'online_players',
 				},
 				async payload => {
-					const deletedPlayer = payload.old as Pick<OnlinePlayer, 'id'>;
-					players = players.filter(p => p.id !== deletedPlayer.id);
-
-					if (currentPlayer.id === deletedPlayer.id) {
-						await supabase.auth.signOut();
-						await goto('/online', { replaceState: true });
-					}
+					room.deletePlayer(payload.old.id as OnlinePlayer['id']);
 				},
 			)
 			.on(
@@ -142,12 +108,10 @@
 					event: 'INSERT',
 					schema: 'public',
 					table: 'online_rounds',
-					filter: `game_id=eq.${initialGame.id}`,
+					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					rounds = [...rounds, payload.new as OnlineRound].toSorted(
-						(a, b) => a.round_number - b.round_number,
-					);
+					room.addRound(payload.new as OnlineRound);
 				},
 			)
 			.on(
@@ -156,13 +120,10 @@
 					event: 'UPDATE',
 					schema: 'public',
 					table: 'online_rounds',
-					filter: `game_id=eq.${initialGame.id}`,
+					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					rounds = rounds.map(r => {
-						if (r.id !== payload.new.id) return r;
-						return payload.new as OnlineRound;
-					});
+					room.updateRound(payload.new as OnlineRound);
 				},
 			)
 			.on(
@@ -173,8 +134,7 @@
 					table: 'online_rounds',
 				},
 				payload => {
-					const deletedRound = payload.old as Pick<OnlineRound, 'id'>;
-					rounds = rounds.filter(r => r.id !== deletedRound.id);
+					room.deleteRound(payload.old.id as OnlineRound['id']);
 				},
 			)
 			.subscribe();
@@ -185,44 +145,9 @@
 	});
 </script>
 
-{#if game.status === 'lobby'}
-	<div class="space-y-8 w-full">
-		<p>
-			{game.room_code}
-		</p>
-		<p>{game.number_of_rounds}</p>
-		<p class="text-base text-red-primary text-center">{startingError || leavingError}</p>
-		{#if currentPlayer.is_host}
-			<div class="space-y-8">
-				<Slider slides={NUMBER_OF_ROUNDS_OPTIONS} bind:slide={numberOfRounds} label="Rounds" />
-				<Slider slides={GUESS_TIME_OPTIONS} bind:slide={guessTime} label="Guess time" />
-				<Button
-					type="button"
-					onclick={handleStartGame}
-					disabled={players.length === 1 || leaving}
-					submitting={starting}
-				>
-					Start
-				</Button>
-			</div>
-		{/if}
-		<Button type="button" onclick={handleLeaveGame} submitting={leaving} disabled={starting}>
-			Leave
-		</Button>
-		{#each players as player (`player-${player.id}`)}
-			<p>{player.display_name}</p>
-		{/each}
-	</div>
-{/if}
+<svelte:head>
+	<title>Grandlinedle - Online</title>
+	<meta name="description" content="Play online against other players!" />
+</svelte:head>
 
-{#if game.status === 'ingame'}
-	<div>
-		{#each rounds as round (`round-${round.id}`)}
-			<p>{round.round_number}</p>
-		{/each}
-	</div>
-{/if}
-
-{#if game.status === 'finished'}
-	FINISHED
-{/if}
+<View />

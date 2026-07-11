@@ -47,8 +47,8 @@
 		{genericError}
 	</p>
 	<div class="space-y-2">
-		<Input name="displayName" label="Display name" error={displayNameError} required />
 		<Input name="roomCode" label="Room code" error={roomCodeError} required />
+		<Input name="displayName" label="Display name" error={displayNameError} required />
 	</div>
 	<Button type="submit" {submitting}>Join</Button>
 </form>

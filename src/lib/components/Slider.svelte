@@ -24,7 +24,7 @@
 			<Slider.TickLabel
 				{index}
 				position="bottom"
-				class="text-grey data-selected:text-black mt-1 text-lg font-medium"
+				class="text-black/60 data-selected:text-black mt-1 text-lg font-medium"
 			>
 				{value}
 			</Slider.TickLabel>

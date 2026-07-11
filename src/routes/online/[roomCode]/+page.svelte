@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import Lobby from './_components/Lobby.svelte';
-	import Game from './_components/Game.svelte';
-	import Finished from './_components/Finished.svelte';
+	import InGame from './_components/InGame.svelte';
+	import Results from './_components/Results.svelte';
 	import { supabase } from '$lib/supabaseClient';
+	import { setOnlineRoom } from './_lib/online-room-context';
+	import { OnlineRoomState } from './_lib/online-room-state.svelte';
 	import { GAME_STATUSES } from '$lib/utils/constants';
 	import type {
 		OnlineGame,
@@ -10,16 +13,13 @@
 		OnlinePlayer,
 		OnlineRound,
 	} from '$lib/types/DatabaseTypes';
-	import { setOnlineRoom } from './_lib/online-room-context';
-	import { OnlineRoomState } from './_lib/online-room-state.svelte';
-	import { untrack } from 'svelte';
 
 	let { data } = $props();
 
 	const VIEWS = {
 		[GAME_STATUSES.LOBBY]: Lobby,
-		[GAME_STATUSES.IN_GAME]: Game,
-		[GAME_STATUSES.FINISHED]: Finished,
+		[GAME_STATUSES.IN_GAME]: InGame,
+		[GAME_STATUSES.RESULTS]: Results,
 	} as const;
 
 	const room = setOnlineRoom(

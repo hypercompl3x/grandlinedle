@@ -129,6 +129,6 @@ export const ICON = {
 
 export const GAME_STATUSES = {
 	LOBBY: 'lobby',
-	IN_GAME: 'ingame',
-	FINISHED: 'finished',
+	IN_GAME: 'in_game',
+	RESULTS: 'results',
 } as const;

@@ -241,6 +241,7 @@ export type Database = {
 					number_of_rounds: number;
 					room_code: string;
 					status: Database['public']['Enums']['online_game_status'];
+					sub_status: Database['public']['Enums']['online_game_sub_status'];
 				};
 				Insert: {
 					created_at?: string;
@@ -250,6 +251,7 @@ export type Database = {
 					number_of_rounds?: number;
 					room_code: string;
 					status?: Database['public']['Enums']['online_game_status'];
+					sub_status?: Database['public']['Enums']['online_game_sub_status'];
 				};
 				Update: {
 					created_at?: string;
@@ -259,6 +261,7 @@ export type Database = {
 					number_of_rounds?: number;
 					room_code?: string;
 					status?: Database['public']['Enums']['online_game_status'];
+					sub_status?: Database['public']['Enums']['online_game_sub_status'];
 				};
 				Relationships: [];
 			};
@@ -475,7 +478,8 @@ export type Database = {
 			};
 		};
 		Enums: {
-			online_game_status: 'lobby' | 'ingame' | 'finished';
+			online_game_status: 'lobby' | 'in_game' | 'results';
+			online_game_sub_status: 'guessing' | 'revealing' | 'results';
 		};
 		CompositeTypes: {
 			[_ in never]: never;
@@ -604,7 +608,8 @@ export const Constants = {
 	},
 	public: {
 		Enums: {
-			online_game_status: ['lobby', 'ingame', 'finished'],
+			online_game_status: ['lobby', 'in_game', 'results'],
+			online_game_sub_status: ['guessing', 'revealing', 'results'],
 		},
 	},
 } as const;

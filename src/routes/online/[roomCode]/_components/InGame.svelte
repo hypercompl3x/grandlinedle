@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Loader2 } from 'lucide-svelte';
 	import Search from './Search/index.svelte';
-	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 	import { getOnlineRoom } from '../_lib/online-room-context';
 	import { formatBounty, formatHeight } from '$lib/utils/helpers';
 	import type { Character } from '$lib/types/DatabaseTypes';
@@ -86,6 +85,7 @@
 	});
 </script>
 
+<div>{room.game.sub_status}</div>
 <div class="flex flex-col items-center gap-y-8 w-full">
 	{#if currentRound}
 		<div class="bg-red-dark text-white p-4">

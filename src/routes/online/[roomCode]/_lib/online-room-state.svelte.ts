@@ -5,16 +5,19 @@ import { getImages } from '$lib/services/serviceHelpers';
 import type {
 	Database,
 	OnlineGame,
+	OnlineGuess,
 	OnlinePlayer,
 	OnlinePlayerWithImage,
 	OnlineRound,
+	OnlineRoundWithCharacter,
 } from '$lib/types/DatabaseTypes';
 
 type OnlineRoomStateArgs = {
 	supabase: SupabaseClient<Database>;
 	game: OnlineGame;
 	players: OnlinePlayerWithImage[];
-	rounds: OnlineRound[];
+	rounds: OnlineRoundWithCharacter[];
+	guesses: OnlineGuess[];
 	currentPlayer: OnlinePlayer;
 	userId: User['id'];
 };
@@ -24,7 +27,8 @@ export class OnlineRoomState {
 
 	game = $state<OnlineGame>()!;
 	players = $state<OnlinePlayerWithImage[]>([]);
-	rounds = $state<OnlineRound[]>([]);
+	rounds = $state<OnlineRoundWithCharacter[]>([]);
+	guesses = $state<OnlineGuess[]>([]);
 	currentPlayer = $state<OnlinePlayer>()!;
 	userId = $state<User['id']>()!;
 
@@ -37,6 +41,7 @@ export class OnlineRoomState {
 		this.game = args.game;
 		this.players = args.players;
 		this.rounds = args.rounds;
+		this.guesses = args.guesses;
 		this.currentPlayer = args.currentPlayer;
 		this.userId = args.userId;
 	}
@@ -104,17 +109,59 @@ export class OnlineRoomState {
 		}
 	}
 
-	addRound(round: OnlineRound) {
+	async addRound(round: OnlineRound) {
 		if (this.rounds.some(r => r.id === round.id)) return;
 
-		this.rounds = [...this.rounds, round].toSorted((a, b) => a.round_number - b.round_number);
+		const { data: character, error } = await this.supabase
+			.from('characters')
+			.select()
+			.eq('id', round.character_id)
+			.limit(1)
+			.single();
+
+		if (error) {
+			throw new Error(`Failed to fetch character ${round.character_id}: ${error.message}`);
+		}
+
+		if (!character) {
+			throw new Error(`Character ${round.character_id} not found for round ${round.id}`);
+		}
+
+		this.rounds = [
+			...this.rounds,
+			{
+				...round,
+				character,
+			},
+		].toSorted((a, b) => a.round_number - b.round_number);
 	}
 
 	updateRound(round: OnlineRound) {
-		this.rounds = this.rounds.map(r => (r.id === round.id ? round : r));
+		this.rounds = this.rounds.map(r => {
+			if (r.id !== round.id) return r;
+
+			return {
+				...round,
+				character: r.character,
+			};
+		});
 	}
 
 	deleteRound(roundId: OnlineRound['id']) {
 		this.rounds = this.rounds.filter(r => r.id !== roundId);
+	}
+
+	addGuess(guess: OnlineGuess) {
+		if (this.guesses.some(g => g.id === guess.id)) return;
+
+		this.guesses = [...this.guesses, guess];
+	}
+
+	updateGuess(guess: OnlineGuess) {
+		this.guesses = this.guesses.map(g => (g.id === guess.id ? guess : g));
+	}
+
+	deleteGuess(guessId: OnlineGuess['id']) {
+		this.guesses = this.guesses.filter(g => g.id !== guessId);
 	}
 }

@@ -1,5 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
 import { getImages } from '$lib/services/serviceHelpers';
 
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 		redirect(303, roomCode ? `/online/${roomCode}` : '/online');
 	}
 
-	const { players, rounds, ...game } = gameData;
+	const { players, rounds, guesses, ...game } = gameData;
 
 	const currentPlayer = players.find(p => p.user_id === user.id);
 
@@ -37,5 +37,39 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 
 	const playersWithImages = await getImages(players, supabase, 'icons');
 
-	return { game, players: playersWithImages, rounds, userId: user.id, currentPlayer };
+	return { game, players: playersWithImages, rounds, guesses, userId: user.id, currentPlayer };
 };
+
+export const actions = {
+	default: async ({ request, locals: { supabase, session, user }, params }) => {
+		if (!supabase) {
+			error(500, {
+				message: 'Supabase client is not available',
+			});
+		}
+
+		if (!session || !user) {
+			redirect(303, '/online');
+		}
+
+		const data = await request.formData();
+		const characterId = Number(data.get('characterId'));
+		const roundId = Number(data.get('roundId'));
+		const guessNumber = Number(data.get('guessNumber'));
+
+		const { error: submitGuessError } = await supabase.rpc('submit_online_guess', {
+			p_room_code: params.roomCode,
+			p_character_id: characterId,
+			p_round_id: roundId,
+			p_guess_number: guessNumber,
+		});
+
+		if (submitGuessError) {
+			error(400, {
+				message: submitGuessError.message,
+			});
+		}
+
+		return { success: true };
+	},
+} satisfies Actions;

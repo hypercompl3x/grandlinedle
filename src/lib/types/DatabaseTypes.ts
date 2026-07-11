@@ -23,6 +23,8 @@ export type OnlineGame = Tables<'online_games'>;
 export type OnlinePlayer = Tables<'online_players'>;
 export type OnlinePlayerWithImage = OnlinePlayer & { url: string };
 export type OnlineRound = Tables<'online_rounds'>;
+export type OnlineRoundWithCharacter = OnlineRound & { character: Character };
+export type OnlineGuess = Tables<'online_guesses'>;
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -256,6 +258,65 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			online_guesses: {
+				Row: {
+					character_id: number;
+					created_at: string;
+					game_id: number;
+					guess_number: number;
+					id: number;
+					player_id: number;
+					round_id: number;
+				};
+				Insert: {
+					character_id: number;
+					created_at?: string;
+					game_id: number;
+					guess_number: number;
+					id?: number;
+					player_id: number;
+					round_id: number;
+				};
+				Update: {
+					character_id?: number;
+					created_at?: string;
+					game_id?: number;
+					guess_number?: number;
+					id?: number;
+					player_id?: number;
+					round_id?: number;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'online_guesses_character_id_fkey';
+						columns: ['character_id'];
+						isOneToOne: false;
+						referencedRelation: 'characters';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'online_guesses_game_id_fkey';
+						columns: ['game_id'];
+						isOneToOne: false;
+						referencedRelation: 'online_games';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'online_guesses_player_id_fkey';
+						columns: ['player_id'];
+						isOneToOne: false;
+						referencedRelation: 'online_players';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'online_guesses_round_id_fkey';
+						columns: ['round_id'];
+						isOneToOne: false;
+						referencedRelation: 'online_rounds';
+						referencedColumns: ['id'];
+					},
+				];
+			};
 			online_players: {
 				Row: {
 					created_at: string;
@@ -296,7 +357,7 @@ export type Database = {
 			};
 			online_rounds: {
 				Row: {
-					character_id: number | null;
+					character_id: number;
 					created_at: string;
 					current_guess_number: number;
 					game_id: number;
@@ -304,7 +365,7 @@ export type Database = {
 					round_number: number;
 				};
 				Insert: {
-					character_id?: number | null;
+					character_id: number;
 					created_at?: string;
 					current_guess_number?: number;
 					game_id: number;
@@ -312,7 +373,7 @@ export type Database = {
 					round_number: number;
 				};
 				Update: {
-					character_id?: number | null;
+					character_id?: number;
 					created_at?: string;
 					current_guess_number?: number;
 					game_id?: number;
@@ -374,6 +435,23 @@ export type Database = {
 			create_online_rounds: {
 				Args: { p_game_id: number; p_number_of_rounds: number };
 				Returns: undefined;
+			};
+			submit_online_guess: {
+				Args: {
+					p_character_id: number;
+					p_guess_number: number;
+					p_max_guess_number?: number;
+					p_room_code: string;
+					p_round_id: number;
+				};
+				Returns: {
+					current_guess_number: number;
+					current_round_number: number;
+					game_status: Database['public']['Enums']['online_game_status'];
+					guess_id: number;
+					result: string;
+					was_correct: boolean;
+				}[];
 			};
 		};
 		Enums: {

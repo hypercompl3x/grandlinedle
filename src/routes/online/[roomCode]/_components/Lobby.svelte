@@ -25,6 +25,8 @@
 			starting = false;
 		}
 	};
+
+	// const startDisabled = room.players.length === 1 || room.leaving;
 </script>
 
 <div class="flex flex-col items-center gap-y-8 w-full">
@@ -37,14 +39,7 @@
 				<div class="space-y-12">
 					<Slider slides={NUMBER_OF_ROUNDS_OPTIONS} bind:slide={numberOfRounds} label="Rounds" />
 					<Slider slides={GUESS_TIME_OPTIONS} bind:slide={guessTime} label="Guess time (seconds)" />
-					<Button
-						type="button"
-						onclick={start}
-						disabled={room.players.length === 1 || room.leaving}
-						submitting={starting}
-					>
-						Start
-					</Button>
+					<Button type="button" onclick={start} submitting={starting}>Start</Button>
 				</div>
 			{/if}
 			<Button

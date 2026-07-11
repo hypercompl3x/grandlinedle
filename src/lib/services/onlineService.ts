@@ -1,4 +1,3 @@
-import { redirect } from '@sveltejs/kit';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database, OnlineGame } from '$lib/types/DatabaseTypes';
 
@@ -39,7 +38,11 @@ export const getGameFromRoomCode = async (
 			`
 		*,
 		players:online_players (*),
-		rounds:online_rounds (*)
+		rounds:online_rounds (
+			*,
+			character:characters (*)
+		),
+		guesses:online_guesses (*)
 	`,
 		)
 		.order('id', {

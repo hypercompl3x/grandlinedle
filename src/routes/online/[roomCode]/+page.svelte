@@ -4,7 +4,12 @@
 	import Finished from './_components/Finished.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { GAME_STATUSES } from '$lib/utils/constants';
-	import type { OnlineGame, OnlinePlayer, OnlineRound } from '$lib/types/DatabaseTypes';
+	import type {
+		OnlineGame,
+		OnlineGuess,
+		OnlinePlayer,
+		OnlineRound,
+	} from '$lib/types/DatabaseTypes';
 	import { setOnlineRoom } from './_lib/online-room-context';
 	import { OnlineRoomState } from './_lib/online-room-state.svelte';
 	import { untrack } from 'svelte';
@@ -25,6 +30,7 @@
 					game: data.game,
 					players: data.players,
 					rounds: data.rounds,
+					guesses: data.guesses,
 					currentPlayer: data.currentPlayer,
 					userId: data.userId,
 				}),
@@ -111,7 +117,7 @@
 					filter: `game_id=eq.${data.game.id}`,
 				},
 				payload => {
-					room.addRound(payload.new as OnlineRound);
+					void room.addRound(payload.new as OnlineRound);
 				},
 			)
 			.on(
@@ -135,6 +141,41 @@
 				},
 				payload => {
 					room.deleteRound(payload.old.id as OnlineRound['id']);
+				},
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'online_guesses',
+					filter: `game_id=eq.${data.game.id}`,
+				},
+				payload => {
+					room.addGuess(payload.new as OnlineGuess);
+				},
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'UPDATE',
+					schema: 'public',
+					table: 'online_guesses',
+					filter: `game_id=eq.${data.game.id}`,
+				},
+				payload => {
+					room.updateGuess(payload.new as OnlineGuess);
+				},
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'DELETE',
+					schema: 'public',
+					table: 'online_guesses',
+				},
+				payload => {
+					room.deleteGuess(payload.old.id as OnlineGuess['id']);
 				},
 			)
 			.subscribe();

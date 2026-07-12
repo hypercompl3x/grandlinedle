@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { X } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Slider from '$lib/components/Slider.svelte';
 	import { getOnlineRoom } from '../_lib/online-room-context';
@@ -29,8 +30,6 @@
 			starting = false;
 		}
 	};
-
-	// const startDisabled = room.players.length === 1 || room.leaving;
 </script>
 
 <div class="flex flex-col items-center gap-y-8 w-full px-4">
@@ -50,7 +49,7 @@
 							label="Guess time (seconds)"
 						/>
 					</div>
-					<Button type="button" onclick={start} submitting={starting}>Start</Button>
+					<Button type="button" onclick={start} disabled={room.players.length === 1 || room.leaving} submitting={starting}>Start</Button>
 				</div>
 			{/if}
 			<Button
@@ -70,12 +69,27 @@
 		</p>
 		<div class="flex flex-wrap gap-8 justify-center">
 			{#each room.players as player (`player-${player.id}`)}
-				<div class="flex bg-green-light rounded-md overflow-hidden items-center">
-					<img alt="Player icon" src={player.url} class="w-28 p-2 bg-green-primary" />
-					<p class="p-4 text-white font-bold text-3xl">
+				{const isOnline = $derived(room.isPlayerOnline(player.id))}
+				<div class="flex items-center relative">
+					<img alt="Player icon" src={player.url} class="w-28 p-2 bg-green-primary rounded-l-md" />
+					<p
+						class='p-4 bg-green-light text-white font-bold text-3xl rounded-r-md h-full flex items-center'
+					>
+					<span class:animate-pulse={!isOnline}>
 						{#if player.is_host}👑{/if}
 						{player.display_name}
+						</span>
 					</p>
+					{#if room.currentPlayer.is_host && player.id !== room.currentPlayer.id}
+						<button
+							type="button"
+							onclick={() => room.kickPlayer(player.id)}
+							disabled={room.kickingPlayerId === player.id}
+							class="absolute -top-2 -right-2 rounded-full bg-white p-0.5 group/kick"
+						>
+							<X class="size-5 stroke-3 group-hover/kick:text-red-primary" />
+						</button>
+					{/if}
 				</div>
 			{/each}
 		</div>

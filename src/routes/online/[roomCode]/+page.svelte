@@ -59,8 +59,15 @@
 	});
 
 	$effect(() => {
-		const channel = supabase
-			.channel(`online-room:${data.game.room_code}`)
+		const channel = supabase.channel(`online-room:${data.game.room_code}`, {
+			config: {
+				presence: {
+					key: String(room.currentPlayer.id),
+				},
+			},
+		});
+
+		channel
 			.on(
 				'postgres_changes',
 				{
@@ -178,10 +185,82 @@
 					room.deleteGuess(payload.old.id as OnlineGuess['id']);
 				},
 			)
-			.subscribe();
+			.on('presence', { event: 'sync' }, () => {
+				const presenceState = channel.presenceState<{
+					playerId: number;
+					displayName: string;
+				}>();
+
+				const onlinePlayerIds = Object.values(presenceState)
+					.flat()
+					.map(presence => presence.playerId);
+
+				room.setOnlinePlayerIds(onlinePlayerIds);
+			})
+			.subscribe(async status => {
+				if (status !== 'SUBSCRIBED') return;
+
+				await channel.track({
+					playerId: room.currentPlayer.id,
+					displayName: room.currentPlayer.display_name,
+				});
+			});
 
 		return () => {
-			supabase.removeChannel(channel);
+			void channel.untrack();
+			void supabase.removeChannel(channel);
+		};
+	});
+
+	const HOST_TRANSFER_DELAY_MS = 5000;
+
+	$effect(() => {
+		if (!room.presenceReady) return;
+		if (room.currentPlayer.is_host) return;
+
+		const host = room.players.find(player => player.is_host);
+
+		if (!host) return;
+		if (room.isPlayerOnline(host.id)) return;
+
+		const oldestOnlinePlayer = room.players
+			.filter(player => player.id !== host.id)
+			.filter(player => room.isPlayerOnline(player.id))
+			.toSorted((a, b) => {
+				const createdAtDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+
+				if (createdAtDiff !== 0) return createdAtDiff;
+
+				return a.id - b.id;
+			})[0];
+
+		if (oldestOnlinePlayer?.id !== room.currentPlayer.id) return;
+
+		const timeout = window.setTimeout(() => {
+			const currentHost = room.players.find(player => player.is_host);
+
+			if (!currentHost) return;
+			if (currentHost.id !== host.id) return;
+			if (room.isPlayerOnline(currentHost.id)) return;
+
+			const currentOldestOnlinePlayer = room.players
+				.filter(player => player.id !== currentHost.id)
+				.filter(player => room.isPlayerOnline(player.id))
+				.toSorted((a, b) => {
+					const createdAtDiff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+
+					if (createdAtDiff !== 0) return createdAtDiff;
+
+					return a.id - b.id;
+				})[0];
+
+			if (currentOldestOnlinePlayer?.id !== room.currentPlayer.id) return;
+
+			void room.claimHost(currentHost.id);
+		}, HOST_TRANSFER_DELAY_MS);
+
+		return () => {
+			window.clearTimeout(timeout);
 		};
 	});
 </script>

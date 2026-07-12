@@ -267,10 +267,15 @@
 			</p>
 			<div class="flex flex-wrap gap-8 justify-center">
 				{#each playersWithCurrentGuess as player (`player-${player.id}`)}
+					{const isOnline = $derived(room.isPlayerOnline(player.id))}
 					<PlayerCard
 						subStatus={room.game.sub_status}
 						currentRoundCharacterId={room.currentRound.character_id}
+						currentPlayer={room.currentPlayer}
+						kickingPlayerId={room.kickingPlayerId}
+						kickPlayer={() => room.kickPlayer(player.id)}
 						{player}
+						{isOnline}
 					/>
 				{/each}
 			</div>

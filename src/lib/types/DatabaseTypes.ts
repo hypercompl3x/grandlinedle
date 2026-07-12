@@ -471,6 +471,14 @@ export type Database = {
 					sub_status_started_at: string;
 				}[];
 			};
+			claim_online_host: {
+				Args: { p_game_id: number; p_old_host_id: number };
+				Returns: {
+					new_host_id: number;
+					old_host_id: number;
+					result: string;
+				}[];
+			};
 			create_daily_game: { Args: never; Returns: undefined };
 			create_online_game_with_host: {
 				Args: { p_display_name: string; p_icon: number };
@@ -478,6 +486,13 @@ export type Database = {
 					game_id: number;
 					player_id: number;
 					room_code: string;
+				}[];
+			};
+			kick_online_player: {
+				Args: { p_game_id: number; p_player_id: number };
+				Returns: {
+					kicked_player_id: number;
+					result: string;
 				}[];
 			};
 			leave_online_game: {

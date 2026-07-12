@@ -1,6 +1,11 @@
 import { goto } from '$app/navigation';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
-import { advanceGameIfReady, leaveGame } from '$lib/remote/online.remote';
+import {
+	advanceGameIfReady,
+	claimOnlineHost,
+	kickOnlinePlayer,
+	leaveGame,
+} from '$lib/remote/online.remote';
 import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
 import type {
 	Database,
@@ -36,6 +41,10 @@ export class OnlineRoomState {
 	leaving = $state(false);
 	redirecting = $state(false);
 	advancing = $state(false);
+	transferringHost = $state(false);
+	presenceReady = $state(false);
+
+	kickingPlayerId = $state<number | null>(null);
 
 	currentRound = $derived(this.rounds.find(r => r.round_number === this.game.current_round_number));
 
@@ -206,6 +215,51 @@ export class OnlineRoomState {
 			console.error('Failed to advance game:', error);
 		} finally {
 			this.advancing = false;
+		}
+	};
+
+	onlinePlayerIds = $state<Set<number>>(new Set());
+
+	setOnlinePlayerIds = (playerIds: number[]) => {
+		this.onlinePlayerIds = new Set(playerIds);
+		this.presenceReady = true;
+	};
+
+	isPlayerOnline = (playerId: number) => {
+		return this.onlinePlayerIds.has(playerId);
+	};
+
+	claimHost = async (oldHostId: number) => {
+		if (this.transferringHost) return;
+
+		this.transferringHost = true;
+
+		try {
+			await claimOnlineHost({
+				gameId: this.game.id,
+				oldHostId,
+			});
+		} catch (error) {
+			console.error('Failed to transfer host:', error);
+		} finally {
+			this.transferringHost = false;
+		}
+	};
+
+	kickPlayer = async (playerId: number) => {
+		if (this.kickingPlayerId) return;
+
+		this.kickingPlayerId = playerId;
+
+		try {
+			await kickOnlinePlayer({
+				gameId: this.game.id,
+				playerId,
+			});
+		} catch (error) {
+			console.error('Failed to kick player:', error);
+		} finally {
+			this.kickingPlayerId = null;
 		}
 	};
 }

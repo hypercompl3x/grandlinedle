@@ -80,7 +80,7 @@ export const advanceGameIfReady = command(
 		} = getRequestEvent();
 
 		if (!session || !user) {
-			throw new Error('Not authenticated');
+			invalid('Not authenticated');
 		}
 
 		const { error } = await supabase.rpc('advance_online_game_if_ready', {
@@ -92,7 +92,7 @@ export const advanceGameIfReady = command(
 
 		if (error) {
 			console.error('Failed to advance game:', error.message);
-			throw new Error(error.message);
+			invalid(error.message);
 		}
 
 		return { success: true };
@@ -109,7 +109,7 @@ export const advanceGameFromResults = command(
 		} = getRequestEvent();
 
 		if (!session || !user) {
-			throw new Error('Not authenticated');
+			invalid('Not authenticated');
 		}
 
 		const { error } = await supabase.rpc('advance_online_game_from_results', {
@@ -119,7 +119,7 @@ export const advanceGameFromResults = command(
 
 		if (error) {
 			console.error('Failed to advance from results:', error.message);
-			throw new Error(error.message);
+			invalid(error.message);
 		}
 	},
 );
@@ -134,7 +134,7 @@ export const leaveGame = command(
 		} = getRequestEvent();
 
 		if (!session || !user) {
-			throw new Error('Not authenticated');
+			invalid('Not authenticated');
 		}
 
 		const { error } = await supabase.rpc('leave_online_game', {
@@ -142,7 +142,57 @@ export const leaveGame = command(
 		});
 
 		if (error) {
-			throw new Error(error.message);
+			invalid(error.message);
+		}
+	},
+);
+
+export const claimOnlineHost = command(
+	v.object({
+		gameId: v.pipe(v.number(), v.integer()),
+		oldHostId: v.pipe(v.number(), v.integer()),
+	}),
+	async ({ gameId, oldHostId }) => {
+		const {
+			locals: { session, user, supabase },
+		} = getRequestEvent();
+
+		if (!session || !user) {
+			invalid('Not authenticated');
+		}
+
+		const { error } = await supabase.rpc('claim_online_host', {
+			p_game_id: gameId,
+			p_old_host_id: oldHostId,
+		});
+
+		if (error) {
+			invalid(error.message);
+		}
+	},
+);
+
+export const kickOnlinePlayer = command(
+	v.object({
+		gameId: v.pipe(v.number(), v.integer()),
+		playerId: v.pipe(v.number(), v.integer()),
+	}),
+	async ({ gameId, playerId }) => {
+		const {
+			locals: { session, user, supabase },
+		} = getRequestEvent();
+
+		if (!session || !user) {
+			invalid('Not authenticated');
+		}
+
+		const { error } = await supabase.rpc('kick_online_player', {
+			p_game_id: gameId,
+			p_player_id: playerId,
+		});
+
+		if (error) {
+			invalid(error.message);
 		}
 	},
 );

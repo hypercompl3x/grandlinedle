@@ -70,14 +70,16 @@
 		<div class="flex flex-wrap gap-8 justify-center">
 			{#each room.players as player (`player-${player.id}`)}
 				{const isOnline = $derived(room.isPlayerOnline(player.id))}
-				<div class="flex items-center relative">
-					<img alt="Player icon" src={player.url} class="w-28 p-2 bg-green-primary rounded-l-md" />
-					<p
-						class='p-4 bg-green-light text-white font-bold text-3xl rounded-r-md h-full flex items-center'
-					>
-					<span class:animate-pulse={!isOnline}>
-						{#if player.is_host}👑{/if}
-						{player.display_name}
+				<div class="relative flex items-stretch">
+					<img
+						alt={player.display_name}
+						src={player.url}
+						class="w-28 rounded-l-md bg-green-primary p-2"
+					/>
+					<p class="flex items-center rounded-r-md bg-green-light p-4 text-3xl font-bold text-white">
+						<span class:animate-pulse={!isOnline}>
+							{#if player.is_host}👑{/if}
+							{player.display_name}
 						</span>
 					</p>
 					{#if room.currentPlayer.is_host && player.id !== room.currentPlayer.id}
@@ -85,7 +87,7 @@
 							type="button"
 							onclick={() => room.kickPlayer(player.id)}
 							disabled={room.kickingPlayerId === player.id}
-							class="absolute -top-2 -right-2 rounded-full bg-white p-0.5 group/kick"
+							class="group/kick absolute -right-2 -top-2 rounded-full bg-white p-0.5"
 						>
 							<X class="size-5 stroke-3 group-hover/kick:text-red-primary" />
 						</button>

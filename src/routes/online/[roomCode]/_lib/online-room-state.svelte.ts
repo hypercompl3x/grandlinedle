@@ -46,6 +46,8 @@ export class OnlineRoomState {
 
 	kickingPlayerId = $state<number | null>(null);
 
+	onlinePlayerIds = $state<Set<number>>(new Set());
+
 	currentRound = $derived(this.rounds.find(r => r.round_number === this.game.current_round_number));
 
 	constructor(args: OnlineRoomStateArgs) {
@@ -218,11 +220,12 @@ export class OnlineRoomState {
 		}
 	};
 
-	onlinePlayerIds = $state<Set<number>>(new Set());
-
-	setOnlinePlayerIds = (playerIds: number[]) => {
+	setOnlinePlayerIds = (playerIds: number[], currentPlayerId: number) => {
 		this.onlinePlayerIds = new Set(playerIds);
-		this.presenceReady = true;
+
+		if (playerIds.includes(currentPlayerId)) {
+			this.presenceReady = true;
+		}
 	};
 
 	isPlayerOnline = (playerId: number) => {

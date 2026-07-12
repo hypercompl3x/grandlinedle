@@ -174,9 +174,6 @@
 			advancing = false;
 		}
 	};
-
-	// TODO: ADD PRESENCE AND HANDLE DISCONNECTS ACCORDINGLY
-	// TODO: HANDLE TRANSFER OF HOST WHEN LEAVING/DISCONNECTING
 </script>
 
 {#if room.currentRound}

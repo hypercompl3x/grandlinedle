@@ -85,9 +85,20 @@ export const actions = {
 
 		const { displayName, roomCode } = result.output;
 
+		const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
+			options: { data: { displayName } },
+		});
+
+		if (authError || !authData.user) {
+			return fail(500, {
+				errors: { generic: [GENERIC_ERROR] },
+			});
+		}
+
 		const { data: gameData, error: gameError } = await getGameFromRoomCode(supabase, roomCode);
 
 		if (gameError || !gameData) {
+			await supabase.auth.signOut();
 			return fail(400, {
 				errors: { roomCode: ['A game with this room code does not exist'] },
 			});
@@ -98,30 +109,23 @@ export const actions = {
 		);
 
 		if (!nameIsUnique) {
+			await supabase.auth.signOut();
 			return fail(400, {
 				errors: { displayName: ['This display name is already taken'] },
 			});
 		}
 
 		if (gameData.players.length === MAX_ONLINE_PLAYER_COUNT) {
+			await supabase.auth.signOut();
 			return fail(400, {
 				errors: { roomCode: ['This game is already full'] },
 			});
 		}
 
 		if (gameData.status !== 'lobby') {
+			await supabase.auth.signOut();
 			return fail(400, {
 				errors: { roomCode: ['This game has already started'] },
-			});
-		}
-
-		const { data: authData, error: authError } = await supabase.auth.signInAnonymously({
-			options: { data: { displayName } },
-		});
-
-		if (authError || !authData.user) {
-			return fail(500, {
-				errors: { generic: [GENERIC_ERROR] },
 			});
 		}
 

@@ -40,175 +40,173 @@
 	const View = $derived(VIEWS[room.game.status]);
 
 	$effect(() => {
-		const {
-			data: { subscription },
-		} = supabase.auth.onAuthStateChange((event, session) => {
-			if (event === 'SIGNED_OUT') {
-				void room.kickToOnline();
-				return;
-			}
+		let channel: ReturnType<typeof supabase.channel> | undefined;
+		let cancelled = false;
 
-			if (session?.user && session.user.id !== room.userId) {
-				void room.kickToOnline();
-			}
-		});
+		const setupChannel = async () => {
+			if (!data.realtimeAccessToken || cancelled) return;
 
-		return () => {
-			subscription.unsubscribe();
-		};
-	});
+			supabase.realtime.setAuth(data.realtimeAccessToken);
 
-	$effect(() => {
-		const channel = supabase.channel(`online-room:${data.game.room_code}`, {
-			config: {
-				presence: {
-					key: String(room.currentPlayer.id),
+			channel = supabase.channel(`online-room:${room.game.room_code}`, {
+				config: {
+					presence: {
+						key: String(room.currentPlayer.id),
+					},
 				},
-			},
-		});
-
-		channel
-			.on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'online_games',
-					filter: `room_code=eq.${data.game.room_code}`,
-				},
-				payload => {
-					room.updateGame(payload.new as OnlineGame);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'online_players',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					void room.addPlayer(payload.new as OnlinePlayer);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'online_players',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					room.updatePlayer(payload.new as OnlinePlayer);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'DELETE',
-					schema: 'public',
-					table: 'online_players',
-				},
-				async payload => {
-					room.deletePlayer(payload.old.id as OnlinePlayer['id']);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'online_rounds',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					void room.addRound(payload.new as OnlineRound);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'online_rounds',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					room.updateRound(payload.new as OnlineRound);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'DELETE',
-					schema: 'public',
-					table: 'online_rounds',
-				},
-				payload => {
-					room.deleteRound(payload.old.id as OnlineRound['id']);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'online_guesses',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					void room.addGuess(payload.new as OnlineGuess);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'online_guesses',
-					filter: `game_id=eq.${data.game.id}`,
-				},
-				payload => {
-					room.updateGuess(payload.new as OnlineGuess);
-				},
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'DELETE',
-					schema: 'public',
-					table: 'online_guesses',
-				},
-				payload => {
-					room.deleteGuess(payload.old.id as OnlineGuess['id']);
-				},
-			)
-			.on('presence', { event: 'sync' }, () => {
-				const presenceState = channel.presenceState<{
-					playerId: number;
-					displayName: string;
-				}>();
-
-				const onlinePlayerIds = Object.values(presenceState)
-					.flat()
-					.map(presence => presence.playerId);
-
-				room.setOnlinePlayerIds(onlinePlayerIds);
-			})
-			.subscribe(async status => {
-				if (status !== 'SUBSCRIBED') return;
-
-				await channel.track({
-					playerId: room.currentPlayer.id,
-					displayName: room.currentPlayer.display_name,
-				});
 			});
 
+			channel
+				.on(
+					'postgres_changes',
+					{
+						event: 'UPDATE',
+						schema: 'public',
+						table: 'online_games',
+						filter: `room_code=eq.${data.game.room_code}`,
+					},
+					payload => {
+						room.updateGame(payload.new as OnlineGame);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'online_players',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						void room.addPlayer(payload.new as OnlinePlayer);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'UPDATE',
+						schema: 'public',
+						table: 'online_players',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						room.updatePlayer(payload.new as OnlinePlayer);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'DELETE',
+						schema: 'public',
+						table: 'online_players',
+					},
+					async payload => {
+						room.deletePlayer(payload.old.id as OnlinePlayer['id']);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'online_rounds',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						void room.addRound(payload.new as OnlineRound);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'UPDATE',
+						schema: 'public',
+						table: 'online_rounds',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						room.updateRound(payload.new as OnlineRound);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'DELETE',
+						schema: 'public',
+						table: 'online_rounds',
+					},
+					payload => {
+						room.deleteRound(payload.old.id as OnlineRound['id']);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'online_guesses',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						void room.addGuess(payload.new as OnlineGuess);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'UPDATE',
+						schema: 'public',
+						table: 'online_guesses',
+						filter: `game_id=eq.${data.game.id}`,
+					},
+					payload => {
+						room.updateGuess(payload.new as OnlineGuess);
+					},
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'DELETE',
+						schema: 'public',
+						table: 'online_guesses',
+					},
+					payload => {
+						room.deleteGuess(payload.old.id as OnlineGuess['id']);
+					},
+				)
+				.on('presence', { event: 'sync' }, () => {
+					const presenceState = channel?.presenceState<{
+						playerId: number;
+						displayName: string;
+					}>();
+
+					if (presenceState) {
+						const onlinePlayerIds = Object.values(presenceState)
+							.flat()
+							.map(presence => presence.playerId);
+
+						room.setOnlinePlayerIds([...new Set(onlinePlayerIds)], room.currentPlayer.id);
+					}
+				})
+				.subscribe(async status => {
+					if (status !== 'SUBSCRIBED') return;
+
+					await channel?.track({
+						playerId: room.currentPlayer.id,
+						displayName: room.currentPlayer.display_name,
+					});
+				});
+		};
+
+		void setupChannel();
+
 		return () => {
-			void channel.untrack();
-			void supabase.removeChannel(channel);
+			cancelled = true;
+
+			if (channel) {
+				void channel.untrack();
+				void supabase.removeChannel(channel);
+			}
 		};
 	});
 

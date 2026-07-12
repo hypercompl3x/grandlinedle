@@ -57,7 +57,7 @@
 			{hasGuessed ? '✓ Guessed' : 'Waiting...'}
 		</div>
 	{/if}
-	<div class="flex items-center relative">
+	<div class="flex items-stretch relative">
 		<img
 			alt="Player icon"
 			src={player.url}
@@ -67,7 +67,7 @@
 			})}
 		/>
 		<p
-			class={cn('p-4 text-white font-bold text-3xl rounded-r-md bg-grey h-full flex items-center', {
+			class={cn('p-4 text-white font-bold text-3xl rounded-r-md bg-grey flex items-center', {
 				'bg-green-light': isCorrect,
 				'bg-red-light': isWrong,
 			})}

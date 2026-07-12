@@ -46,6 +46,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 		guesses,
 		userId: user.id,
 		currentPlayer,
+		realtimeAccessToken: session.access_token,
 	};
 };
 

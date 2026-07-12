@@ -24,20 +24,12 @@
 			})
 			.toSorted((a, b) => b.score - a.score);
 
-		const playersWithPlace = players.map((player, i) => ({
+		return players.map((player, i) => ({
 			...player,
 			place: i + 1,
 		}));
-
-		if (playersWithPlace.length > 2) {
-			const [first, second, third, ...rest] = playersWithPlace;
-
-			return [second, first, third, ...rest];
-		}
-
-		return playersWithPlace;
 	});
-	let clearWinner = $derived(playersRanked.length > 2 ? playersRanked[0].score < playersRanked[1].score : playersRanked.length === 2 ? playersRanked[0].score > playersRanked[1].score : true);
+	let clearWinner = $derived(playersRanked.length === 1 || playersRanked[0].score > playersRanked[1].score);
 
 	let resetting = $state(false);
 
@@ -60,7 +52,8 @@
 
 		{#if clearWinner}
 			<h1 class="mt-1 text-3xl font-black text-blue-primary sm:text-5xl">
-				{playersRanked[0].name} wins!
+				{const winnerText = $derived(playersRanked[0].id === room.currentPlayer.id ? "You win!" : `${playersRanked[0].name} wins!`)}
+				{winnerText}
 			</h1>
 		{:else}
 			<h1 class="mt-1 text-3xl font-black text-blue-primary sm:text-5xl">It's a draw</h1>
@@ -70,7 +63,7 @@
 		class="rounded-xl border-2 border-black/20 bg-white/85 p-4 shadow-lg sm:p-6"
 	>
 		<div class="flex items-end justify-center gap-2 sm:gap-5">
-			{#each playersRanked.slice(0, 3) as { name, score, url, place } (`player-${place}`)}
+			{#each playersRanked.slice(0, 3).length > 2 ? [playersRanked[1], playersRanked[0], playersRanked[2]] : playersRanked.slice(0, 3) as {name, place, score, url} (`player-${place}`)}
 				{const label = $derived(place === 1 ? "1st" : place === 2 ? "2nd" : "3rd")}
 				<div class="flex min-w-0 flex-1 flex-col items-center">
 						<div
@@ -127,25 +120,14 @@
 						<div class="w-8 text-center text-lg font-black text-red-primary">
 							#{place}
 						</div>
-
-						{#if url}
 							<img
 								src={url}
 								alt={name}
 								class="size-10 rounded-full border-2 border-black/10 bg-white object-cover p-0.5"
 							/>
-						{:else}
-							<div
-								class="flex size-10 items-center justify-center rounded-full border-2 border-black/10 bg-blue-primary text-lg font-black text-white"
-							>
-								{name.slice(0, 1).toUpperCase()}
-							</div>
-						{/if}
-
 						<div class="min-w-0 flex-1">
 							<p class="truncate font-black text-blue-primary">{name}</p>
 						</div>
-
 						<div class="rounded-md bg-black/5 px-3 py-1 text-sm font-black text-black/70">
 							{score} correct
 						</div>

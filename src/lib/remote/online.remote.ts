@@ -46,49 +46,6 @@ export const startGame = command(
 	},
 );
 
-export const leaveGame = command(
-	v.object({
-		gameId: v.pipe(v.number(), v.integer()),
-	}),
-	async ({ gameId }) => {
-		const {
-			locals: { session, user, supabase },
-		} = getRequestEvent();
-
-		if (!session || !user) {
-			invalid('Not authenticated');
-		}
-
-		const { count, error: playersError } = await supabase
-			.from('online_players')
-			.select()
-			.eq('game_id', gameId);
-
-		if (playersError) {
-			console.error(playersError.message);
-			invalid('Failed to leave game');
-		}
-
-		if (count === 1) {
-			const { error } = await supabase.from('online_games').delete().eq('id', gameId);
-			if (error) {
-				console.error(error.message);
-				invalid('Failed to leave game');
-			}
-		} else {
-			const { error } = await supabase
-				.from('online_players')
-				.delete()
-				.eq('user_id', user.id)
-				.eq('game_id', gameId);
-			if (error) {
-				console.error(error.message);
-				invalid('Failed to leave game');
-			}
-		}
-	},
-);
-
 export const resetGameToLobby = command(
 	v.object({
 		gameId: v.pipe(v.number(), v.integer()),
@@ -162,6 +119,29 @@ export const advanceGameFromResults = command(
 
 		if (error) {
 			console.error('Failed to advance from results:', error.message);
+			throw new Error(error.message);
+		}
+	},
+);
+
+export const leaveGame = command(
+	v.object({
+		gameId: v.pipe(v.number(), v.integer()),
+	}),
+	async ({ gameId }) => {
+		const {
+			locals: { session, user, supabase },
+		} = getRequestEvent();
+
+		if (!session || !user) {
+			throw new Error('Not authenticated');
+		}
+
+		const { error } = await supabase.rpc('leave_online_game', {
+			p_game_id: gameId,
+		});
+
+		if (error) {
 			throw new Error(error.message);
 		}
 	},

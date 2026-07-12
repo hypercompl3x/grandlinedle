@@ -20,7 +20,10 @@ export type OnlineGame = Tables<'online_games'>;
 
 export type OnlinePlayer = Tables<'online_players'>;
 export type OnlinePlayerWithImage = OnlinePlayer & { url: string };
-export type OnlinePlayerWithCurrentGuess = OnlinePlayer & { url: string; currentGuess: OnlineGuessWithCharacter | undefined }
+export type OnlinePlayerWithCurrentGuess = OnlinePlayer & {
+	url: string;
+	currentGuess: OnlineGuessWithCharacter | undefined;
+};
 
 export type OnlineRound = Tables<'online_rounds'>;
 export type OnlineRoundWithCharacter = OnlineRound & { character: Character };
@@ -477,6 +480,14 @@ export type Database = {
 					room_code: string;
 				}[];
 			};
+			leave_online_game: {
+				Args: { p_game_id: number };
+				Returns: {
+					game_deleted: boolean;
+					new_host_id: number;
+					result: string;
+				}[];
+			};
 			reset_online_game_to_lobby: {
 				Args: { p_game_id: number };
 				Returns: undefined;
@@ -493,7 +504,7 @@ export type Database = {
 				Args: {
 					p_character_id: number;
 					p_guess_number: number;
-					p_max_guess_number?: number;
+					p_max_guess_number: number;
 					p_room_code: string;
 					p_round_id: number;
 				};

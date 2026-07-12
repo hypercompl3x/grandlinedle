@@ -44,7 +44,7 @@
 		</div>
 	{/if}
 	<div
-		class={cn('flex bg-grey rounded-md overflow-hidden items-center max-w-xs', {
+		class={cn('flex bg-grey rounded-md overflow-hidden items-center', {
 			'bg-green-light': isCorrect,
 			'bg-red-light': isWrong,
 		})}

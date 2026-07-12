@@ -5,7 +5,8 @@
 
 	const room = getOnlineRoom();
 
-	const TIMER_BUFFER_MS = 300;
+	const SERVER_GRACE_PERIOD = 750;
+	const TIMER_BUFFER_MS = SERVER_GRACE_PERIOD + 100;
 
 	let now = $state(Date.now());
 

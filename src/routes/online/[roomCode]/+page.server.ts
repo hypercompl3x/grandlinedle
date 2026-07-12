@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
 import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
+import { MAX_GUESSES } from '$lib/utils/constants';
 
 export const load: PageServerLoad = async ({ locals: { supabase, session, user }, params }) => {
 	if (!supabase) {
@@ -70,6 +71,7 @@ export const actions = {
 			p_character_id: characterId,
 			p_round_id: roundId,
 			p_guess_number: guessNumber,
+			p_max_guess_number: MAX_GUESSES,
 		});
 
 		if (submitGuessError) {

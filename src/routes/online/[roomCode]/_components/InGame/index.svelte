@@ -1,51 +1,97 @@
 <script lang="ts">
 	import { Loader2 } from 'lucide-svelte';
-	import Search from '../Search/index.svelte';
-	import { getOnlineRoom } from '../../_lib/online-room-context';
-	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
-	import type { Character } from '$lib/types/DatabaseTypes';
-	import Timer from './Timer.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { MAX_GUESSES } from '$lib/utils/constants';
+	import Timer from './Timer.svelte';
+	import Search from './Search/index.svelte';
+	import { getOnlineRoom } from '../../_lib/online-room-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
+	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
+	import { HAKI_MAP, MAX_GUESSES } from '$lib/utils/constants';
+	import type { Character } from '$lib/types/DatabaseTypes';
+	import X from '$lib/assets/x.png';
+	import Berry from '$lib/assets/berry-black.png';
+
+	type CluePart =
+	| {
+			type: 'text';
+			text: string;
+	  }
+	| {
+			type: 'image';
+			src: string;
+			alt: string;
+			class: string
+	  };
 
 	type CharacterClue = {
 		label: string;
-		getValue: (character: Character) => string | number | string[] | null;
+		getValue: (character: Character) => CluePart[];
 	};
 
 	export const CHARACTER_CLUES = [
 		{
 			label: 'First Arc',
-			getValue: character => character.first_arc,
+			getValue: character => [{ type: 'text', text: character.first_arc }],
 		},
 		{
 			label: 'Gender',
-			getValue: character => character.gender,
+			getValue: character => [{ type: 'text', text: character.gender }],
 		},
 		{
 			label: 'Devil Fruit',
-			getValue: character => character.devil_fruit,
+			getValue: character => [{ type: 'text', text: character.devil_fruit }],
 		},
 		{
 			label: 'Haki',
-			getValue: character => character.haki,
+			getValue: character =>
+				character.haki.length > 0
+					? character.haki.map(haki => ({
+							type: 'image',
+							src: HAKI_MAP[haki],
+							alt: `${haki} Haki`,
+							class: "w-7"
+						}))
+					: [
+				
+							{
+								type: 'image',
+								src: X,
+								alt: 'No Haki',
+								class: "w-5"
+							},
+						],
 		},
 		{
 			label: 'Last Bounty',
-			getValue: character => formatBounty(character.last_bounty),
+			getValue: character => [
+				{
+					type: 'image',
+					src: Berry,
+					alt: 'Berry',
+					class: "w-3.5 translate-y-px"
+				},
+				{
+					type: 'text',
+					text: formatBounty(character.last_bounty),
+				},
+			],
 		},
 		{
 			label: 'Height',
-			getValue: character => formatHeight(character.height_m, character.height_cm),
+			getValue: character => [
+				{
+					type: 'text',
+					text: formatHeight(character.height_m, character.height_cm),
+				},
+			],
 		},
 		{
 			label: 'Origin',
-			getValue: character => character.origin,
+			getValue: character => [{ type: 'text', text: character.origin }],
 		},
 		{
 			label: 'Affiliation',
-			getValue: character => character.affiliation,
+			getValue: character => [{ type: 'text', text: character.affiliation }],
 		},
 	] satisfies CharacterClue[];
 
@@ -136,29 +182,32 @@
 {#if room.currentRound}
 	<div class="w-full gap-y-8 flex flex-col items-center px-4">
 		<Timer />
-		<div class="w-full max-w-96">
+		<div class="w-full max-w-96 bg-white rounded-md overflow-hidden">
 			<div
-				class="flex items-center justify-center text-lg font-bold text-center bg-blue-primary text-white rounded-t-md h-12 md:text-xl w-full"
+				class="flex items-center justify-center text-lg font-bold text-center bg-blue-primary text-white h-12 md:text-xl w-full"
 			>
 				Clues
 			</div>
-			{#each visibleClues as clue, i (clue.label)}
+			{#each visibleClues as clue, i (`clue-${i}`)}
 				<div
-					class={cn(
-						'flex items-center justify-center text-lg text-center bg-white text-black rounded-t-md h-12 md:text-xl w-full gap-x-1',
-						{
-							'rounded-b-md': i === visibleClues.length - 1,
-						},
-					)}
+					class='flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-1'
 				>
 					<span class="font-bold">{clue.label}:</span>
-					<span class="font-medium">{clue.value}</span>
+					<span class="font-medium flex items-center gap-x-1">
+						{#each clue.value as value, j (`clue-part-${i}-${j}`)}
+							{#if value.type === "text"}
+								{value.text}
+							{:else}
+								<img src={value.src} alt={value.alt} class={value.class} />
+							{/if}
+						{/each}
+					</span>
 				</div>
 			{/each}
 		</div>
 		<div class="flex flex-col items-center gap-y-2 w-full max-w-96">
 			<div class="flex gap-x-2 flex-wrap">
-				<span class="font-semibold">Guesses Made:</span>
+				<span class="font-semibold">Guesses:</span>
 				{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
 					{const characterWithComma = $derived(`${guess.character.name}${i < currentPlayerGuessesThisRound.length - 1 ? "," : ""}`)}
 					<span class="font-medium">
@@ -178,7 +227,7 @@
 			{#each playersWithCurrentGuess as player, i (`player-${i}`)}
 				<div class="space-y-1">
 					{#if room.game.sub_status !== "guessing"}
-						<p class="text-center text-lg font-semibold">{player.currentGuess?.character.name || "No Guess Made"}</p>
+						<p class="text-center text-lg font-semibold">{player.currentGuess?.character.name || "No Guess"}</p>
 					{/if}
 					<div class={cn("flex bg-grey rounded-md overflow-hidden items-center w-fit", {
 						"bg-green-light": player.currentGuess?.character_id === room.currentRound.character_id && room.game.sub_status === "results",
@@ -199,7 +248,7 @@
 		{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
 			{#if room.currentPlayer.is_host}
 				<Button type="button" onclick={advanceFromResults} submitting={advancing} class="max-w-96 w-full">
-					{isFinalRound ? 'See Results' : 'Next Round'}
+					{isFinalRound ? 'Results' : 'Next Round'}
 				</Button>
 			{:else}
 				<p class="text-lg font-medium">

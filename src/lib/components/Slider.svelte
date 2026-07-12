@@ -29,13 +29,13 @@
 				{value}
 			</Slider.TickLabel>
 		{/each}
-		<span class="bg-white relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full">
-			<Slider.Range class="bg-red-light absolute h-full" />
+		<span class="bg-grey/20 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full">
+			<Slider.Range class="bg-red-primary absolute h-full" />
 		</span>
 		<Slider.Thumb
 			index={0}
 			class={cn(
-				'bg-red-primary focus-visible:outline-hidden block size-6 cursor-pointer rounded-full shadow-sm transition-colors ring-0 disabled:pointer-events-none disabled:opacity-50',
+				'bg-red-light focus-visible:outline-hidden block size-6 cursor-pointer rounded-full shadow-sm transition-colors ring-0 disabled:pointer-events-none disabled:opacity-50',
 			)}
 		/>
 	</Slider.Root>

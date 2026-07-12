@@ -69,26 +69,26 @@
 		return Math.min(timerDurationSeconds, Math.max(0, remaining));
 	});
 
-	$effect(() => {
-		if (!browser) return;
+	// $effect(() => {
+	// 	if (!browser) return;
 
-		const startedAt = room.game.sub_status_started_at;
+	// 	const startedAt = room.game.sub_status_started_at;
 
-		if (!startedAt || timerDurationSeconds === null) return;
+	// 	if (!startedAt || timerDurationSeconds === null) return;
 
-		const startedAtMs = new Date(startedAt).getTime();
-		const endAtMs = startedAtMs + timerDurationSeconds * 1000;
-		const delayMs = Math.max(0, endAtMs - Date.now() + TIMER_BUFFER_MS);
+	// 	const startedAtMs = new Date(startedAt).getTime();
+	// 	const endAtMs = startedAtMs + timerDurationSeconds * 1000;
+	// 	const delayMs = Math.max(0, endAtMs - Date.now() + TIMER_BUFFER_MS);
 
-		const timeout = window.setTimeout(() => {
-			void room.advanceGameIfReady();
-		}, delayMs);
+	// 	const timeout = window.setTimeout(() => {
+	// 		void room.advanceGameIfReady();
+	// 	}, delayMs);
 
-		return () => window.clearTimeout(timeout);
-	});
+	// 	return () => window.clearTimeout(timeout);
+	// });
 </script>
 
-{#if timeRemaining !== null}
+{#if timeRemaining !== null && room.game.sub_status === 'guessing'}
 	<p class="p-2 text-6xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		{timeRemaining}
 	</p>

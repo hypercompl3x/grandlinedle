@@ -13,7 +13,7 @@
 				'px-5 h-14 font-bold text-white rounded-full from-blue-light to-blue-primary text-2xl bg-linear-to-b text-center hover:brightness-110 flex items-center gap-x-2.5 w-52',
 				{
 					'from-green-light to-green-primary': name === 'Rankings',
-					'from-red-primary to-red-light': name === 'Online',
+					'from-red-primary to-red-medium-dark': name === 'Online',
 				},
 			)}
 		>

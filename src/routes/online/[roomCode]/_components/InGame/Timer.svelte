@@ -89,5 +89,7 @@
 </script>
 
 {#if timeRemaining !== null}
-	<div>TIME REMAINING: {timeRemaining}s</div>
+	<p class="p-2 text-6xl font-bold text-center text-white text-shadow-sm text-shadow-black">
+		{timeRemaining}
+	</p>
 {/if}

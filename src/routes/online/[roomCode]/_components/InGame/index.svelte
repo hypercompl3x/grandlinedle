@@ -2,7 +2,7 @@
 	import { Loader2 } from 'lucide-svelte';
 	import Search from '../Search/index.svelte';
 	import { getOnlineRoom } from '../../_lib/online-room-context';
-	import { formatBounty, formatHeight } from '$lib/utils/helpers';
+	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import type { Character } from '$lib/types/DatabaseTypes';
 	import Timer from './Timer.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -128,49 +128,88 @@
 			advancing = false;
 		}
 	};
+
+	// TODO: ADD PRESENCE AND HANDLE DISCONNECTS ACCORDINGLY
+	// TODO: HANDLE TRANSFER OF HOST WHEN LEAVING/DISCONNECTING
 </script>
 
-<div>{room.game.sub_status}</div>
-<Timer />
-{#if room.currentPlayer.is_host && room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
-	<Button type="button" onclick={advanceFromResults} submitting={advancing}>
-		{isFinalRound ? 'End Game' : 'Next Round'}
-	</Button>
-{:else}
-	Waiting for host...
-{/if}
-<div class="flex flex-col items-center gap-y-8 w-full">
-	{#if room.currentRound}
-		<div class="bg-red-dark text-white p-4">
-			<img alt="Round character" src={room.currentRound.character.url} />
-			<div>{room.currentRound.character.name}</div>
+{#if room.currentRound}
+	<div class="w-full gap-y-8 flex flex-col items-center px-4">
+		<Timer />
+		<div class="w-full max-w-96">
+			<div
+				class="flex items-center justify-center text-lg font-bold text-center bg-blue-primary text-white rounded-t-md h-12 md:text-xl w-full"
+			>
+				Clues
+			</div>
+			{#each visibleClues as clue, i (clue.label)}
+				<div
+					class={cn(
+						'flex items-center justify-center text-lg text-center bg-white text-black rounded-t-md h-12 md:text-xl w-full gap-x-1',
+						{
+							'rounded-b-md': i === visibleClues.length - 1,
+						},
+					)}
+				>
+					<span class="font-bold">{clue.label}:</span>
+					<span class="font-medium">{clue.value}</span>
+				</div>
+			{/each}
 		</div>
-		{#each visibleClues as clue, i (clue.label)}
-			<div class:font-bold={i === visibleClues.length - 1}>
-				{clue.label}: {clue.value}
+		<div class="flex flex-col items-center gap-y-2 w-full max-w-96">
+			<div class="flex gap-x-2 flex-wrap">
+				<span class="font-semibold">Guesses Made:</span>
+				{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
+					{const characterWithComma = $derived(`${guess.character.name}${i < currentPlayerGuessesThisRound.length - 1 ? "," : ""}`)}
+					<span class="font-medium">
+						{characterWithComma}
+					</span>
+				{/each}
 			</div>
-		{/each}
-		{#if !currentPlayerGuessesThisRound.some(g => g.guess_number === room.currentRound?.current_guess_number)}
-			<Search
-				guessIds={currentPlayerGuessesThisRound.map(g => g.character_id)}
-				roundId={room.currentRound?.id}
-				guessNumber={room.currentRound?.current_guess_number}
-			/>
+			{#if !currentPlayerGuessesThisRound.some(g => g.guess_number === room.currentRound?.current_guess_number) && room.game.sub_status === "guessing"}
+				<Search
+					guessIds={currentPlayerGuessesThisRound.map(g => g.character_id)}
+					roundId={room.currentRound.id}
+					guessNumber={room.currentRound.current_guess_number}
+				/>
+			{/if}
+		</div>
+		<div class="flex flex-wrap gap-8 justify-center">
+			{#each playersWithCurrentGuess as player, i (`player-${i}`)}
+				<div class="space-y-1">
+					{#if room.game.sub_status !== "guessing"}
+						<p class="text-center text-lg font-semibold">{player.currentGuess?.character.name || "No Guess Made"}</p>
+					{/if}
+					<div class={cn("flex bg-grey rounded-md overflow-hidden items-center w-fit", {
+						"bg-green-light": player.currentGuess?.character_id === room.currentRound.character_id && room.game.sub_status === "results",
+						"bg-red-light": player.currentGuess?.character_id !== room.currentRound.character_id && room.game.sub_status === "results",
+					})}>
+						<img alt="Player icon" src={player.url} class={cn("w-28 p-2 bg-grey-dark", {
+							"bg-green-primary": player.currentGuess?.character_id === room.currentRound.character_id && room.game.sub_status === "results",
+							"bg-red-medium-dark": player.currentGuess?.character_id !== room.currentRound.character_id && room.game.sub_status === "results"
+						})} />
+						<p class="p-4 text-white font-bold text-3xl">
+							{#if player.is_host}👑{/if}
+							{player.display_name}
+						</p>
+					</div>
+				</div>
+			{/each}
+		</div>
+		{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
+			{#if room.currentPlayer.is_host}
+				<Button type="button" onclick={advanceFromResults} submitting={advancing} class="max-w-96 w-full">
+					{isFinalRound ? 'See Results' : 'Next Round'}
+				</Button>
+			{:else}
+				<p class="text-lg font-medium">
+					Waiting for host to continue...
+				</p>
+			{/if}
 		{/if}
-		{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
-			<div>
-				{guess.character_id}
-			</div>
-		{/each}
-		{#each playersWithCurrentGuess as player, i (`player-${i}`)}
-			<div>
-				<div>{player.display_name}</div>
-				<img alt="Player icon" src={player.url} />
-				<div>Current Guess: {player.currentGuess?.character.name}</div>
-			</div>
-		{/each}
-		<!-- SHOW PLAYERS IN A LINE, HIGHLIGHT THEM ONCE THEY HAVE GUESSED, ONCE EVERYONE GUESSED YOU CAN REVEAL THEIR ANSWERS AND THEN THE CORRECT ANSWER, CORRECT TURN GREEN, INCORRECT TURN RED -->
-	{:else}
-		<Loader2 class="text-white animate-spin size-20" />
-	{/if}
-</div>
+	</div>
+{:else}
+	<Loader2 class="text-white animate-spin size-20" />
+{/if}
+
+

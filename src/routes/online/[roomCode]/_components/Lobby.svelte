@@ -29,7 +29,7 @@
 	// const startDisabled = room.players.length === 1 || room.leaving;
 </script>
 
-<div class="flex flex-col items-center gap-y-8 w-full">
+<div class="flex flex-col items-center gap-y-8 w-full px-4">
 	<p class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
 		Room Code: {room.game.room_code}
 	</p>

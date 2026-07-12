@@ -19,7 +19,9 @@
 </script>
 
 {#if room.currentPlayer.is_host}
-	<Button type="button" onclick={resetGame} submitting={resetting}>Back to lobby</Button>
+	<Button type="button" onclick={resetGame} submitting={resetting} class="max-w-96 w-full">
+		Back to Lobby
+	</Button>
 {:else}
-	Waiting for host...
+	<p class="text-lg font-medium">Waiting for host to return to lobby...</p>
 {/if}

@@ -32,7 +32,7 @@
 	</button>
 {/snippet}
 
-<div class="w-full px-4 max-w-96">
+<div class="w-full max-w-96">
 	<div bind:this={onClickOutside.containerEl} class="relative">
 		<input
 			data-testid="search-input-online"

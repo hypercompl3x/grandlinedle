@@ -70,7 +70,7 @@
 		</p>
 		<div class="flex flex-wrap gap-8 justify-center">
 			{#each room.players as player (`player-${player.id}`)}
-				<div class="flex bg-green-light rounded-md overflow-hidden items-center w-fit">
+				<div class="flex bg-green-light rounded-md overflow-hidden items-center max-w-xs">
 					<img alt="Player icon" src={player.url} class="w-28 p-2 bg-green-primary" />
 					<p class="p-4 text-white font-bold text-3xl">
 						{#if player.is_host}👑{/if}

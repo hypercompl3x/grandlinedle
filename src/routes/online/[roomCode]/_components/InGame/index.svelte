@@ -3,25 +3,26 @@
 	import Button from '$lib/components/Button.svelte';
 	import Timer from './Timer.svelte';
 	import Search from './Search/index.svelte';
+	import PlayerCard from './PlayerCard/index.svelte';
 	import { getOnlineRoom } from '../../_lib/online-room-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
-	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
+	import { formatBounty, formatHeight } from '$lib/utils/helpers';
 	import { HAKI_MAP, MAX_GUESSES } from '$lib/utils/constants';
 	import type { Character } from '$lib/types/DatabaseTypes';
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry-black.png';
 
 	type CluePart =
-	| {
-			type: 'text';
-			text: string;
-	  }
-	| {
-			type: 'image';
-			src: string;
-			alt: string;
-			class: string
-	  };
+		| {
+				type: 'text';
+				text: string;
+		  }
+		| {
+				type: 'image';
+				src: string;
+				alt: string;
+				class: string;
+		  };
 
 	type CharacterClue = {
 		label: string;
@@ -49,15 +50,14 @@
 							type: 'image',
 							src: HAKI_MAP[haki],
 							alt: `${haki} Haki`,
-							class: "w-7"
+							class: 'w-7',
 						}))
 					: [
-				
 							{
 								type: 'image',
 								src: X,
 								alt: 'No Haki',
-								class: "w-5"
+								class: 'w-5',
 							},
 						],
 		},
@@ -68,7 +68,7 @@
 					type: 'image',
 					src: Berry,
 					alt: 'Berry',
-					class: "w-3.5 translate-y-px"
+					class: 'w-3.5 translate-y-px',
 				},
 				{
 					type: 'text',
@@ -181,84 +181,111 @@
 
 {#if room.currentRound}
 	<div class="w-full gap-y-8 flex flex-col items-center px-4">
-		<Timer />
-		<div class="w-full max-w-96 bg-white rounded-md overflow-hidden">
+		<div class="w-full max-w-md shadow-sm text-center rounded-md">
 			<div
-				class="flex items-center justify-center text-lg font-bold text-center bg-blue-primary text-white h-12 md:text-xl w-full"
+				class="bg-blue-primary text-lg font-black uppercase tracking-widest p-3 text-white rounded-t-md"
 			>
-				Clues
+				Round {room.game.current_round_number} of {room.game.number_of_rounds}
 			</div>
-			{#each visibleClues as clue, i (`clue-${i}`)}
-				<div
-					class='flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-1'
-				>
-					<span class="font-bold">{clue.label}:</span>
-					<span class="font-medium flex items-center gap-x-1">
-						{#each clue.value as value, j (`clue-part-${i}-${j}`)}
-							{#if value.type === "text"}
-								{value.text}
-							{:else}
-								<img src={value.src} alt={value.alt} class={value.class} />
-							{/if}
+			<div class="p-5 space-y-5 bg-white rounded-b-md">
+				<Timer />
+				<div class="w-full bg-white rounded-md overflow-hidden border-2 border-black/15 shadow-sm">
+					<div
+						class="flex items-center justify-center text-lg font-bold text-center bg-blue-primary text-white h-12 md:text-xl w-full"
+					>
+						Clues
+					</div>
+					<div class="divide-y divide-black/10">
+						{#each visibleClues as clue, i (`clue-${i}`)}
+							<div
+								class="flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-1"
+							>
+								<span class="font-bold">{clue.label}:</span>
+								<span class="font-medium flex items-center gap-x-1">
+									{#each clue.value as value, j (`clue-part-${i}-${j}`)}
+										{#if value.type === 'text'}
+											{value.text}
+										{:else}
+											<img src={value.src} alt={value.alt} class={value.class} />
+										{/if}
+									{/each}
+								</span>
+							</div>
 						{/each}
-					</span>
-				</div>
-			{/each}
-		</div>
-		<div class="flex flex-col items-center gap-y-2 w-full max-w-96">
-			<div class="flex gap-x-2 flex-wrap">
-				<span class="font-semibold">Guesses:</span>
-				{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
-					{const characterWithComma = $derived(`${guess.character.name}${i < currentPlayerGuessesThisRound.length - 1 ? "," : ""}`)}
-					<span class="font-medium">
-						{characterWithComma}
-					</span>
-				{/each}
-			</div>
-			{#if !currentPlayerGuessesThisRound.some(g => g.guess_number === room.currentRound?.current_guess_number) && room.game.sub_status === "guessing"}
-				<Search
-					guessIds={currentPlayerGuessesThisRound.map(g => g.character_id)}
-					roundId={room.currentRound.id}
-					guessNumber={room.currentRound.current_guess_number}
-				/>
-			{/if}
-		</div>
-		<div class="flex flex-wrap gap-8 justify-center">
-			{#each playersWithCurrentGuess as player, i (`player-${i}`)}
-				<div class="space-y-1">
-					{#if room.game.sub_status !== "guessing"}
-						<p class="text-center text-lg font-semibold">{player.currentGuess?.character.name || "No Guess"}</p>
-					{/if}
-					<div class={cn("flex bg-grey rounded-md overflow-hidden items-center w-fit", {
-						"bg-green-light": player.currentGuess?.character_id === room.currentRound.character_id && room.game.sub_status === "results",
-						"bg-red-light": player.currentGuess?.character_id !== room.currentRound.character_id && room.game.sub_status === "results",
-					})}>
-						<img alt="Player icon" src={player.url} class={cn("w-28 p-2 bg-grey-dark", {
-							"bg-green-primary": player.currentGuess?.character_id === room.currentRound.character_id && room.game.sub_status === "results",
-							"bg-red-medium-dark": player.currentGuess?.character_id !== room.currentRound.character_id && room.game.sub_status === "results"
-						})} />
-						<p class="p-4 text-white font-bold text-3xl">
-							{#if player.is_host}👑{/if}
-							{player.display_name}
-						</p>
 					</div>
 				</div>
-			{/each}
+				<div class="w-full rounded-lg border-2 border-black/10 bg-black/5 px-3 py-3 text-center">
+					<p class="text-xs font-black uppercase tracking-widest text-black/50">Your Guesses</p>
+					{#if currentPlayerGuessesThisRound.length > 0}
+						<div class="mt-1 flex flex-wrap justify-center gap-x-2 gap-y-1">
+							{#each currentPlayerGuessesThisRound as guess, i (`guess-${i}`)}
+								<span class="font-bold text-blue-primary">
+									{guess.character.name}{i < currentPlayerGuessesThisRound.length - 1 ? ',' : ''}
+								</span>
+							{/each}
+						</div>
+					{:else}
+						<p class="mt-1 font-semibold text-black/70">No guesses yet</p>
+					{/if}
+				</div>
+				{#if !currentPlayerGuessesThisRound.some(g => g.guess_number === room.currentRound?.current_guess_number) && room.game.sub_status === 'guessing'}
+					<Search
+						guessIds={currentPlayerGuessesThisRound.map(g => g.character_id)}
+						roundId={room.currentRound.id}
+						guessNumber={room.currentRound.current_guess_number}
+					/>
+				{/if}
+				{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
+					<div
+						class="w-full rounded-lg border-2 border-black/15 bg-green-light p-4 text-center shadow-sm"
+					>
+						<p class="text-xs font-black uppercase tracking-[0.15em] text-white">
+							Correct Character
+						</p>
+						<div class="mt-3 flex flex-col items-center">
+							<img
+								src={room.currentRound.character.url}
+								alt={room.currentRound.character.name}
+								class="w-28 rounded-lg shadow-md"
+							/>
+
+							<p class="mt-2 text-2xl font-black text-white">
+								{room.currentRound.character.name}
+							</p>
+						</div>
+					</div>
+				{/if}
+			</div>
+		</div>
+		<div class="space-y-4">
+			<p class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
+				Crew Members
+			</p>
+			<div class="flex flex-wrap gap-8 justify-center">
+				{#each playersWithCurrentGuess as player (`player-${player.id}`)}
+					<PlayerCard
+						subStatus={room.game.sub_status}
+						currentRoundCharacterId={room.currentRound.character_id}
+						{player}
+					/>
+				{/each}
+			</div>
 		</div>
 		{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
 			{#if room.currentPlayer.is_host}
-				<Button type="button" onclick={advanceFromResults} submitting={advancing} class="max-w-96 w-full">
+				<Button
+					type="button"
+					onclick={advanceFromResults}
+					submitting={advancing}
+					class="max-w-96 w-full"
+				>
 					{isFinalRound ? 'Results' : 'Next Round'}
 				</Button>
 			{:else}
-				<p class="text-lg font-medium">
-					Waiting for host to continue...
-				</p>
+				<p class="text-lg font-medium">Waiting for host to continue...</p>
 			{/if}
 		{/if}
 	</div>
 {:else}
 	<Loader2 class="text-white animate-spin size-20" />
 {/if}
-
-

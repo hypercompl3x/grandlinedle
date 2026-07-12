@@ -32,8 +32,8 @@
 	</button>
 {/snippet}
 
-<div class="w-full max-w-96">
-	<div bind:this={onClickOutside.containerEl} class="relative">
+
+	<div bind:this={onClickOutside.containerEl} class="relative w-full">
 		<input
 			data-testid="search-input-online"
 			type="text"
@@ -43,7 +43,7 @@
 			onclick={() => (search.isDropdownOpen = true)}
 			disabled={search.submitting}
 			placeholder="Search for a character..."
-			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white rounded-md focus-visible:outline-hidden shadow-md"
+			class="flex w-full py-2 pl-3 pr-10 text-sm bg-white rounded-md focus-visible:outline-hidden border border-black/30"
 		/>
 		{#if search.submitting}
 			<Loader2 size={20} class="absolute inset-y-0 my-auto right-3 animate-spin text-grey" />
@@ -55,7 +55,7 @@
 				bind:this={search.form}
 				use:enhance={search.pickItem}
 				method="POST"
-				class="absolute top-9.5 bg-white inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20"
+				class="absolute top-9.5 bg-white inset-x-0 mx-auto rounded-md overflow-hidden max-h-80 overflow-y-auto z-20 border border-black/30"
 			>
       <input type="hidden" name="roundId" value={roundId} />
       <input type="hidden" name="guessNumber" value={guessNumber} />
@@ -77,4 +77,3 @@
 			</form>
 		{/if}
 	</div>
-</div>

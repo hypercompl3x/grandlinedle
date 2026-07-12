@@ -17,13 +17,17 @@ export type Leaderboard = Tables<'leaderboard'>[];
 export type LeaderboardEntry = Tables<'leaderboard'>;
 
 export type OnlineGame = Tables<'online_games'>;
+
 export type OnlinePlayer = Tables<'online_players'>;
 export type OnlinePlayerWithImage = OnlinePlayer & { url: string };
+export type OnlinePlayerWithCurrentGuess = OnlinePlayer & { url: string; currentGuess: OnlineGuessWithCharacter | undefined }
+
 export type OnlineRound = Tables<'online_rounds'>;
 export type OnlineRoundWithCharacter = OnlineRound & { character: Character };
 export type OnlineRoundWithCharacterAndImage = OnlineRound & {
 	character: Character & { url: string };
 };
+
 export type OnlineGuess = Tables<'online_guesses'>;
 export type OnlineGuessWithCharacter = Tables<'online_guesses'> & { character: { name: string } };
 

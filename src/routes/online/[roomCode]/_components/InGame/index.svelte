@@ -6,7 +6,7 @@
 	import PlayerCard from './PlayerCard/index.svelte';
 	import { getOnlineRoom } from '../../_lib/online-room-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
-	import { formatBounty, formatHeight } from '$lib/utils/helpers';
+	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import { HAKI_MAP, MAX_GUESSES } from '$lib/utils/constants';
 	import type { Character } from '$lib/types/DatabaseTypes';
 	import X from '$lib/assets/x.png';
@@ -180,12 +180,14 @@
 </script>
 
 {#if room.currentRound}
-	<div class="w-full gap-y-8 flex flex-col items-center px-4">
+	<div class="w-full gap-y-8 flex flex-col items-center px-4 pb-12">
 		<div class="w-full max-w-md shadow-sm text-center rounded-md">
 			<div
-				class="bg-blue-primary text-lg font-black uppercase tracking-widest p-3 text-white rounded-t-md"
+				class="bg-blue-primary p-3 text-white rounded-t-md"
 			>
-				Round {room.game.current_round_number} of {room.game.number_of_rounds}
+				<p class="text-sm font-black uppercase tracking-widest">Round {room.game.current_round_number} of {room.game.number_of_rounds}</p>
+				{const gameStatus = $derived(room.game.sub_status === "guessing" ? "Guess" : room.game.sub_status === "revealing" ? "Reveal Answers" : "Results")}
+				<p class="text-2xl font-black">{gameStatus}</p>
 			</div>
 			<div class="p-5 space-y-5 bg-white rounded-b-md">
 				<Timer />
@@ -198,10 +200,12 @@
 					<div class="divide-y divide-black/10">
 						{#each visibleClues as clue, i (`clue-${i}`)}
 							<div
-								class="flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-1"
+								class="flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-2 overflow-hidden"
 							>
 								<span class="font-bold">{clue.label}:</span>
-								<span class="font-medium flex items-center gap-x-1">
+								<span class={cn("font-medium flex items-center gap-x-1", {
+									"max-sm:text-sm": clue.value.some(v => v.type === "text" && v.text.split(" ").some(w => w.length > 10))
+								})}>
 									{#each clue.value as value, j (`clue-part-${i}-${j}`)}
 										{#if value.type === 'text'}
 											{value.text}
@@ -279,7 +283,7 @@
 					submitting={advancing}
 					class="max-w-96 w-full"
 				>
-					{isFinalRound ? 'Results' : 'Next Round'}
+					{isFinalRound ? 'View Final Results' : 'Next Round'}
 				</Button>
 			{:else}
 				<p class="text-lg font-medium">Waiting for host to continue...</p>

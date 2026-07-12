@@ -46,7 +46,7 @@
 		const setupChannel = async () => {
 			if (!data.realtimeAccessToken || cancelled) return;
 
-			supabase.realtime.setAuth(data.realtimeAccessToken);
+			await supabase.realtime.setAuth(data.realtimeAccessToken);
 
 			channel = supabase.channel(`online-room:${room.game.room_code}`, {
 				config: {

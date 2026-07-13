@@ -1,19 +1,13 @@
-import { untrack } from 'svelte';
 import type { FormEventHandler } from 'svelte/elements';
 import type { SubmitFunction } from '@sveltejs/kit';
 import { invalidateAll } from '$app/navigation';
 import { applyAction } from '$app/forms';
-import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 import { getEasterEggCharacters } from '$lib/services/characterService';
+import { getSounds } from '$lib/context/sounds/sounds-context';
 import { getSettings } from '$lib/context/settings/settings-context';
 import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
 import type { Page } from '$lib/types/SearchTypes';
-import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
-import theOnePieceIsReal from '$lib/assets/the-one-piece-is-real.m4a';
-
-let hisashiburidanaMugiwaraSound: Sound | undefined;
-let theOnePieceIsRealSound: Sound | undefined;
 
 const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	page: Page,
@@ -21,21 +15,8 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
 	guessIds: () => T['id'][],
 ) => {
+	const sounds = getSounds();
 	const settings = getSettings();
-
-	$effect(() => {
-		const oldHisashiburidanaMugiwaraSound = untrack(() => hisashiburidanaMugiwaraSound);
-		const oldTheOnePieceIsRealSound = untrack(() => theOnePieceIsRealSound);
-		if (!oldHisashiburidanaMugiwaraSound || !oldTheOnePieceIsRealSound) return;
-
-		hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
-			volume: settings.volume,
-		});
-
-		theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
-			volume: settings.volume,
-		});
-	});
 
 	let isDropdownOpen = $state(false);
 	let query = $state('');
@@ -53,18 +34,6 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	};
 
 	const handleSearch: FormEventHandler<HTMLInputElement> = async e => {
-		if (!hisashiburidanaMugiwaraSound) {
-			hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
-				volume: settings.volume,
-			});
-		}
-
-		if (!theOnePieceIsRealSound) {
-			theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
-				volume: settings.volume,
-			});
-		}
-
 		const { value } = e.currentTarget;
 		const oldQuery = query;
 
@@ -80,15 +49,13 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 		}
 
 		if (query.toLowerCase() === 'mugiwara' && page === 'character' && settings.enableEasterEggs) {
-			hisashiburidanaMugiwaraSound?.stop();
-			hisashiburidanaMugiwaraSound?.play();
+			sounds.play('hisashiburidanaMugiwara');
 			updateAllItems([]);
 			return;
 		}
 
 		if (query.toLowerCase() === 'laugh tale' && page === 'location' && settings.enableEasterEggs) {
-			theOnePieceIsRealSound?.stop();
-			theOnePieceIsRealSound?.play();
+			sounds.play('theOnePieceIsReal');
 			updateAllItems([]);
 			return;
 		}

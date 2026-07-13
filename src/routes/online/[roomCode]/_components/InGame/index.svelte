@@ -1,67 +1,25 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
-	import { Sound } from 'svelte-sound';
 	import Button from '$lib/components/Button.svelte';
 	import Timer from './Timer.svelte';
 	import Search from './Search/index.svelte';
 	import PlayerCard from './PlayerCard/index.svelte';
 	import CharacterCard from './CharacterCard.svelte';
 	import { getOnlineRoom } from '$lib/context/online-room/online-room-context';
-	import { getSettings } from '$lib/context/settings/settings-context';
+	import { getSounds } from '$lib/context/sounds/sounds-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
 	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import { HAKI_MAP, MAX_GUESSES } from '$lib/utils/constants';
 	import type { Character } from '$lib/types/DatabaseTypes';
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry-black.png';
-	import goofy from '$lib/assets/goofy.m4a';
-	import shock from '$lib/assets/shock.m4a';
-	import haki from '$lib/assets/haki.mp3';
 
 	const room = getOnlineRoom();
-	const settings = getSettings();
+	const sounds = getSounds();
 
 	let lastResultSoundKey = $state<string | null>(null);
-	let userHasInteracted = $state(false);
-	let goofySound = $state<Sound>();
-	let shockSound = $state<Sound>();
-	let hakiSound = $state<Sound>();
-
-	const initSoundEffects = () => {
-		goofySound = new Sound(goofy, {
-			volume: settings.volume,
-		});
-		shockSound = new Sound(shock, {
-			volume: settings.volume,
-		});
-		hakiSound = new Sound(haki, {
-			volume: settings.volume,
-		});
-	};
-
-	const handleClickAnywhere = () => {
-		if (userHasInteracted) return;
-		userHasInteracted = true;
-		initSoundEffects();
-	};
 
 	$effect(() => {
-		document.addEventListener('click', handleClickAnywhere);
-
-		return () => {
-			document.removeEventListener('click', handleClickAnywhere);
-		};
-	});
-
-	$effect(() => {
-		const oldUserHasInteracted = untrack(() => userHasInteracted);
-		if (!oldUserHasInteracted) return;
-		initSoundEffects();
-	});
-
-	$effect(() => {
-		if (!userHasInteracted) return;
 		if (room.game.sub_status !== 'results') return;
 		if (!room.currentRound) return;
 		if (!room.game.sub_status_started_at) return;
@@ -73,19 +31,16 @@
 		lastResultSoundKey = resultSoundKey;
 
 		if (currentPlayerCurrentGuess?.character_id === room.currentRound.character_id) {
-			hakiSound?.stop();
-			hakiSound?.play();
+			sounds.play('haki');
 			return;
 		}
 
 		if (currentPlayerCurrentGuess) {
-			goofySound?.stop();
-			goofySound?.play();
+			sounds.play('goofy');
 			return;
 		}
 
-		shockSound?.stop();
-		shockSound?.play();
+		sounds.play('shock');
 	});
 
 	type CluePart =
@@ -365,25 +320,30 @@
 				{/if}
 			</div>
 		</div>
-		<div class="space-y-4">
-			<p class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
-				Crew Members
-			</p>
-			<div class="flex flex-wrap gap-8 justify-center">
-				{#each playersWithCurrentGuess.filter(p => p.id !== room.currentPlayer.id) as player (`player-${player.id}`)}
-					{const isOnline = $derived(room.isPlayerOnline(player.id))}
-					<PlayerCard
-						subStatus={room.game.sub_status}
-						currentRoundCharacterId={room.currentRound.character_id}
-						currentPlayer={room.currentPlayer}
-						kickingPlayerId={room.kickingPlayerId}
-						kickPlayer={() => room.kickPlayer(player.id)}
-						{player}
-						{isOnline}
-					/>
-				{/each}
+		{const crewMembers = $derived(
+			playersWithCurrentGuess.filter(p => p.id !== room.currentPlayer.id),
+		)}
+		{#if crewMembers.length > 0}
+			<div class="space-y-4">
+				<p class="p-2 text-4xl font-bold text-center text-white text-shadow-sm text-shadow-black">
+					Crew Members
+				</p>
+				<div class="flex flex-wrap gap-8 justify-center">
+					{#each crewMembers as player (`player-${player.id}`)}
+						{const isOnline = $derived(room.isPlayerOnline(player.id))}
+						<PlayerCard
+							subStatus={room.game.sub_status}
+							currentRoundCharacterId={room.currentRound.character_id}
+							currentPlayer={room.currentPlayer}
+							kickingPlayerId={room.kickingPlayerId}
+							kickPlayer={() => room.kickPlayer(player.id)}
+							{player}
+							{isOnline}
+						/>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 		{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
 			{#if room.currentPlayer.is_host}
 				<Button

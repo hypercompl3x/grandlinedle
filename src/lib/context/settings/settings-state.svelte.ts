@@ -1,19 +1,23 @@
 type SettingsStateArgs = {
 	enableEasterEggs: boolean;
-	volume: number;
+	soundEffectVolume: number;
+	musicVolume: number;
 };
 
 export class SettingsState {
 	enableEasterEggs = $state<boolean>()!;
-	volume = $state<number>()!;
+	soundEffectVolume = $state<number>()!;
+	musicVolume = $state<number>()!;
 
 	constructor(args: SettingsStateArgs) {
 		this.enableEasterEggs = args.enableEasterEggs;
-		this.volume = args.volume;
+		this.soundEffectVolume = args.soundEffectVolume;
+		this.musicVolume = args.musicVolume;
 	}
 
 	update(settings: SettingsStateArgs) {
 		this.enableEasterEggs = settings.enableEasterEggs;
-		this.volume = settings.volume;
+		this.soundEffectVolume = settings.soundEffectVolume;
+		this.musicVolume = settings.musicVolume;
 	}
 }

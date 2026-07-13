@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { kv } from '$lib/kv';
-import { COOKIE } from '$lib/utils/constants';
+import { COOKIE, DEFAULT_VOLUME } from '$lib/utils/constants';
 import { VERCEL_ENV } from '$env/static/private';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
@@ -14,10 +14,12 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	}
 
 	const enableEasterEggs = (cookies.get(COOKIE.ENABLE_EASTER_EGGS) || 'true') === 'true';
-	const volume = cookies.get(COOKIE.VOLUME);
+	const soundEffectVolume = cookies.get(COOKIE.SOUND_EFFECT_VOLUME);
+	const musicVolume = cookies.get(COOKIE.MUSIC_VOLUME);
 
 	return {
 		enableEasterEggs,
-		volume: volume ? Number(volume) : 0.7,
+		soundEffectVolume: soundEffectVolume ? Number(soundEffectVolume) : DEFAULT_VOLUME,
+		musicVolume: musicVolume ? Number(musicVolume) : DEFAULT_VOLUME,
 	};
 };

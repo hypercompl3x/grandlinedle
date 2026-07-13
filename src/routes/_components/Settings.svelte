@@ -12,7 +12,8 @@
 	const settings = getSettings();
 
 	let saving = $state(false);
-	let volume = $derived(settings.volume);
+	let soundEffectVolume = $derived(settings.soundEffectVolume);
+	let musicVolume = $derived(settings.musicVolume);
 	let enableEasterEggs = $derived(settings.enableEasterEggs);
 
 	const getEnableEasterEggs = () => {
@@ -26,7 +27,7 @@
 	const saveSettings = async () => {
 		try {
 			saving = true;
-			await updateSettings({ enableEasterEggs, volume });
+			await updateSettings({ enableEasterEggs, soundEffectVolume, musicVolume });
 			await invalidateAll();
 		} finally {
 			saving = false;
@@ -75,11 +76,17 @@
 >
 	<div class="space-y-6 w-full">
 		<Slider
-			label="Volume"
-			bind:slide={volume}
+			label="Sound Effects"
+			bind:slide={soundEffectVolume}
 			slides={[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
 			disabled={saving}
 		/>
+		<!-- <Slider
+			label="Music"
+			bind:slide={musicVolume}
+			slides={[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+			disabled={saving}
+		/> -->
 		<div class="flex items-center space-x-3">
 			<Checkbox.Root
 				id="enableEasterEggs"
@@ -109,7 +116,9 @@
 			onclick={saveSettings}
 			class="from-grey to-grey-dark"
 			submitting={saving}
-			disabled={settings.volume === volume && settings.enableEasterEggs === enableEasterEggs}
+			disabled={settings.musicVolume === musicVolume &&
+				settings.soundEffectVolume === soundEffectVolume &&
+				settings.enableEasterEggs === enableEasterEggs}
 		>
 			Save
 		</Button>

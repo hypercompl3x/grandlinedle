@@ -7,6 +7,8 @@
 	import Settings from './_components/Settings.svelte';
 	import { setSettings } from '$lib/context/settings/settings-context';
 	import { SettingsState } from '$lib/context/settings/settings-state.svelte';
+	import { setSounds } from '$lib/context/sounds/sounds-context';
+	import { SoundsState } from '$lib/context/sounds/sounds-state.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
@@ -17,15 +19,38 @@
 			() =>
 				new SettingsState({
 					enableEasterEggs: data.enableEasterEggs,
-					volume: data.volume,
+					soundEffectVolume: data.soundEffectVolume,
+					musicVolume: data.musicVolume,
 				}),
 		),
 	);
+	const sounds = setSounds(new SoundsState(settings));
+
+	$effect(() => {
+		const initSounds = () => {
+			sounds.init();
+		};
+
+		window.addEventListener('pointerdown', initSounds, { once: true });
+		window.addEventListener('keydown', initSounds, { once: true });
+		window.addEventListener('touchstart', initSounds, { once: true });
+
+		return () => {
+			window.removeEventListener('pointerdown', initSounds);
+			window.removeEventListener('keydown', initSounds);
+			window.removeEventListener('touchstart', initSounds);
+		};
+	});
+
+	$effect(() => {
+		sounds.refreshVolumes();
+	});
 
 	$effect(() => {
 		settings.update({
 			enableEasterEggs: data.enableEasterEggs,
-			volume: data.volume,
+			soundEffectVolume: data.soundEffectVolume,
+			musicVolume: data.musicVolume,
 		});
 	});
 </script>

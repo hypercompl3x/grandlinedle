@@ -75,7 +75,8 @@ export const COOKIE = {
 	CREWS: 'crews',
 	LOCATION_HARD_MODE: 'locationhardmode',
 	ENABLE_EASTER_EGGS: 'enableeastereggs',
-	VOLUME: 'volume',
+	SOUND_EFFECT_VOLUME: 'soundeffectvolume',
+	MUSIC_VOLUME: 'musicvolume',
 } as const;
 
 export const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
@@ -118,6 +119,8 @@ export const ONLINE_LINKS = [{ name: 'Online', href: '/online', icon: '⚔️' }
 export const GENERIC_ERROR = 'An unexpected error has occured';
 
 export const MAX_ONLINE_PLAYER_COUNT = 8;
+
+export const DEFAULT_VOLUME = 0.7;
 
 export const NUMBER_OF_ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8];
 export const GUESS_TIME_OPTIONS = [5, 10, 15, 20, 25, 30];

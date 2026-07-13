@@ -1,11 +1,8 @@
 <script lang="ts">
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { Sound } from 'svelte-sound';
 	import { Loader2 } from 'lucide-svelte';
-	import { getSettings } from '$lib/context/settings/settings-context';
+	import { getSounds } from '$lib/context/sounds/sounds-context';
 	import { cn } from '$lib/utils/helpers';
-	import kacha from '$lib/assets/kacha.m4a';
-	import { untrack } from 'svelte';
 
 	type Props = HTMLButtonAttributes & {
 		submitting?: boolean;
@@ -21,40 +18,12 @@
 		...rest
 	}: Props = $props();
 
-	const settings = getSettings();
-
-	let kachaSound = $state<Sound>();
-
-	$effect(() => {
-		const oldKatchaSound = untrack(() => kachaSound);
-		if (!oldKatchaSound) return;
-
-		kachaSound = new Sound(kacha, {
-			volume: settings.volume,
-		});
-	});
-
-	const initKacha = () => {
-		if (kachaSound) return;
-
-		kachaSound = new Sound(kacha, {
-			volume: settings.volume,
-		});
-	};
-
-	const playKacha = () => {
-		if (!kachaSound) return;
-
-		kachaSound.stop();
-		kachaSound.play();
-	};
+	const sounds = getSounds();
 </script>
 
 <button
-	onpointerdown={initKacha}
-	onkeydown={initKacha}
 	onclick={e => {
-		playKacha();
+		sounds.play('kacha');
 		onclick?.(e);
 	}}
 	class={cn(

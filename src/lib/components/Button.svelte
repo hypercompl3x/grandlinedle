@@ -5,6 +5,7 @@
 	import { getSettings } from '$lib/context/settings/settings-context';
 	import { cn } from '$lib/utils/helpers';
 	import kacha from '$lib/assets/kacha.m4a';
+	import { untrack } from 'svelte';
 
 	type Props = HTMLButtonAttributes & {
 		submitting?: boolean;
@@ -25,7 +26,8 @@
 	let kachaSound = $state<Sound>();
 
 	$effect(() => {
-		if (!kachaSound) return;
+		const oldKatchaSound = untrack(() => kachaSound);
+		if (!oldKatchaSound) return;
 
 		kachaSound = new Sound(kacha, {
 			volume: settings.volume,

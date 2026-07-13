@@ -1,3 +1,4 @@
+import { untrack } from 'svelte';
 import type { FormEventHandler } from 'svelte/elements';
 import type { SubmitFunction } from '@sveltejs/kit';
 import { invalidateAll } from '$app/navigation';
@@ -23,7 +24,9 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	const settings = getSettings();
 
 	$effect(() => {
-		if (!hisashiburidanaMugiwaraSound || !theOnePieceIsRealSound) return;
+		const oldHisashiburidanaMugiwaraSound = untrack(() => hisashiburidanaMugiwaraSound);
+		const oldTheOnePieceIsRealSound = untrack(() => theOnePieceIsRealSound);
+		if (!oldHisashiburidanaMugiwaraSound || !oldTheOnePieceIsRealSound) return;
 
 		hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
 			volume: settings.volume,

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { Loader2 } from 'lucide-svelte';
 	import { Sound } from 'svelte-sound';
 	import Button from '$lib/components/Button.svelte';
@@ -54,7 +55,8 @@
 	});
 
 	$effect(() => {
-		if (!userHasInteracted) return;
+		const oldUserHasInteracted = untrack(() => userHasInteracted);
+		if (!oldUserHasInteracted) return;
 		initSoundEffects();
 	});
 

@@ -14,8 +14,10 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	}
 
 	const enableEasterEggs = (cookies.get(COOKIE.ENABLE_EASTER_EGGS) || 'true') === 'true';
+	const volume = cookies.get(COOKIE.VOLUME);
 
 	return {
 		enableEasterEggs,
+		volume: volume ? Number(volume) : 0.7,
 	};
 };

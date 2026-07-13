@@ -1,13 +1,33 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 	import PatchNotes from './_components/PatchNotes.svelte';
 	import Settings from './_components/Settings.svelte';
+	import { setSettings } from '$lib/context/settings/settings-context';
+	import { SettingsState } from '$lib/context/settings/settings-state.svelte';
 	import { cn } from '$lib/utils/helpers';
 	import '../app.css';
 
 	let { children, data }: LayoutProps = $props();
+
+	const settings = setSettings(
+		untrack(
+			() =>
+				new SettingsState({
+					enableEasterEggs: data.enableEasterEggs,
+					volume: data.volume,
+				}),
+		),
+	);
+
+	$effect(() => {
+		settings.update({
+			enableEasterEggs: data.enableEasterEggs,
+			volume: data.volume,
+		});
+	});
 </script>
 
 <div class="h-dvh min-h-dvh overflow-hidden overflow-y-auto">
@@ -29,7 +49,7 @@
 			>
 				<img alt="The grandlinedle logo" src="/grandlinedle-logo.png" class="w-96" />
 			</button>
-			<Settings enableEasterEggs={data.enableEasterEggs} />
+			<Settings />
 		</div>
 		{@render children()}
 	</div>

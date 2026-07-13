@@ -6,9 +6,17 @@
 		slides: number[];
 		slide: number;
 		label: string;
+		disabled?: boolean;
+		showSlides?: boolean;
 	};
 
-	let { slides, label, slide = $bindable() }: Props = $props();
+	let {
+		slides,
+		label,
+		slide = $bindable(),
+		showSlides = false,
+		disabled = false,
+	}: Props = $props();
 </script>
 
 <div class="w-full flex flex-col gap-y-1">
@@ -18,17 +26,20 @@
 		type="single"
 		bind:value={slide}
 		step={slides}
+		{disabled}
 		class="relative flex w-full touch-none select-none items-center"
 	>
-		{#each slides as value, index (`${label}-slider-${index}`)}
-			<Slider.TickLabel
-				{index}
-				position="bottom"
-				class="text-black/60 data-selected:text-black mt-1 text-lg font-medium"
-			>
-				{value}
-			</Slider.TickLabel>
-		{/each}
+		{#if showSlides}
+			{#each slides as value, index (`${label}-slider-${index}`)}
+				<Slider.TickLabel
+					{index}
+					position="bottom"
+					class="text-black/60 data-selected:text-black mt-1 text-lg font-medium"
+				>
+					{value}
+				</Slider.TickLabel>
+			{/each}
+		{/if}
 		<span class="bg-grey/20 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full">
 			<Slider.Range class="bg-red-primary absolute h-full" />
 		</span>

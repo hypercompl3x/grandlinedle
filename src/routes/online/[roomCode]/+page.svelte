@@ -4,8 +4,8 @@
 	import InGame from './_components/InGame/index.svelte';
 	import Results from './_components/Results.svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { setOnlineRoom } from './_lib/online-room-context';
-	import { OnlineRoomState } from './_lib/online-room-state.svelte';
+	import { setOnlineRoom } from '$lib/context/online-room/online-room-context';
+	import { OnlineRoomState } from '$lib/context/online-room/online-room-state.svelte';
 	import { GAME_STATUSES } from '$lib/utils/constants';
 	import type {
 		OnlineGame,

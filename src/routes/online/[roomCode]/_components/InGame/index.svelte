@@ -1,17 +1,89 @@
 <script lang="ts">
 	import { Loader2 } from 'lucide-svelte';
+	import { Sound } from 'svelte-sound';
 	import Button from '$lib/components/Button.svelte';
 	import Timer from './Timer.svelte';
 	import Search from './Search/index.svelte';
 	import PlayerCard from './PlayerCard/index.svelte';
 	import CharacterCard from './CharacterCard.svelte';
-	import { getOnlineRoom } from '../../_lib/online-room-context';
+	import { getOnlineRoom } from '$lib/context/online-room/online-room-context';
+	import { getSettings } from '$lib/context/settings/settings-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
 	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
 	import { HAKI_MAP, MAX_GUESSES } from '$lib/utils/constants';
 	import type { Character } from '$lib/types/DatabaseTypes';
 	import X from '$lib/assets/x.png';
 	import Berry from '$lib/assets/berry-black.png';
+	import goofy from '$lib/assets/goofy.m4a';
+	import shock from '$lib/assets/shock.m4a';
+	import haki from '$lib/assets/haki.mp3';
+
+	const room = getOnlineRoom();
+	const settings = getSettings();
+
+	let lastResultSoundKey = $state<string | null>(null);
+	let userHasInteracted = $state(false);
+	let goofySound = $state<Sound>();
+	let shockSound = $state<Sound>();
+	let hakiSound = $state<Sound>();
+
+	const initSoundEffects = () => {
+		goofySound = new Sound(goofy, {
+			volume: settings.volume,
+		});
+		shockSound = new Sound(shock, {
+			volume: settings.volume,
+		});
+		hakiSound = new Sound(haki, {
+			volume: settings.volume,
+		});
+	};
+
+	const handleClickAnywhere = () => {
+		if (userHasInteracted) return;
+		userHasInteracted = true;
+		initSoundEffects();
+	};
+
+	$effect(() => {
+		document.addEventListener('click', handleClickAnywhere);
+
+		return () => {
+			document.removeEventListener('click', handleClickAnywhere);
+		};
+	});
+
+	$effect(() => {
+		initSoundEffects();
+	});
+
+	$effect(() => {
+		if (!userHasInteracted) return;
+		if (room.game.sub_status !== 'results') return;
+		if (!room.currentRound) return;
+		if (!room.game.sub_status_started_at) return;
+
+		const resultSoundKey = `${room.currentRound.id}-${room.game.sub_status_started_at}`;
+
+		if (lastResultSoundKey === resultSoundKey) return;
+
+		lastResultSoundKey = resultSoundKey;
+
+		if (currentPlayerCurrentGuess?.character_id === room.currentRound.character_id) {
+			hakiSound?.stop();
+			hakiSound?.play();
+			return;
+		}
+
+		if (currentPlayerCurrentGuess) {
+			goofySound?.stop();
+			goofySound?.play();
+			return;
+		}
+
+		shockSound?.stop();
+		shockSound?.play();
+	});
 
 	type CluePart =
 		| {
@@ -105,8 +177,6 @@
 		};
 	};
 
-	const room = getOnlineRoom();
-
 	const currentGuessGuesses = $derived.by(() => {
 		const round = room.currentRound;
 
@@ -132,7 +202,11 @@
 			),
 		})),
 	);
-	const currentPlayerCurrentGuess = $derived(currentPlayerGuessesThisRound.find(g => g.guess_number === room.currentRound?.current_guess_number))
+	const currentPlayerCurrentGuess = $derived(
+		currentPlayerGuessesThisRound.find(
+			g => g.guess_number === room.currentRound?.current_guess_number,
+		),
+	);
 
 	const visibleClues = $derived.by(() => {
 		const currentRound = room.currentRound;
@@ -181,11 +255,17 @@
 {#if room.currentRound}
 	<div class="w-full gap-y-8 flex flex-col items-center px-4 pb-12">
 		<div class="w-full max-w-md shadow-sm text-center rounded-md">
-			<div
-				class="bg-blue-primary p-3 text-white rounded-t-md"
-			>
-				<p class="text-sm font-black uppercase tracking-widest">Round {room.game.current_round_number} of {room.game.number_of_rounds}</p>
-				{const gameStatus = $derived(room.game.sub_status === "guessing" ? "Guess" : room.game.sub_status === "revealing" ? "Reveal Answers" : "Results")}
+			<div class="bg-blue-primary p-3 text-white rounded-t-md">
+				<p class="text-sm font-black uppercase tracking-widest">
+					Round {room.game.current_round_number} of {room.game.number_of_rounds}
+				</p>
+				{const gameStatus = $derived(
+					room.game.sub_status === 'guessing'
+						? 'Guess'
+						: room.game.sub_status === 'revealing'
+							? 'Reveal Answers'
+							: 'Results',
+				)}
 				<p class="text-2xl font-black">{gameStatus}</p>
 			</div>
 			<div class="p-5 space-y-5 bg-white rounded-b-md">
@@ -202,9 +282,13 @@
 								class="flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-2 overflow-hidden"
 							>
 								<span class="font-bold">{clue.label}:</span>
-								<span class={cn("font-medium flex items-center gap-x-1", {
-									"max-sm:text-sm": clue.value.some(v => v.type === "text" && v.text.split(" ").some(w => w.length > 10))
-								})}>
+								<span
+									class={cn('font-medium flex items-center gap-x-1', {
+										'max-sm:text-sm': clue.value.some(
+											v => v.type === 'text' && v.text.split(' ').some(w => w.length > 10),
+										),
+									})}
+								>
 									{#each clue.value as value, j (`clue-part-${i}-${j}`)}
 										{#if value.type === 'text'}
 											{value.text}
@@ -238,6 +322,18 @@
 						guessNumber={room.currentRound.current_guess_number}
 					/>
 				{/if}
+				{#if !currentPlayerCurrentGuess && room.game.sub_status !== 'guessing'}
+					<div
+						class={cn(
+							'p-4 bg-red-light text-xs font-black uppercase tracking-[0.15em] text-white w-full rounded-lg border-2 border-black/15 text-center shadow-sm',
+							{
+								'bg-grey': room.game.sub_status === 'revealing',
+							},
+						)}
+					>
+						No Guess
+					</div>
+				{/if}
 				{#if !!currentPlayerCurrentGuess && room.game.sub_status === 'results' && currentPlayerCurrentGuess?.character_id !== room.currentRound.character_id}
 					<CharacterCard
 						title="Your Guess"
@@ -256,7 +352,9 @@
 				{/if}
 				{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
 					<CharacterCard
-						title={currentPlayerCurrentGuess?.character_id === room.currentRound.character_id ? "Your Guess" : "Correct Character"}
+						title={currentPlayerCurrentGuess?.character_id === room.currentRound.character_id
+							? 'Your Guess'
+							: 'Correct Character'}
 						name={room.currentRound.character.name}
 						url={room.currentRound.character.url}
 						variant="roundCharacter"

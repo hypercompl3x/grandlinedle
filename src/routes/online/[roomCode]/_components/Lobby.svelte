@@ -2,7 +2,7 @@
 	import { X } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Slider from '$lib/components/Slider.svelte';
-	import { getOnlineRoom } from '../_lib/online-room-context';
+	import { getOnlineRoom } from '$lib/context/online-room/online-room-context';
 	import { startGame } from '$lib/remote/online.remote';
 	import {
 		GUESS_TIME_OPTIONS,
@@ -42,14 +42,27 @@
 			{#if room.currentPlayer.is_host}
 				<div class="space-y-14">
 					<div class="space-y-12">
-						<Slider slides={NUMBER_OF_ROUNDS_OPTIONS} bind:slide={numberOfRounds} label="Rounds" />
+						<Slider
+							slides={NUMBER_OF_ROUNDS_OPTIONS}
+							bind:slide={numberOfRounds}
+							label="Rounds"
+							showSlides
+						/>
 						<Slider
 							slides={GUESS_TIME_OPTIONS}
 							bind:slide={guessTime}
 							label="Guess time (seconds)"
+							showSlides
 						/>
 					</div>
-					<Button type="button" onclick={start} disabled={room.players.length === 1 || room.leaving} submitting={starting}>Start</Button>
+					<Button
+						type="button"
+						onclick={start}
+						disabled={room.players.length === 1 || room.leaving}
+						submitting={starting}
+					>
+						Start
+					</Button>
 				</div>
 			{/if}
 			<Button
@@ -76,7 +89,9 @@
 						src={player.url}
 						class="w-28 rounded-l-md bg-green-primary p-2"
 					/>
-					<p class="flex items-center rounded-r-md bg-green-light p-4 text-3xl font-bold text-white">
+					<p
+						class="flex items-center rounded-r-md bg-green-light p-4 text-3xl font-bold text-white"
+					>
 						<span class:animate-pulse={!isOnline}>
 							{#if player.is_host}👑{/if}
 							{player.display_name}

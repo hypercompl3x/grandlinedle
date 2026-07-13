@@ -5,6 +5,7 @@ import { applyAction } from '$app/forms';
 import { Sound } from 'svelte-sound';
 import useAsyncTransition from '$lib/hooks/useAsyncTransition.svelte';
 import { getEasterEggCharacters } from '$lib/services/characterService';
+import { getSettings } from '$lib/context/settings/settings-context';
 import type { CharacterWithImage, Crew, Location } from '$lib/types/DatabaseTypes';
 import type { Page } from '$lib/types/SearchTypes';
 import hisashiburidanaMugiwara from '$lib/assets/hisashiburidana-mugiwara.mp3';
@@ -17,9 +18,20 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	page: Page,
 	buttonName: string,
 	getItemsFromQuery: (query: string, guessIds: T['id'][]) => Promise<T[]>,
-	enableEasterEggs: () => boolean,
 	guessIds: () => T['id'][],
 ) => {
+	const settings = getSettings();
+
+	$effect(() => {
+		hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
+			volume: settings.volume,
+		});
+
+		theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
+			volume: settings.volume,
+		});
+	});
+
 	let isDropdownOpen = $state(false);
 	let query = $state('');
 	let items = $state<T[]>([]);
@@ -38,13 +50,13 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	const handleSearch: FormEventHandler<HTMLInputElement> = async e => {
 		if (!hisashiburidanaMugiwaraSound) {
 			hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
-				volume: 0.7,
+				volume: settings.volume,
 			});
 		}
 
 		if (!theOnePieceIsRealSound) {
 			theOnePieceIsRealSound = new Sound(theOnePieceIsReal, {
-				volume: 0.7,
+				volume: settings.volume,
 			});
 		}
 
@@ -56,22 +68,22 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 
 		await currentSearchPromise;
 
-		if (query.toLowerCase().includes('hyde') && page === 'character' && enableEasterEggs()) {
+		if (query.toLowerCase().includes('hyde') && page === 'character' && settings.enableEasterEggs) {
 			const newItems = await getEasterEggCharacters(guessIds());
 			updateAllItems(newItems as T[]);
 			return;
 		}
 
-		if (query.toLowerCase() === 'mugiwara' && page === 'character' && enableEasterEggs()) {
-			hisashiburidanaMugiwaraSound.stop();
-			hisashiburidanaMugiwaraSound.play();
+		if (query.toLowerCase() === 'mugiwara' && page === 'character' && settings.enableEasterEggs) {
+			hisashiburidanaMugiwaraSound?.stop();
+			hisashiburidanaMugiwaraSound?.play();
 			updateAllItems([]);
 			return;
 		}
 
-		if (query.toLowerCase() === 'laugh tale' && page === 'location' && enableEasterEggs()) {
-			theOnePieceIsRealSound.stop();
-			theOnePieceIsRealSound.play();
+		if (query.toLowerCase() === 'laugh tale' && page === 'location' && settings.enableEasterEggs) {
+			theOnePieceIsRealSound?.stop();
+			theOnePieceIsRealSound?.play();
 			updateAllItems([]);
 			return;
 		}

@@ -75,6 +75,7 @@ export const COOKIE = {
 	CREWS: 'crews',
 	LOCATION_HARD_MODE: 'locationhardmode',
 	ENABLE_EASTER_EGGS: 'enableeastereggs',
+	VOLUME: 'volume',
 } as const;
 
 export const TEN_YEARS = 60 * 60 * 24 * 365 * 10;

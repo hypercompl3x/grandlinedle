@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { getOnlineRoom } from '../../_lib/online-room-context';
+	import { getOnlineRoom } from '$lib/context/online-room/online-room-context';
 	import { MAX_GUESSES, TIMER } from '$lib/utils/constants';
 
 	const room = getOnlineRoom();

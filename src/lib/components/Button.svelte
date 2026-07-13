@@ -25,6 +25,8 @@
 	let kachaSound = $state<Sound>();
 
 	$effect(() => {
+		if (!kachaSound) return;
+
 		kachaSound = new Sound(kacha, {
 			volume: settings.volume,
 		});

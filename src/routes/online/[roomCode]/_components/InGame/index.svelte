@@ -54,6 +54,7 @@
 	});
 
 	$effect(() => {
+		if (!userHasInteracted) return;
 		initSoundEffects();
 	});
 

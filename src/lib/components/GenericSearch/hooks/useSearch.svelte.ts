@@ -23,6 +23,8 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 	const settings = getSettings();
 
 	$effect(() => {
+		if (!hisashiburidanaMugiwaraSound || !theOnePieceIsRealSound) return;
+
 		hisashiburidanaMugiwaraSound = new Sound(hisashiburidanaMugiwara, {
 			volume: settings.volume,
 		});

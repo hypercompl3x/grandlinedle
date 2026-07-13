@@ -237,7 +237,7 @@
 					<div class="divide-y divide-black/10">
 						{#each visibleClues as clue, i (`clue-${i}`)}
 							<div
-								class="flex items-center justify-center text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-2 overflow-hidden"
+								class="flex items-center justify-center text-base sm:text-lg text-center bg-white text-black h-12 md:text-xl w-full gap-x-2 overflow-hidden"
 							>
 								<span class="font-bold">{clue.label}:</span>
 								<span

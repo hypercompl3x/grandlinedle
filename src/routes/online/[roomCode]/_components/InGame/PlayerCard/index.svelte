@@ -57,20 +57,23 @@
 			{hasGuessed ? '✓ Guessed' : 'Waiting...'}
 		</div>
 	{/if}
-	<div class="flex items-stretch relative">
+	<div class="flex items-stretch relative max-sm:flex-col">
 		<img
 			alt="Player icon"
 			src={player.url}
-			class={cn('w-28 p-2 bg-grey-dark rounded-l-md', {
+			class={cn('sm:w-28 p-2 bg-grey-dark max-sm:rounded-t-md sm:rounded-l-md', {
 				'bg-green-primary': isCorrect,
 				'bg-red-medium-dark': isWrong,
 			})}
 		/>
 		<p
-			class={cn('p-4 text-white font-bold text-3xl rounded-r-md bg-grey flex items-center', {
-				'bg-green-light': isCorrect,
-				'bg-red-light': isWrong,
-			})}
+			class={cn(
+				'p-4 text-white font-bold text-3xl max-sm:rounded-b-md sm:rounded-r-md bg-grey flex items-center max-sm:justify-center',
+				{
+					'bg-green-light': isCorrect,
+					'bg-red-light': isWrong,
+				},
+			)}
 		>
 			<span class:animate-pulse={!isOnline}>
 				{#if player.is_host}👑{/if}

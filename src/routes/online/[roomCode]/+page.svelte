@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import Lobby from './_components/Lobby.svelte';
+	import Lobby from './_components/Lobby/index.svelte';
 	import InGame from './_components/InGame/index.svelte';
 	import Results from './_components/Results.svelte';
 	import { supabase } from '$lib/supabaseClient';

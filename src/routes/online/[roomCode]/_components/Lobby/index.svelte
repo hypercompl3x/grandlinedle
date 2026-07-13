@@ -2,6 +2,7 @@
 	import { X } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Slider from '$lib/components/Slider.svelte';
+	import HowToPlay from './HowToPlay.svelte';
 	import { getOnlineRoom } from '$lib/context/online-room/online-room-context';
 	import { startGame } from '$lib/remote/online.remote';
 	import {
@@ -32,7 +33,8 @@
 	};
 </script>
 
-<div class="flex flex-col items-center gap-y-8 w-full px-4">
+<div class="flex flex-col items-center gap-y-8 w-full px-4 pb-12">
+	<HowToPlay />
 	<div class="max-w-md w-full bg-white rounded-md p-5 shadow-sm space-y-4">
 		<div class="bg-blue-primary rounded-md text-center p-3 text-white border-2 border-black/20">
 			<p class="text-sm font-black tracking-widest">ROOM CODE</p>
@@ -83,14 +85,14 @@
 		<div class="flex flex-wrap gap-8 justify-center">
 			{#each room.players as player (`player-${player.id}`)}
 				{const isOnline = $derived(room.isPlayerOnline(player.id))}
-				<div class="relative flex items-stretch">
+				<div class="relative flex max-sm:flex-col sm:items-stretch">
 					<img
 						alt={player.display_name}
 						src={player.url}
-						class="w-28 rounded-l-md bg-green-primary p-2"
+						class="sm:w-28 max-sm:rounded-t-md sm:rounded-l-md bg-green-primary p-2"
 					/>
 					<p
-						class="flex items-center rounded-r-md bg-green-light p-4 text-3xl font-bold text-white"
+						class="flex items-center max-sm:rounded-b-md sm:rounded-r-md bg-green-light p-4 text-3xl font-bold text-white max-sm:justify-center"
 					>
 						<span class:animate-pulse={!isOnline}>
 							{#if player.is_host}👑{/if}

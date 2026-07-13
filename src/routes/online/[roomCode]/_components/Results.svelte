@@ -56,7 +56,7 @@
 	};
 </script>
 
-<div class="space-y-8 max-w-md w-full px-4">
+<div class="space-y-8 max-w-md w-full px-4 pb-12">
 	<div
 		class="rounded-xl border-2 border-black/20 bg-white/90 p-5 text-center shadow-lg backdrop-blur-sm"
 	>

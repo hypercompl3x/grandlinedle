@@ -6,12 +6,12 @@ import {
 	kickOnlinePlayer,
 	leaveGame,
 } from '$lib/remote/online.remote';
-import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
+import { getGuessImages, getImages, getRoundImages } from '$lib/services/serviceHelpers';
 import type {
 	Database,
 	OnlineGame,
 	OnlineGuess,
-	OnlineGuessWithCharacter,
+	OnlineGuessWithImage,
 	OnlinePlayer,
 	OnlinePlayerWithImage,
 	OnlineRound,
@@ -23,7 +23,7 @@ type OnlineRoomStateArgs = {
 	game: OnlineGame;
 	players: OnlinePlayerWithImage[];
 	rounds: OnlineRoundWithCharacterAndImage[];
-	guesses: OnlineGuessWithCharacter[];
+	guesses: OnlineGuessWithImage[];
 	currentPlayer: OnlinePlayer;
 	userId: User['id'];
 };
@@ -34,7 +34,7 @@ export class OnlineRoomState {
 	game = $state<OnlineGame>()!;
 	players = $state<OnlinePlayerWithImage[]>([]);
 	rounds = $state<OnlineRoundWithCharacterAndImage[]>([]);
-	guesses = $state<OnlineGuessWithCharacter[]>([]);
+	guesses = $state<OnlineGuessWithImage[]>([]);
 	currentPlayer = $state<OnlinePlayer>()!;
 	userId = $state<User['id']>()!;
 
@@ -186,7 +186,9 @@ export class OnlineRoomState {
 
 		const guessWithCharacter = { ...guess, character };
 
-		this.guesses = [...this.guesses, guessWithCharacter];
+		const [guessWithImage] = await getGuessImages([guessWithCharacter], this.supabase);
+
+		this.guesses = [...this.guesses, guessWithImage];
 	}
 
 	updateGuess(guess: OnlineGuess) {

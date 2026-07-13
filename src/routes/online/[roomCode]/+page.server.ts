@@ -3,6 +3,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { getGameFromRoomCode, getRoomCodeFromUser } from '$lib/services/onlineService';
 import { getImages, getRoundImages } from '$lib/services/serviceHelpers';
 import { MAX_GUESSES } from '$lib/utils/constants';
+import { getGuessImages } from '$lib/services/serviceHelpers';
 
 export const load: PageServerLoad = async ({ locals: { supabase, session, user }, params }) => {
 	if (!supabase) {
@@ -38,12 +39,13 @@ export const load: PageServerLoad = async ({ locals: { supabase, session, user }
 
 	const playersWithImages = await getImages(players, supabase, 'icons');
 	const roundsWithImages = await getRoundImages(rounds, supabase);
+	const guessesWithImages = await getGuessImages(guesses, supabase);
 
 	return {
 		game,
 		players: playersWithImages,
 		rounds: roundsWithImages,
-		guesses,
+		guesses: guessesWithImages,
 		userId: user.id,
 		currentPlayer,
 		realtimeAccessToken: session.access_token,

@@ -6,6 +6,7 @@ import type {
 	Database,
 	OnlinePlayer,
 	OnlineRoundWithCharacter,
+	OnlineGuessWithCharacter,
 } from '$lib/types/DatabaseTypes';
 
 const getCharacterImage = async (id: Character['id'], supabase: SupabaseClient<Database>) => {
@@ -58,6 +59,25 @@ export const getRoundImages = async (
 				...r,
 				character: {
 					...r.character,
+					url,
+				},
+			};
+		}),
+	);
+};
+
+export const getGuessImages = async (
+	guesses: OnlineGuessWithCharacter[],
+	supabase: SupabaseClient<Database>,
+) => {
+	return await Promise.all(
+		guesses.map(async g => {
+			const url = await getCharacterImage(g.character_id, supabase);
+
+			return {
+				...g,
+				character: {
+					...g.character,
 					url,
 				},
 			};

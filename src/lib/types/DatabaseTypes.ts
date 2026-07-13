@@ -32,7 +32,12 @@ export type OnlineRoundWithCharacterAndImage = OnlineRound & {
 };
 
 export type OnlineGuess = Tables<'online_guesses'>;
-export type OnlineGuessWithCharacter = Tables<'online_guesses'> & { character: { name: string } };
+export type OnlineGuessWithCharacter = Tables<'online_guesses'> & {
+	character: { name: string };
+};
+export type OnlineGuessWithImage = Tables<'online_guesses'> & {
+	character: { name: string; url: string };
+};
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 

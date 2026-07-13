@@ -4,6 +4,7 @@
 	import Timer from './Timer.svelte';
 	import Search from './Search/index.svelte';
 	import PlayerCard from './PlayerCard/index.svelte';
+	import CharacterCard from './CharacterCard.svelte';
 	import { getOnlineRoom } from '../../_lib/online-room-context';
 	import { advanceGameFromResults } from '$lib/remote/online.remote';
 	import { cn, formatBounty, formatHeight } from '$lib/utils/helpers';
@@ -131,6 +132,7 @@
 			),
 		})),
 	);
+	const currentPlayerCurrentGuess = $derived(currentPlayerGuessesThisRound.find(g => g.guess_number === room.currentRound?.current_guess_number))
 
 	const visibleClues = $derived.by(() => {
 		const currentRound = room.currentRound;
@@ -236,25 +238,29 @@
 						guessNumber={room.currentRound.current_guess_number}
 					/>
 				{/if}
+				{#if !!currentPlayerCurrentGuess && room.game.sub_status === 'results' && currentPlayerCurrentGuess?.character_id !== room.currentRound.character_id}
+					<CharacterCard
+						title="Your Guess"
+						name={currentPlayerCurrentGuess.character.name}
+						url={currentPlayerCurrentGuess.character.url}
+						variant="incorrectGuess"
+					/>
+				{/if}
+				{#if !!currentPlayerCurrentGuess && room.game.sub_status !== 'results'}
+					<CharacterCard
+						title="Your Guess"
+						name={currentPlayerCurrentGuess.character.name}
+						url={currentPlayerCurrentGuess.character.url}
+						variant="guess"
+					/>
+				{/if}
 				{#if room.game.sub_status === 'results' && (someoneCorrect || noMoreClues)}
-					<div
-						class="w-full rounded-lg border-2 border-black/15 bg-green-light p-4 text-center shadow-sm"
-					>
-						<p class="text-xs font-black uppercase tracking-[0.15em] text-white">
-							Correct Character
-						</p>
-						<div class="mt-3 flex flex-col items-center">
-							<img
-								src={room.currentRound.character.url}
-								alt={room.currentRound.character.name}
-								class="w-28 rounded-lg shadow-md"
-							/>
-
-							<p class="mt-2 text-2xl font-black text-white">
-								{room.currentRound.character.name}
-							</p>
-						</div>
-					</div>
+					<CharacterCard
+						title={currentPlayerCurrentGuess?.character_id === room.currentRound.character_id ? "Your Guess" : "Correct Character"}
+						name={room.currentRound.character.name}
+						url={room.currentRound.character.url}
+						variant="roundCharacter"
+					/>
 				{/if}
 			</div>
 		</div>
@@ -263,7 +269,7 @@
 				Crew Members
 			</p>
 			<div class="flex flex-wrap gap-8 justify-center">
-				{#each playersWithCurrentGuess as player (`player-${player.id}`)}
+				{#each playersWithCurrentGuess.filter(p => p.id !== room.currentPlayer.id) as player (`player-${player.id}`)}
 					{const isOnline = $derived(room.isPlayerOnline(player.id))}
 					<PlayerCard
 						subStatus={room.game.sub_status}

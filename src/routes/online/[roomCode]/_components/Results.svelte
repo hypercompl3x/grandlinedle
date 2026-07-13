@@ -24,10 +24,20 @@
 			})
 			.toSorted((a, b) => b.score - a.score);
 
-		return players.map((player, i) => ({
-			...player,
-			place: i + 1,
-		}));
+		let previousScore: number | null = null;
+		let previousPlace = 0;
+
+		return players.map((player, i) => {
+			const place = player.score === previousScore ? previousPlace : i + 1;
+
+			previousScore = player.score;
+			previousPlace = place;
+
+			return {
+				...player,
+				place,
+			};
+		});
 	});
 	let clearWinner = $derived(playersRanked.length === 1 || playersRanked[0].score > playersRanked[1].score);
 
@@ -63,17 +73,17 @@
 		class="rounded-xl border-2 border-black/20 bg-white/85 p-4 shadow-lg sm:p-6"
 	>
 		<div class="flex items-end justify-center gap-2 sm:gap-5">
-			{#each playersRanked.slice(0, 3).length > 2 ? [playersRanked[1], playersRanked[0], playersRanked[2]] : playersRanked.slice(0, 3) as {name, place, score, url} (`player-${place}`)}
+			{#each playersRanked.slice(0, 3).length > 2 ? [playersRanked[1], playersRanked[0], playersRanked[2]] : playersRanked.slice(0, 3) as {name, place, score, url},i (`player-${place}-${i}`)}
+				{const player = $derived(score === playersRanked[0]?.score ?
+					{height: 'h-32', bg: 'bg-yellow-primary', border: "border-yellow-primary"} :
+					score === playersRanked[1]?.score ?
+					{height: 'h-22', bg: 'bg-grey/50', border: "border-grey/50"} :
+					{height: 'h-14', bg: 'bg-brown', border: "border-brown"}
+				)}
 				{const label = $derived(place === 1 ? "1st" : place === 2 ? "2nd" : "3rd")}
 				<div class="flex min-w-0 flex-1 flex-col items-center">
 						<div
-							class={cn(
-								'relative mb-2 flex size-16 items-center justify-center rounded-full border-4 bg-white shadow-md sm:size-20', {
-								"border-yellow-primary": place === 1,
-								"border-grey/50": place === 2,
-								"border-brown": place === 3,
-							})
-							}
+							class={cn('relative mb-2 flex size-16 items-center justify-center rounded-full border-4 bg-white shadow-md sm:size-20',	player.border)}
 						>
 							<img
 									src={url}
@@ -92,11 +102,8 @@
 					<div
 						class={cn(
 							'flex w-full items-center justify-center rounded-t-lg border-2 border-b-0 border-black/20 px-2 shadow-inner text-white',
-							{
-								"bg-yellow-primary h-32": place === 1,
-								"bg-grey/50 h-22": place === 2,
-								"bg-brown h-14": place === 3,
-							}
+							player.height,
+							player.bg,
 						)}
 					>
 						<span class="text-2xl font-black sm:text-4xl">{label}</span>

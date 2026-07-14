@@ -93,6 +93,10 @@
 						],
 		},
 		{
+			label: 'Affiliation',
+			getValue: character => [{ type: 'text', text: character.affiliation }],
+		},
+		{
 			label: 'Last Bounty',
 			getValue: character => [
 				{
@@ -108,6 +112,10 @@
 			],
 		},
 		{
+			label: 'Origin',
+			getValue: character => [{ type: 'text', text: character.origin }],
+		},
+		{
 			label: 'Height',
 			getValue: character => [
 				{
@@ -115,14 +123,6 @@
 					text: formatHeight(character.height_m, character.height_cm),
 				},
 			],
-		},
-		{
-			label: 'Origin',
-			getValue: character => [{ type: 'text', text: character.origin }],
-		},
-		{
-			label: 'Affiliation',
-			getValue: character => [{ type: 'text', text: character.affiliation }],
 		},
 	] satisfies CharacterClue[];
 

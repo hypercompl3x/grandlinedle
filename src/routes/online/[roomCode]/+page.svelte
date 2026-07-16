@@ -6,6 +6,8 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { setOnlineRoom } from '$lib/context/online-room/online-room-context';
 	import { OnlineRoomState } from '$lib/context/online-room/online-room-state.svelte';
+	import { getSounds } from '$lib/context/sounds/sounds-context';
+	import { getSettings } from '$lib/context/settings/settings-context';
 	import { GAME_STATUSES } from '$lib/utils/constants';
 	import type {
 		OnlineGame,
@@ -36,6 +38,9 @@
 				}),
 		),
 	);
+
+	const settings = getSettings();
+	const sounds = getSounds();
 
 	const View = $derived(VIEWS[room.game.status]);
 
@@ -259,6 +264,15 @@
 
 		return () => {
 			window.clearTimeout(timeout);
+		};
+	});
+
+	$effect(() => {
+		if (settings.musicVolume <= 0) return;
+		sounds.play('binksSake');
+
+		return () => {
+			sounds.stop('binksSake');
 		};
 	});
 </script>

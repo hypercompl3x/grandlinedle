@@ -17,6 +17,13 @@
 	let guessTime = $derived(room.game.guess_time);
 
 	let starting = $state(false);
+	let showCopiedMessage = $state(false);
+
+	const copyToClipboard = () => {
+		navigator.clipboard.writeText(room.game.room_code);
+		showCopiedMessage = true;
+		setTimeout(() => (showCopiedMessage = false), 1500);
+	};
 
 	const start = async () => {
 		starting = true;
@@ -36,10 +43,20 @@
 <div class="flex flex-col items-center gap-y-8 w-full px-4 pb-12">
 	<HowToPlay />
 	<div class="max-w-md w-full bg-white rounded-md p-5 shadow-sm space-y-4">
-		<div class="bg-blue-primary rounded-md text-center p-3 text-white border-2 border-black/20">
+		<button
+			type="button"
+			onclick={copyToClipboard}
+			class="bg-blue-primary rounded-md text-center p-3 text-white border-2 border-black/20 w-full relative hover:brightness-105"
+		>
+			{#if showCopiedMessage}
+				<p
+					class="text-base font-bold text-blue-primary text-center absolute inset-x-0 mx-auto -bottom-7"
+				>
+					Copied successfully!
+				</p>{/if}
 			<p class="text-sm font-black tracking-widest">ROOM CODE</p>
 			<p class="text-4xl font-black tracking-widest">{room.game.room_code}</p>
-		</div>
+		</button>
 		<div class="space-y-4">
 			{#if room.currentPlayer.is_host}
 				<div class="space-y-14">

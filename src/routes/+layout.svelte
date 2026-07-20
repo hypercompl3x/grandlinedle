@@ -10,6 +10,7 @@
 	import { setSounds } from '$lib/context/sounds/sounds-context';
 	import { SoundsState } from '$lib/context/sounds/sounds-state.svelte';
 	import { cn } from '$lib/utils/helpers';
+	import '@fontsource-variable/dm-sans/wght.css';
 	import '../app.css';
 
 	let { children, data }: LayoutProps = $props();

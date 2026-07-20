@@ -55,6 +55,8 @@
 {#snippet button(onClick: () => void)}
 	<button
 		type="button"
+		aria-label="Open settings"
+		aria-haspopup="dialog"
 		onclick={onClick}
 		onmouseenter={onMouseEnter}
 		onmouseleave={onMouseLeave}

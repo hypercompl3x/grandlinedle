@@ -34,7 +34,7 @@
 @layer base {
 	html {
 		@apply text-black;
-		font-family: 'DM Sans';
+		font-family: 'DM Sans Variable', sans-serif;
 	}
 
 	button:enabled:hover {

@@ -10,6 +10,7 @@
 		disableClose?: boolean;
 		headerClass?: string;
 		containerClass?: string;
+		wide?: boolean;
 	};
 
 	let {
@@ -19,6 +20,7 @@
 		children,
 		button,
 		disableClose = false,
+		wide = false,
 	}: Props = $props();
 
 	let dialog = $state<HTMLDialogElement>();
@@ -27,7 +29,12 @@
 {@render button(() => dialog?.showModal())}
 <dialog
 	bind:this={dialog}
-	class="w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:opacity-40 fixed inset-0 m-auto h-fit"
+	class={cn(
+		'w-[calc(100%-32px)] sm:w-full overflow-hidden rounded-md max-w-96 backdrop:bg-black backdrop:opacity-40 fixed inset-0 m-auto h-fit',
+		{
+			'max-w-xl': wide,
+		},
+	)}
 	onclick={e => {
 		if (e.target === dialog && !disableClose) {
 			dialog.close();

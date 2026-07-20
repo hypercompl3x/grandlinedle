@@ -278,7 +278,7 @@
 </script>
 
 <svelte:head>
-	<title>Grandlinedle - Online</title>
+	<title>Grandlinedle - {room.game.room_code}</title>
 	<meta name="description" content="Play online against other players!" />
 </svelte:head>
 

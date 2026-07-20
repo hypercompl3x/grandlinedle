@@ -6,7 +6,7 @@
 	import SuccessBox from '$lib/components/SuccessBox.svelte';
 	import Hint from '$lib/components/Hint.svelte';
 	import QuoteCharacters from './_components/QuoteCharacters.svelte';
-	import { animateNewItem, formatBounty, preloadImage } from '$lib/utils/helpers.js';
+	import { animateNewItem, preloadImage } from '$lib/utils/helpers.js';
 	import { getCharactersFromQuery } from '$lib/services/characterService.js';
 
 	type Result = Awaited<PageData['pageData']>;
@@ -57,8 +57,8 @@
 		{#if !quoteHasBeenGuessed}
 			<div class="flex gap-x-8">
 				<Hint
-					category="Bounty"
-					hint={formatBounty(result.currentQuote.bounty)}
+					category="First Arc"
+					hint={result.currentQuote.firstArc}
 					numberOfGuesses={guessIds.length}
 					guessesToReveal={3}
 				/>

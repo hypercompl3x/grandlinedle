@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>Grandlinedle - Home</title>
-	<meta name="description" content="Guess One Piece characters daily!" />
+	<meta
+		name="description"
+		content="Play Grandlinedle, a daily One Piece Wordle game featuring character, location, quote and crew challenges."
+	/>
 </svelte:head>
 
 <main class="flex flex-col items-center w-full pb-12 max-sm:w-screen gap-y-8">

@@ -49,8 +49,9 @@ const useSearch = <T extends CharacterWithImage | Location | Crew>(
 		}
 
 		if (query.toLowerCase() === 'mugiwara' && page === 'character' && settings.enableEasterEggs) {
+			const newItems = await getItemsFromQuery('Monkey D. Luffy', guessIds());
 			sounds.play('hisashiburidanaMugiwara');
-			updateAllItems([]);
+			updateAllItems(newItems);
 			return;
 		}
 

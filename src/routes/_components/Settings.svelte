@@ -1,22 +1,38 @@
 <script lang="ts">
-	import { Settings } from 'lucide-svelte';
+	import { invalidateAll } from '$app/navigation';
+	import { Settings, Check } from 'lucide-svelte';
+	import { Checkbox, Label } from 'bits-ui';
 	import gsap, { Power1 } from 'gsap';
 	import Modal from '$lib/components/Modal.svelte';
+	import Slider from '$lib/components/Slider.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { updateSettings } from '$lib/remote/settings.remote';
+	import { getSettings } from '$lib/context/settings/settings-context';
 
-	type Props = {
-		enableEasterEggs: boolean;
+	const settings = getSettings();
+
+	let saving = $state(false);
+	let soundEffectVolume = $derived(settings.soundEffectVolume);
+	let musicVolume = $derived(settings.musicVolume);
+	let enableEasterEggs = $derived(settings.enableEasterEggs);
+
+	const getEnableEasterEggs = () => {
+		return enableEasterEggs;
 	};
 
-	let { enableEasterEggs }: Props = $props();
+	const setEnableEasterEggs = (newEnableEasterEggs: boolean) => {
+		enableEasterEggs = newEnableEasterEggs;
+	};
 
-	$effect(() => {
-		updateSettings.fields.set({
-			enableEasterEggs,
-		});
-	});
-
-	let formEl = $state<HTMLFormElement>();
+	const saveSettings = async () => {
+		try {
+			saving = true;
+			await updateSettings({ enableEasterEggs, soundEffectVolume, musicVolume });
+			await invalidateAll();
+		} finally {
+			saving = false;
+		}
+	};
 
 	const onMouseEnter = () => {
 		gsap.to('#settings-icon', {
@@ -39,6 +55,8 @@
 {#snippet button(onClick: () => void)}
 	<button
 		type="button"
+		aria-label="Open settings"
+		aria-haspopup="dialog"
 		onclick={onClick}
 		onmouseenter={onMouseEnter}
 		onmouseleave={onMouseLeave}
@@ -51,26 +69,60 @@
 	</button>
 {/snippet}
 
-<Modal {button} headerClass="bg-grey" containerClass="text-center p-2" name="Settings">
-	<form
-		bind:this={formEl}
-		class="flex items-center py-3 gap-x-3"
-		{...updateSettings.enhance(async form => {
-			try {
-				await form.submit();
-			} catch (error) {
-				console.error(error);
-			}
-		})}
-	>
-		<label>
-			<input
-				disabled={!!updateSettings.pending}
-				class="hover:cursor-pointer disabled:hover:cursor-auto"
-				{...updateSettings.fields.enableEasterEggs.as('checkbox')}
-				onchange={() => formEl?.requestSubmit()}
-			/>
-			Enable easter eggs
-		</label>
-	</form>
+<Modal
+	{button}
+	headerClass="bg-grey"
+	containerClass="text-center px-8 py-4"
+	name="Settings"
+	disableClose={saving}
+>
+	<div class="space-y-6 w-full">
+		<Slider
+			label="Sound Effects"
+			bind:slide={soundEffectVolume}
+			slides={[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+			disabled={saving}
+		/>
+		<Slider
+			label="Music"
+			bind:slide={musicVolume}
+			slides={[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+			disabled={saving}
+		/>
+		<div class="flex items-center space-x-3">
+			<Checkbox.Root
+				id="enableEasterEggs"
+				aria-labelledby="enableEasterEggs-label"
+				class="border-muted bg-red-primary data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-white data-[state=unchecked]:hover:border-dark-40 peer inline-flex size-6.25 items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
+				bind:checked={getEnableEasterEggs, setEnableEasterEggs}
+				disabled={saving}
+			>
+				{#snippet children({ checked })}
+					{#if checked}
+						<div class="text-white inline-flex items-center justify-center ring-0">
+							<Check class="w-5 stroke-3" />
+						</div>
+					{/if}
+				{/snippet}
+			</Checkbox.Root>
+			<Label.Root
+				id="enableEasterEggs-label"
+				for="enableEasterEggs"
+				class="text-lg font-medium leading-none peer-disabled:cursor-not-allowed"
+			>
+				Enable easter eggs
+			</Label.Root>
+		</div>
+		<Button
+			type="button"
+			onclick={saveSettings}
+			class="from-grey to-grey-dark"
+			submitting={saving}
+			disabled={settings.musicVolume === musicVolume &&
+				settings.soundEffectVolume === soundEffectVolume &&
+				settings.enableEasterEggs === enableEasterEggs}
+		>
+			Save
+		</Button>
+	</div>
 </Modal>

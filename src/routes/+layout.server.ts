@@ -1,12 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { kv } from '$lib/kv';
-import { GAME_MODE, COOKIE } from '$lib/utils/constants';
-import { objectAsValues, getArrayLengthFromCookie } from '$lib/utils/helpers';
-
+import { COOKIE, DEFAULT_VOLUME } from '$lib/utils/constants';
 import { VERCEL_ENV } from '$env/static/private';
-
-const GAME_MODES = objectAsValues(GAME_MODE);
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
 	if (VERCEL_ENV !== 'development') {
@@ -17,45 +13,13 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		}
 	}
 
-	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
-	const completed = JSON.parse(completedString);
-
 	const enableEasterEggs = (cookies.get(COOKIE.ENABLE_EASTER_EGGS) || 'true') === 'true';
-
-	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false, enableEasterEggs };
-
-	const playerName = cookies.get(COOKIE.PLAYER_NAME) || '';
-	const submittedEntry = !!cookies.get(COOKIE.SUBMITTED_ENTRY);
-
-	const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
-	const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
-	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
-	const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
-
-	const locationHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
-
-	const today = new Date(
-		new Intl.DateTimeFormat('en-CA', {
-			timeZone: 'Europe/London',
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit',
-		}).format(new Date()) + 'T00:00:00Z',
-	);
-	const startDate = new Date('2024-05-05T00:00:00Z');
-	const msPerDay = 24 * 60 * 60 * 1000;
-	const todayNumber = Math.floor((today.getTime() - startDate.getTime()) / msPerDay) + 1;
+	const soundEffectVolume = cookies.get(COOKIE.SOUND_EFFECT_VOLUME);
+	const musicVolume = cookies.get(COOKIE.MUSIC_VOLUME);
 
 	return {
-		characterGuessesLen,
-		locationGuessesLen,
-		quoteCharacterGuessesLen,
-		crewGuessesLen,
-		todayNumber,
-		completed: true,
-		submittedEntry,
-		playerName,
-		locationHardMode: locationHardModeStr === 'true',
 		enableEasterEggs,
+		soundEffectVolume: soundEffectVolume ? Number(soundEffectVolume) : DEFAULT_VOLUME,
+		musicVolume: musicVolume ? Number(musicVolume) : DEFAULT_VOLUME,
 	};
 };

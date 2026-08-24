@@ -15,14 +15,18 @@
 
 	--color-red-light: #d53633;
 	--color-red-primary: #e30c0c;
+	--color-red-medium-dark: #a82b29;
 	--color-red-dark: #80201f;
 
 	--color-blue-light: #4abfff;
 	--color-blue-primary: #1767bd;
+	--color-blue-medium-dark: #13559b;
 	--color-blue-dark: #1e4de0;
 
 	--color-grey: #696969;
 	--color-grey-dark: #424242;
+
+	--color-brown: #9c5a2e;
 
 	--background-image-page-background: url('/one-piece-bg.webp');
 }
@@ -30,7 +34,7 @@
 @layer base {
 	html {
 		@apply text-black;
-		font-family: 'DM Sans';
+		font-family: 'DM Sans Variable', sans-serif;
 	}
 
 	button:enabled:hover {

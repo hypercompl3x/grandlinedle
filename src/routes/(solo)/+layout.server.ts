@@ -1,0 +1,56 @@
+import { redirect } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+import { getRoomCodeFromUser } from '$lib/services/onlineService';
+import { GAME_MODE, COOKIE } from '$lib/utils/constants';
+import { objectAsValues, getArrayLengthFromCookie } from '$lib/utils/helpers';
+
+const GAME_MODES = objectAsValues(GAME_MODE);
+
+export const load: LayoutServerLoad = async ({ cookies, locals: { session, user, supabase } }) => {
+	if (session && user) {
+		const roomCode = await getRoomCodeFromUser(supabase, user.id);
+
+		if (roomCode) {
+			redirect(303, `/online/${roomCode}`);
+		}
+	}
+
+	const completedString = cookies.get(COOKIE.COMPLETED) || '[]';
+	const completed = JSON.parse(completedString);
+
+	if (GAME_MODES.some(m => !completed.includes(m))) return { completed: false };
+
+	const playerName = cookies.get(COOKIE.PLAYER_NAME) || '';
+	const submittedEntry = !!cookies.get(COOKIE.SUBMITTED_ENTRY);
+
+	const characterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CHARACTERS);
+	const locationGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.LOCATIONS);
+	const quoteCharacterGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.QUOTE_CHARACTERS);
+	const crewGuessesLen = getArrayLengthFromCookie(cookies, COOKIE.CREWS);
+
+	const locationHardModeStr = cookies.get(COOKIE.LOCATION_HARD_MODE) || 'true';
+
+	const today = new Date(
+		new Intl.DateTimeFormat('en-CA', {
+			timeZone: 'Europe/London',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}).format(new Date()) + 'T00:00:00Z',
+	);
+	const startDate = new Date('2024-05-05T00:00:00Z');
+	const msPerDay = 24 * 60 * 60 * 1000;
+	const todayNumber = Math.floor((today.getTime() - startDate.getTime()) / msPerDay) + 1;
+
+	return {
+		characterGuessesLen,
+		locationGuessesLen,
+		quoteCharacterGuessesLen,
+		crewGuessesLen,
+		todayNumber,
+		completed: true,
+		submittedEntry,
+		playerName,
+		locationHardMode: locationHardModeStr === 'true',
+	};
+};

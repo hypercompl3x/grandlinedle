@@ -3,6 +3,7 @@ import type { Character } from '$lib/types/DatabaseTypes';
 import { preloadImage } from '$lib/utils/helpers';
 import { getImages } from './serviceHelpers';
 
+// Client only
 export const getCharactersFromQuery = async (query: string, currentGuesses: Character['id'][]) => {
 	const { data: characters, error } = await supabase
 		.from('characters')
@@ -22,6 +23,7 @@ export const getCharactersFromQuery = async (query: string, currentGuesses: Char
 	return charactersWithImages;
 };
 
+// Client only
 export const getEasterEggCharacters = async (currentGuesses: Character['id'][]) => {
 	const { data: characters, error } = await supabase
 		.from('characters')

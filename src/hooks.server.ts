@@ -46,6 +46,39 @@ export const handle: Handle = async ({ event, resolve }) => {
 		},
 	);
 
+	const getSessionAndUser = async () => {
+		const {
+			data: { session },
+		} = await event.locals.supabase.auth.getSession();
+		if (!session) {
+			return {
+				session: null,
+				user: null,
+			};
+		}
+
+		const {
+			data: { user },
+			error,
+		} = await event.locals.supabase.auth.getUser();
+		if (error || !user) {
+			return {
+				session: null,
+				user: null,
+			};
+		}
+
+		return {
+			session,
+			user,
+		};
+	};
+
+	const { session, user } = await getSessionAndUser();
+
+	event.locals.session = session;
+	event.locals.user = user;
+
 	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';

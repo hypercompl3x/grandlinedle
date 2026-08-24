@@ -46,7 +46,13 @@
 </script>
 
 {#snippet button(onClick: () => void)}
-	<button type="button" onclick={onClick} class="h-fit group/patchnotes">
+	<button
+		type="button"
+		aria-label="Open patch notes"
+		aria-haspopup="dialog"
+		onclick={onClick}
+		class="h-fit group/patchnotes"
+	>
 		<ScrollText
 			class="text-grey group-hover/patchnotes:text-grey-dark transition-colors duration-500 sm:size-12 xs:size-10 size-8"
 		/>

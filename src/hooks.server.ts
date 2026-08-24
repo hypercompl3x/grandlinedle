@@ -1,4 +1,5 @@
 import { error, type Handle } from '@sveltejs/kit';
+import { building } from '$app/environment';
 import { createServerClient } from '@supabase/ssr';
 import { Ratelimit } from '@upstash/ratelimit';
 import { kv } from '$lib/kv';
@@ -13,7 +14,7 @@ const ratelimit = new Ratelimit({
 });
 
 export const handle: Handle = async ({ event, resolve }) => {
-	if (VERCEL_ENV !== 'development') {
+	if (!building && VERCEL_ENV !== 'development') {
 		const ip = event.getClientAddress() || '127.0.0.1';
 
 		const { success, reset } = await ratelimit.limit(ip);
